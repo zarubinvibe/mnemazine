@@ -4,6 +4,7 @@ beautifulsoup4==4.15.0
 certifi==2026.6.17
 charset-normalizer==3.4.7
 click==8.4.1
+dawg2-python==0.9.0
 defusedxml==0.7.1
 fastembed==0.8.0
 filelock==3.29.4
@@ -39,10 +40,13 @@ protobuf==7.35.1
 py_rust_stemmers==0.1.8
 Pygments==2.20.0
 PyMuPDF==1.27.2.3
+pymorphy3==2.0.6
+pymorphy3-dicts-ru==2.4.417150.4580142
 pypdf==6.14.2
 python-dotenv==1.2.2
 PyYAML==6.0.3
 RapidFuzz==3.14.5
+razdel==0.5.0
 regex==2026.5.9
 reportlab==5.0.0
 requests==2.34.2

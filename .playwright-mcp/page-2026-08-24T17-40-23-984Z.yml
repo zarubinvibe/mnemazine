@@ -1,0 +1,193 @@
+- generic [ref=f42e5]:
+  - list [ref=f42e8]:
+    - listitem [ref=f42e9]:
+      - link "На главную" [ref=f42e10] [cursor=pointer]:
+        - /url: /feed
+    - listitem [ref=f42e11]:
+      - search [ref=f42e12]:
+        - generic [ref=f42e15]:
+          - generic [ref=f42e16]: Поиск
+          - searchbox "Поиск" [ref=f42e20]
+          - button "Очистить поле" [ref=f42e22] [cursor=pointer]
+        - button "Найти" [ref=f42e30] [cursor=pointer]
+    - listitem [ref=f42e33]:
+      - link "Регистрация" [ref=f42e34] [cursor=pointer]:
+        - /url: /join
+  - generic [ref=f42e37]:
+    - generic [ref=f42e39]:
+      - generic [ref=f42e40]:
+        - button "Войти" [ref=f42e41] [cursor=pointer]
+        - button "Регистрация" [ref=f42e44] [cursor=pointer]
+      - separator [ref=f42e48]
+      - navigation [ref=f42e49]:
+        - list [ref=f42e50]:
+          - listitem [ref=f42e51]:
+            - link [ref=f42e52] [cursor=pointer]:
+              - /url: /audio
+              - heading "Музыка" [level=2] [ref=f42e64]
+          - listitem [ref=f42e66]:
+            - link "Видео" [ref=f42e67] [cursor=pointer]:
+              - /url: //vkvideo.ru
+          - listitem [ref=f42e77]:
+            - link "Сообщества" [ref=f42e78] [cursor=pointer]:
+              - /url: /groups/recommendations
+          - listitem [ref=f42e88]:
+            - link "Мини-приложения" [ref=f42e89] [cursor=pointer]:
+              - /url: /services
+          - listitem [ref=f42e99]:
+            - link "Игры" [ref=f42e100] [cursor=pointer]:
+              - /url: /games
+          - listitem [ref=f42e110]:
+            - link "Яндекс Браузер" [ref=f42e111] [cursor=pointer]:
+              - /url: //yandex.ru/project/browser/vk/gen/top-banner?banerid=5899000004
+        - generic [ref=f42e120]:
+          - separator [ref=f42e122]
+          - list [ref=f42e123]:
+            - listitem [ref=f42e124]:
+              - link "Приложение на телефон" [ref=f42e125] [cursor=pointer]:
+                - /url: /mobile?utm_source=menu
+          - separator [ref=f42e132]
+          - list [ref=f42e133]:
+            - listitem [ref=f42e134]:
+              - button "Информация о контенте" [ref=f42e135] [cursor=pointer]
+    - generic [ref=f42e142]:
+      - generic [ref=f42e144]:
+        - generic [ref=f42e150]:
+          - link "Артемий Лебедев" [ref=f42e153] [cursor=pointer]:
+            - /url: /club211437014
+          - generic [ref=f42e155]: Подкаст
+        - generic [ref=f42e176]:
+          - generic [ref=f42e178]:
+            - heading "Самые честные новости" [level=1] [ref=f42e180]
+            - link "Артемий Лебедев" [ref=f42e182] [cursor=pointer]:
+              - /url: /club211437014
+            - generic [ref=f42e188]: Подкаст·Обновлено 21 августа
+          - group [ref=f42e192]:
+            - button "Слушать" [ref=f42e193] [cursor=pointer]
+            - button "Поделиться"
+          - separator [ref=f42e199]
+          - generic [ref=f42e201]:
+            - heading "Беспристрастная политинформация от Артемия Лебедева Чики Пумс Йоу!" [level=4] [ref=f42e204]: Беспристрастная политинформация от Артемия ЛебедеваЧикиПумсЙоу!
+            - button [ref=f42e207] [cursor=pointer]:
+              - heading "Показать ещё" [level=4] [ref=f42e208]
+      - generic [ref=f42e214]:
+        - generic [ref=f42e216]:
+          - generic:
+            - generic: ‌
+            - generic:
+              - generic:
+                - generic: ‌
+                - generic: ‌
+            - generic [ref=f42e217]: ‌
+        - generic [ref=f42e220]:
+          - generic:
+            - generic: ‌
+            - generic:
+              - generic:
+                - generic: ‌
+                - generic: ‌
+            - generic [ref=f42e221]: ‌
+        - generic [ref=f42e224]:
+          - generic:
+            - generic: ‌
+            - generic:
+              - generic:
+                - generic: ‌
+                - generic: ‌
+            - generic [ref=f42e225]: ‌
+        - generic [ref=f42e228]:
+          - generic:
+            - generic: ‌
+            - generic:
+              - generic:
+                - generic: ‌
+                - generic: ‌
+            - generic [ref=f42e229]: ‌
+        - generic [ref=f42e232]:
+          - generic:
+            - generic: ‌
+            - generic:
+              - generic:
+                - generic: ‌
+                - generic: ‌
+            - generic [ref=f42e233]: ‌
+        - generic [ref=f42e236]:
+          - generic:
+            - generic: ‌
+            - generic:
+              - generic:
+                - generic: ‌
+                - generic: ‌
+            - generic [ref=f42e237]: ‌
+        - generic [ref=f42e240]:
+          - generic:
+            - generic: ‌
+            - generic:
+              - generic:
+                - generic: ‌
+                - generic: ‌
+            - generic [ref=f42e241]: ‌
+        - generic [ref=f42e244]:
+          - generic:
+            - generic: ‌
+            - generic:
+              - generic:
+                - generic: ‌
+                - generic: ‌
+            - generic [ref=f42e245]: ‌
+        - generic [ref=f42e248]:
+          - generic:
+            - generic: ‌
+            - generic:
+              - generic:
+                - generic: ‌
+                - generic: ‌
+            - generic [ref=f42e249]: ‌
+        - generic [ref=f42e252]:
+          - generic:
+            - generic: ‌
+            - generic:
+              - generic:
+                - generic: ‌
+                - generic: ‌
+            - generic [ref=f42e253]: ‌
+        - generic [ref=f42e256]:
+          - generic:
+            - generic: ‌
+            - generic:
+              - generic:
+                - generic: ‌
+                - generic: ‌
+            - generic [ref=f42e257]: ‌
+        - generic [ref=f42e260]:
+          - generic:
+            - generic: ‌
+            - generic:
+              - generic:
+                - generic: ‌
+                - generic: ‌
+            - generic [ref=f42e261]: ‌
+        - generic [ref=f42e264]:
+          - generic:
+            - generic: ‌
+            - generic:
+              - generic:
+                - generic: ‌
+                - generic: ‌
+            - generic [ref=f42e265]: ‌
+        - generic [ref=f42e268]:
+          - generic:
+            - generic: ‌
+            - generic:
+              - generic:
+                - generic: ‌
+                - generic: ‌
+            - generic [ref=f42e269]: ‌
+        - generic [ref=f42e272]:
+          - generic:
+            - generic: ‌
+            - generic:
+              - generic:
+                - generic: ‌
+                - generic: ‌
+            - generic [ref=f42e273]: ‌

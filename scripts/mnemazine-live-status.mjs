@@ -81,6 +81,9 @@ async function status(root = ROOT) {
   const failures = []
   if (!lastRun) failures.push('last-run.json missing')
   if (lastRun && !lastRun.ok) failures.push(lastRun.failure || (lastRun.failures || []).join('; ') || 'last run failed')
+  // Смерть литерала ok:true наблюдаема и здесь: даже если поле ok врёт зелёным,
+  // failed>0 означает, что прогон не чист. --require-ok обязан покраснеть.
+  if (lastRun && Number(lastRun.failed || 0) > 0) failures.push(`last run had ${lastRun.failed} failed file(s)`)
   if (lastRun?.deep_required && !lastRun.deep) failures.push('strict run was not deep')
   if (lastRun?.deep_required && lastRun?.synthesize?.degraded) failures.push('deep synthesis degraded')
   if (lastRun?.deep_required && lastRun?.strict_archive_knowledge !== true) failures.push('strict archive gate missing')

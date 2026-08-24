@@ -21,10 +21,40 @@ export MNEMAZINE_VAULT="/path/to/your/vault"
 node scripts/mnemazine-refresh-graphify.mjs --vault "$MNEMAZINE_VAULT" --mode auto --json
 ```
 
+Живые inbox-прогоны используют code mode и запускают семантическую экстракцию фоновой задачей:
+
+```bash
+npm run graph:semantic:async
+npm run graph:semantic:monitor
+npm run graph:semantic:status
+npm run graph:semantic:status:pretty
+npm run doctor:watch
+```
+
+Status включает `progress`: completed jobs, active shard, failed logs и ETA.
+`status:pretty` даёт короткий человекочитаемый вид с PID и elapsed time.
+`doctor:watch` ждёт остановки фоновой задачи.
+Shard-прогоны по умолчанию resume-able: успешные shard outputs получают
+`.done.json` markers, а per-file semantic cache лежит в `.mnemazine/semantic-cache`.
+`graph:semantic:monitor` продолжает pending/failed/dead задачи или старые
+`needs_update` markers после `--stale-hours` / `MNEMAZINE_SEMANTIC_MONITOR_STALE_HOURS`.
+`npm run graph:semantic:async -- --fresh`, `--no-resume` или `--no-cache`
+нужны только для намеренно чистого перезапуска.
+
+По умолчанию async semantic refresh идёт через локальные shards/swarm. Так
+Mnemazine не гонит один огромный Ollama extract на 1160 заметок и не упирается
+в timeout. Старый single-run путь можно включить явно:
+
+```bash
+MNEMAZINE_SEMANTIC_TASK_STRATEGY=full npm run graph:semantic:async
+```
+
 Что делает обёртка:
 
 - запускает code-safe `graphify update`;
 - определяет, осталась ли семантическая свежесть в ожидании;
+- по умолчанию запускает локальные semantic shards, затем merge и re-cluster;
+- продолжает завершённые shards и переиспользует per-file semantic cache;
 - для локального Ollama нормализует базовый URL до `/v1` перед OpenAI-совместимыми вызовами;
 - смоук-тестит кандидатные модели и chat-JSON, и мини `graphify extract` до тяжёлой семантической экстракции;
 - проходит лестницу моделей из `--models` / `MNEMAZINE_GRAPHIFY_MODELS`;

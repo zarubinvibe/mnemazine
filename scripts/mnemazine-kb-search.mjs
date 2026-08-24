@@ -16,7 +16,7 @@
 import { promises as fs } from 'node:fs'
 import path from 'node:path'
 import { resolveVault } from './mnemazine-paths.mjs'
-import { llmAvailable, llmJson, fenceUntrusted } from './mnemazine-llm.mjs'
+import { activeProvider, llmAvailable, llmJson, fenceUntrusted } from './mnemazine-llm.mjs'
 
 const argv = process.argv.slice(2)
 const SELFTEST = argv.includes('--selftest')
@@ -27,7 +27,33 @@ function arg(name, fb = '') {
 }
 
 const DEEP = argv.includes('--deep') || process.env.MNEMAZINE_DEEP === '1'
-const PROVIDER = arg('provider', process.env.MNEMAZINE_LLM || 'claude')
+const STDOUT = argv.includes('--stdout')
+const JSON_OUT = argv.includes('--json')
+
+if (argv.includes('--help')) {
+  console.log(`mnemazine-kb-search.mjs — тематический поиск по корпусу знаний.
+Локальный режим — 0 токенов; --deep (или MNEMAZINE_DEEP=1) — рой агентов с синтезом.
+
+Использование: node scripts/mnemazine-kb-search.mjs --topic "<тема>" [флаги]
+  --topic "<тема>"   тема поиска (обязательна)
+  --vault <путь>     корпус (иначе MNEMAZINE_VAULT или repo-local vault)
+  --out <каталог>    каталог отчёта (иначе MNEMAZINE_REPORTS или ./reports);
+                     каталог внутри корпуса — отказ с кодом 2
+  --stdout           отчёт в stdout, файл не создаётся
+  --json             машинная выдача в stdout: results[] с note/score/subject/snippets
+  --deep             LLM-рой: планирование запроса, шард-агенты, синтез
+  --verify           отбраковка необоснованных находок (только с --deep)
+  --concurrency N    параллелизм роя (по умолчанию 4)
+  --max-notes N      потолок кандидатов для роя (по умолчанию 60)
+  --shard-size N     заметок на агента (по умолчанию 6)
+  --max-shards N     жёсткий потолок агентов в deep (по умолчанию 12)
+  --selftest         селф-тест во временном каталоге
+  --help             эта справка
+
+Коды возврата: 0 — отчёт готов; 1 — ошибка или нет темы; 2 — отказ: каталог отчёта внутри корпуса.`)
+  process.exit(0)
+}
+const PROVIDER = arg('provider', process.env.MNEMAZINE_LLM || activeProvider())
 const CONCURRENCY = Number(arg('concurrency', process.env.MNEMAZINE_CONCURRENCY || '4'))
 const MAX_NOTES = Number(arg('max-notes', '60'))     // candidate cap fed to the swarm
 const SHARD_SIZE = Number(arg('shard-size', '6'))    // notes per agent
@@ -40,10 +66,17 @@ const VERIFY = argv.includes('--verify') || process.env.MNEMAZINE_SEARCH_VERIFY 
 const MAX_VERIFY = Number(arg('max-verify', '5')) // top-K findings to verify
 
 // --- helpers -----------------------------------------------------------------
+function isServicePath(p) {
+  const parts = p.split(path.sep)
+  if (parts.some(seg => seg === 'graphify-out' || seg === 'graphify-out-snapshots' || seg.startsWith('graphify-out-backup-'))) return true
+  return parts.some((seg, i) => seg === '99 Система' && parts[i + 1] === '_archive')
+}
+
 async function walk(dir, out = []) {
   for (const e of await fs.readdir(dir, { withFileTypes: true }).catch(() => [])) {
     if (e.name.startsWith('.')) continue
     const full = path.join(dir, e.name)
+    if (isServicePath(full)) continue
     if (e.isDirectory()) await walk(full, out)
     else if (e.name.endsWith('.md')) out.push(full)
   }
@@ -52,25 +85,38 @@ async function walk(dir, out = []) {
 
 const STOP = new Set(['the', 'and', 'для', 'что', 'как', 'это', 'про', 'или', 'был', 'are', 'with', 'из', 'на', 'по', 'не', 'от'])
 const tokens = s => (String(s).toLowerCase().match(/[\p{L}\p{N}]{3,}/gu) || []).filter(t => !STOP.has(t))
+const uniq = xs => [...new Set(xs.filter(Boolean))]
 
 function scoreNote(text, rel, terms) {
-  const hay = (rel + '\n' + text).toLowerCase()
+  const q = uniq(terms)
+  if (!q.length) return 0
+  const hayTokens = tokens(`${rel}\n${text}`)
+  const relTokens = new Set(tokens(rel))
+  const counts = new Map()
+  for (const t of hayTokens) counts.set(t, (counts.get(t) || 0) + 1)
+  const allTerms = q.every(t => counts.has(t))
+  const hasBigram = q.length > 1 && q.slice(0, -1).some((t, i) =>
+    hayTokens.some((h, j) => h === t && hayTokens[j + 1] === q[i + 1]))
+  if (!allTerms && !hasBigram) return 0
   let score = 0
-  for (const t of terms) {
-    let from = 0, n = 0
-    while ((from = hay.indexOf(t, from)) !== -1) { n++; from += t.length; if (n >= 8) break }
-    score += n
-    if (rel.toLowerCase().includes(t)) score += 4   // title/path hit weighs more
+  for (const t of q) {
+    score += Math.min(counts.get(t) || 0, 8)
+    if (relTokens.has(t)) score += 4   // title/path hit weighs more
   }
   return score
+}
+
+function tokenIndex(text, term) {
+  const rx = new RegExp(`(?<![\\p{L}\\p{N}])${term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}(?![\\p{L}\\p{N}])`, 'iu')
+  const m = rx.exec(text)
+  return m ? m.index : -1
 }
 
 // Pull a few keyword-centered snippets — the local (0-token) "finding".
 function snippets(text, terms, max = 3) {
   const out = []
-  const lower = text.toLowerCase()
-  for (const t of terms) {
-    const i = lower.indexOf(t)
+  for (const t of uniq(terms)) {
+    const i = tokenIndex(text, t)
     if (i === -1) continue
     const s = Math.max(0, i - 120), e = Math.min(text.length, i + 200)
     const snip = text.slice(s, e).replace(/\s+/g, ' ').trim()
@@ -78,6 +124,27 @@ function snippets(text, terms, max = 3) {
     if (out.length >= max) break
   }
   return out
+}
+
+function frontmatterSubject(text) {
+  if (!text.startsWith('---')) return null
+  const end = text.indexOf('\n---', 3)
+  if (end === -1) return null
+  const m = text.slice(3, end).match(/^subject:\s*(.*)$/mi)
+  if (!m) return null
+  const raw = m[1].trim()
+  if (!raw || raw === 'null' || raw === '~') return null
+  if (raw.startsWith('[') && raw.endsWith(']')) {
+    const items = raw.slice(1, -1).split(',').map(s => s.trim().replace(/^['"]|['"]$/g, '')).filter(Boolean)
+    return items.length ? items : null
+  }
+  return raw.replace(/^['"]|['"]$/g, '') || null
+}
+
+async function logQuery(entry) {
+  const file = path.resolve('.mnemazine', 'state', 'kb-search-log.jsonl')
+  await fs.mkdir(path.dirname(file), { recursive: true })
+  await fs.appendFile(file, `${JSON.stringify(entry)}\n`, 'utf8')
 }
 
 // Bounded-concurrency pool — the swarm. One failing task never blocks the rest.
@@ -294,7 +361,7 @@ function renderReport(topic, report, meta) {
 }
 
 // --- main --------------------------------------------------------------------
-async function run(topic, vault, outDir) {
+async function run(topic, vault, outDir, { stdout = false, json = false } = {}) {
   const stamp = new Date().toISOString()
   const { terms, facets } = await plan(topic)
   // RECON
@@ -305,10 +372,21 @@ async function run(topic, vault, outDir) {
     if (!text) continue
     const rel = path.relative(vault, f)
     const score = scoreNote(text, rel, terms)
-    if (score > 0) scored.push({ rel, text, score, url: text.match(/https?:\/\/\S+/)?.[0] || '' })
+    if (score > 0) scored.push({ rel, text, score, subject: frontmatterSubject(text), url: text.match(/https?:\/\/\S+/)?.[0] || '' })
   }
   scored.sort((a, b) => b.score - a.score)
   const candidates = scored.slice(0, MAX_NOTES)
+  if (json) {
+    const results = candidates.map(n => ({
+      note: n.rel,
+      score: n.score,
+      subject: n.subject,
+      snippets: snippets(n.text, terms)
+    }))
+    await logQuery({ ts: stamp, topic, mode: 'json', results: results.length })
+    process.stdout.write(`${JSON.stringify({ topic, scanned: files.length, results }, null, 2)}\n`)
+    return null
+  }
   // FAN-OUT — shard within facet groups so each shard carries one focus axis
   // (2A). No facets (local / planning failed) → flat sharding as before.
   let shards = []  // each: { notes:[...], facet }
@@ -344,6 +422,11 @@ async function run(topic, vault, outDir) {
   // FAN-IN
   const report = await synthesize(topic, kept, facets)
   const md = renderReport(topic, report, { stamp, scanned: files.length, candidates: candidates.length, findings: kept.length, deep: DEEP && llmAvailable(PROVIDER), droppedNotes, droppedByVerify, facets: facets.map(f => f.label) })
+  await logQuery({ ts: stamp, topic, mode: DEEP && llmAvailable(PROVIDER) ? 'deep' : 'local', results: kept.length })
+  if (stdout) {
+    process.stdout.write(md.endsWith('\n') ? md : `${md}\n`)
+    return null
+  }
   await fs.mkdir(outDir, { recursive: true })
   const out = path.join(outDir, `search-${slugify(topic)}-${stamp.slice(0, 10)}-${Date.now()}.md`)
   await fs.writeFile(out, md, 'utf8')
@@ -375,7 +458,14 @@ if (SELFTEST) {
   if (!topic) { console.error('Usage: mnemazine-kb-search.mjs --topic "<тема>" [--deep] [--vault <p>]'); process.exit(1) }
   const vault = resolveVault({ cli: arg('vault') })
   const outDir = path.resolve(arg('out', process.env.MNEMAZINE_REPORTS || path.join(process.cwd(), 'reports')))
-  run(topic, vault, outDir)
-    .then(p => console.log(p))
+  // fail-closed: каталог отчёта внутри корпуса превращает просмотр в правку
+  // корпуса — отказ держит код, а не привычку (план П08). С --stdout файла нет.
+  const relOut = path.relative(vault, outDir)
+  if (!STDOUT && !JSON_OUT && (relOut === '' || (!relOut.startsWith('..') && !path.isAbsolute(relOut)))) {
+    console.error(`[kb-search] отказ: каталог отчёта внутри корпуса (out=${outDir}, vault=${vault}). Укажи --out вне корпуса или --stdout.`)
+    process.exit(2)
+  }
+  run(topic, vault, outDir, { stdout: STDOUT, json: JSON_OUT })
+    .then(p => { if (p) console.log(p) })
     .catch(e => { console.error(`[kb-search] ${e.message}`); process.exit(1) })
 }

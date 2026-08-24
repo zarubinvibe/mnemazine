@@ -1,13 +1,32 @@
 #!/usr/bin/env node
 import { promises as fs } from 'node:fs'
-import { existsSync } from 'node:fs'
+import { existsSync, readFileSync } from 'node:fs'
 import path from 'node:path'
 import crypto from 'node:crypto'
 import { spawnSync } from 'node:child_process'
+import { fileURLToPath } from 'node:url'
 import { llmAvailable, llmText } from './mnemazine-llm.mjs'
+import { strictKnowledgeReady } from './mnemazine-note-spec.mjs'
 import { resolveVault } from './mnemazine-paths.mjs'
+import { requireEngines } from './mnemazine-local-engines.mjs'
 
 const ROOT = process.env.MNEMAZINE_ROOT || path.resolve(process.cwd())
+
+// Config contradiction, caught by code — not by a warning string. Strict protocol
+// (REQUIRE_DEEP) and draft-only are mutually exclusive: draft-only writes nothing
+// to the vault and never archives, so a run that must fail-before-archive cannot
+// also be draft-only. Exit 2 (config error), distinct from a gate failure (1).
+// This gate MUST stay the FIRST exit-2 path: it runs before resolveVault and before
+// the vault-quality-gate, so an observed exit 2 provably means THIS contradiction
+// and nothing else (empty-vault gate also exits 2 — that ambiguity is why order
+// matters). Remove the exit below and the run falls through to a code that is not 2.
+const REQUIRE_DEEP = process.argv.includes('--require-deep') || process.env.MNEMAZINE_REQUIRE_DEEP === '1'
+const DRAFT_ONLY = process.env.MNEMAZINE_DRAFT_ONLY === '1'
+if (REQUIRE_DEEP && DRAFT_ONLY) {
+  console.error('strict protocol vs draft-only: MNEMAZINE_REQUIRE_DEEP=1 и MNEMAZINE_DRAFT_ONLY=1 несовместимы')
+  process.exit(2)
+}
+
 const INBOX = process.env.MNEMAZINE_INBOX || path.join(ROOT, 'inbox')
 const VAULT = resolveVault()
 const REPORTS = process.env.MNEMAZINE_REPORTS || path.join(ROOT, 'reports')
@@ -21,13 +40,22 @@ const VIDEO_QUEUE = path.join(ROOT, '.mnemazine/cache/video-queue.jsonl')
 const EXTRACTS = process.env.MNEMAZINE_EXTRACTS || path.join(ROOT, '.mnemazine/cache/extracted')
 const SYNTHESIZE = process.env.MNEMAZINE_SYNTHESIZE !== '0'
 const FINISH = process.env.MNEMAZINE_FINISH !== '0'
+const RUN_ID = process.env.MNEMAZINE_RUN_ID || `run-${new Date().toISOString().replace(/[-:.TZ]/g, '').slice(0, 14)}`
 // Opt-in deep stage (atomization + web/LLM verification, README:230 pipeline).
-// Default OFF: the runner stays conservative — local only, no external calls.
-// Enable with `--deep` or MNEMAZINE_DEEP=1; forwarded to synthesize.
+// Default OFF for direct runs. Strict desktop protocol does not pass --deep;
+// it lets tierOf(file) choose deep work only for tier>=1.
 const DEEP = process.argv.includes('--deep') || process.env.MNEMAZINE_DEEP === '1'
-const REQUIRE_DEEP = process.argv.includes('--require-deep') || process.env.MNEMAZINE_REQUIRE_DEEP === '1'
-const ENRICH_REQUIRED = DEEP && process.env.MNEMAZINE_ENRICH !== '0' && !process.argv.includes('--no-enrich')
+const DEEP_ALLOWED = DEEP || REQUIRE_DEEP
+const ENRICH_REQUIRED = DEEP_ALLOWED && process.env.MNEMAZINE_ENRICH !== '0' && !process.argv.includes('--no-enrich')
 const STRICT_ARCHIVE_KNOWLEDGE = (REQUIRE_DEEP || (DEEP && ENRICH_REQUIRED)) && process.env.MNEMAZINE_STRICT_ARCHIVE !== '0' && !process.argv.includes('--allow-raw-archive')
+// Local-first contract (П10): with require-local on, a run that meets a MISSING
+// local engine STOPS (exit 3) rather than silently reaching for the cloud. The
+// env name is shared with CI and the launchd job — it flips the switch without
+// changing the command; --require-local is the equivalent CLI flag.
+const REQUIRE_LOCAL = process.argv.includes('--require-local') || process.env.MNEMAZINE_REQUIRE_LOCAL_EXTRACTION === '1'
+// Every local engine seen missing this run — cloud-substituted or not. Stamped
+// onto last-run.json by writeRunState so a silent cloud fallback is never silent.
+const localEnginesMissing = new Set()
 const WHISPER_MODEL = process.env.MNEMAZINE_WHISPER_MODEL || ''
 const WHISPER_LANGUAGE = process.env.MNEMAZINE_WHISPER_LANGUAGE || 'ru'
 const VIDEO_FRAME_LIMIT = Number(process.env.MNEMAZINE_VIDEO_FRAME_LIMIT || '8')
@@ -108,12 +136,33 @@ function isVideo(file) {
   return ['.mp4', '.mov', '.m4v', '.webm', '.mkv'].includes(path.extname(file).toLowerCase())
 }
 
+function isAudio(file) {
+  return ['.mp3', '.wav', '.m4a', '.aac', '.flac', '.ogg', '.opus'].includes(path.extname(file).toLowerCase())
+}
+
 function isImage(file) {
   return ['.png', '.jpg', '.jpeg', '.heic', '.webp', '.tiff'].includes(path.extname(file).toLowerCase())
 }
 
 function isMarkitdownDocument(file) {
   return ['.pdf', '.docx', '.pptx', '.xlsx', '.html', '.htm'].includes(path.extname(file).toLowerCase())
+}
+
+export function tierOf(file) {
+  const ext = path.extname(file).toLowerCase()
+  if (['.md', '.txt', '.json', '.csv'].includes(ext)) return 0
+  if (['.pdf', '.docx', '.pptx', '.xlsx'].includes(ext)) return 1
+  if (isImage(file)) return 2
+  if (isVideo(file) || isAudio(file)) return 3
+  return 1
+}
+
+function enginesFor(file) {
+  if (tierOf(file) === 0) return ['text-read']
+  if (isVideo(file) || isAudio(file)) return ['ffmpeg', 'whisper', 'vision-ocr']
+  if (isImage(file)) return ['vision-ocr']
+  if (isMarkitdownDocument(file)) return ['markitdown']
+  return []
 }
 
 function videoDurationSeconds(file) {
@@ -190,6 +239,36 @@ async function extractVideo(file, hash) {
   return joinVideoParts(transcript, frames)
 }
 
+async function extractAudio(file, hash) {
+  await ensureDir(TRANSCRIPTS)
+  await ensureDir(VIDEO_AUDIO)
+  const transcriptPath = path.join(TRANSCRIPTS, `${hash}.txt`)
+  if (existsSync(transcriptPath)) return await fs.readFile(transcriptPath, 'utf8')
+  const audioPath = path.join(VIDEO_AUDIO, `${hash}.wav`)
+  const ffmpeg = spawnSync('ffmpeg', [
+    '-y',
+    '-i', file,
+    '-vn',
+    '-ac', '1',
+    '-ar', '16000',
+    '-f', 'wav',
+    audioPath
+  ], { encoding: 'utf8', timeout: COMMAND_TIMEOUT_MS })
+  if (ffmpeg.status !== 0 || !existsSync(audioPath)) return ''
+  const whisper = spawnSync('whisper', [
+    audioPath,
+    '--model', WHISPER_MODEL || 'tiny',
+    '--language', WHISPER_LANGUAGE,
+    '--output_dir', TRANSCRIPTS,
+    '--output_format', 'txt',
+    '--fp16', 'False',
+    '--verbose', 'False'
+  ], { encoding: 'utf8', timeout: COMMAND_TIMEOUT_MS })
+  const whisperOut = path.join(TRANSCRIPTS, `${hash}.txt`)
+  if (whisper.status === 0 && existsSync(whisperOut)) return await fs.readFile(whisperOut, 'utf8')
+  return ''
+}
+
 async function extractVideoFrames(file, hash) {
   const ocr = path.join(ROOT, '.mnemazine/bin/vision-ocr')
   if (!existsSync(ocr)) return ''
@@ -233,25 +312,57 @@ function joinVideoParts(transcript, frameText) {
   return parts.join('\n\n')
 }
 
+// Local-first extraction. Returns { text, engine_used, engines_missing }: a
+// MISSING engine (binary absent) is reported in engines_missing so the caller can
+// stop under require-local; a PRESENT engine that yields nothing leaves
+// engines_missing empty — that is «движок не нашёл», a different outcome that must
+// not be confused with «движка нет». Engine presence is the ONE truth in
+// mnemazine-local-engines.mjs (rule 8) — not re-encoded here.
+//
+// Text on the extraction/verification/citation path is passed through WHOLE — it
+// is never compressed or summarised on the way (measured 32–60% dangling links
+// after compressors). This is a rule, not a gate: keep it that way here and in
+// llmExtract below.
 async function extract(file) {
   const ext = path.extname(file).toLowerCase()
-  if (['.md', '.txt', '.json', '.csv'].includes(ext)) return await fs.readFile(file, 'utf8')
-  if (isVideo(file)) return await extractVideo(file, await sha256(file))
-  const ocr = path.join(ROOT, '.mnemazine/bin/vision-ocr')
-  if (existsSync(ocr) && isImage(file)) {
-    const out = spawnSync(ocr, [file], { encoding: 'utf8', timeout: COMMAND_TIMEOUT_MS })
-    if (out.status === 0) return out.stdout
+  if (['.md', '.txt', '.json', '.csv'].includes(ext)) {
+    return { text: await fs.readFile(file, 'utf8'), engine_used: 'text-read', engines_tried: ['text-read'], engines_missing: [] }
+  }
+  if (isVideo(file)) {
+    const engines_missing = requireEngines(['ffmpeg', 'whisper', 'vision-ocr'])
+    const text = await extractVideo(file, await sha256(file))
+    return { text, engine_used: text ? 'video' : '', engines_tried: ['ffmpeg', 'whisper', 'vision-ocr'], engines_missing }
+  }
+  if (isAudio(file)) {
+    const engines_missing = requireEngines(['ffmpeg', 'whisper'])
+    const text = await extractAudio(file, await sha256(file))
+    return { text, engine_used: text ? 'audio' : '', engines_tried: ['ffmpeg', 'whisper'], engines_missing }
+  }
+  if (isImage(file)) {
+    const engines_missing = requireEngines(['vision-ocr'])
+    if (!engines_missing.length) {
+      const ocr = path.join(ROOT, '.mnemazine/bin/vision-ocr')
+      const out = spawnSync(ocr, [file], { encoding: 'utf8', timeout: COMMAND_TIMEOUT_MS })
+      if (out.status === 0) return { text: out.stdout, engine_used: 'vision-ocr', engines_tried: ['vision-ocr'], engines_missing: [] }
+    }
+    return { text: '', engine_used: '', engines_tried: ['vision-ocr'], engines_missing }
   }
   if (isMarkitdownDocument(file)) {
-    const markitdown = spawnSync('markitdown', [file], { encoding: 'utf8', timeout: COMMAND_TIMEOUT_MS })
-    if (markitdown.status === 0 && markitdown.stdout.trim()) return markitdown.stdout
+    const engines_missing = requireEngines(['markitdown'])
+    if (!engines_missing.length) {
+      const markitdown = spawnSync('markitdown', [file], { encoding: 'utf8', timeout: COMMAND_TIMEOUT_MS })
+      if (markitdown.status === 0 && markitdown.stdout.trim()) return { text: markitdown.stdout, engine_used: 'markitdown', engines_tried: ['markitdown'], engines_missing: [] }
+    }
+    return { text: '', engine_used: '', engines_tried: ['markitdown'], engines_missing }
   }
-  return ''
+  return { text: '', engine_used: '', engines_tried: enginesFor(file), engines_missing: [] }
 }
 
 // LLM recognition fallback (deep only). Used ONLY when local engines (Apple
 // Vision OCR / markitdown / whisper) produced nothing usable — keeps the default
 // path at 0 tokens. A vision-capable agent reads the file and transcribes it.
+// The transcription is returned WHOLE (no compression/summary on the way) — same
+// rule as extract(): compressors drop 32–60% of citation links.
 async function llmExtract(file) {
   const ext = path.extname(file).toLowerCase()
   const kind = isImage(file) ? 'image' : isVideo(file) ? 'video frame still' : 'document'
@@ -315,29 +426,6 @@ async function listVaultMarkdownFiles() {
   return out
 }
 
-function noteSectionAfter(text, label) {
-  const start = String(text || '').indexOf(label)
-  if (start === -1) return ''
-  const tail = text.slice(start + label.length)
-  const next = tail.search(/\n##\s+/)
-  return next === -1 ? tail : tail.slice(0, next)
-}
-
-function strictKnowledgeReady(text) {
-  const facts = noteSectionAfter(text, 'External facts added before atomization:')
-  const sources = noteSectionAfter(text, 'Public/source expansion:')
-  const factCount = facts
-    .split('\n')
-    .filter(line => /^\s*-\s+\S/.test(line) && !/No external enrichment facts recorded/i.test(line))
-    .length
-  return /^status:\s*"final"\s*$/m.test(text) &&
-    /^verified:\s*true\s*$/m.test(text) &&
-    /^verification_status:\s*"verified"\s*$/m.test(text) &&
-    /^enrichment:\s*"external-research"\s*$/m.test(text) &&
-    factCount >= 2 &&
-    /https?:\/\//i.test(sources)
-}
-
 async function hasFinalKnowledgeForHash(hash) {
   const ref = sourceRef(hash)
   for (const file of await listVaultMarkdownFiles()) {
@@ -357,9 +445,19 @@ async function cachedExtractionText(entry) {
   return await fs.readFile(path.join(EXTRACTS, textPath), 'utf8').catch(() => '')
 }
 
-function runLocalNodeScript(script, args = []) {
+export function runLocalNodeScript(script, args = []) {
   const file = path.join(ROOT, 'scripts', script)
-  if (!existsSync(file)) return { skipped: true, reason: `${script} missing` }
+  if (!existsSync(file)) {
+    // Пропавший ОБЯЗАТЕЛЬНЫЙ скрипт — дыра, а не «пропущено»: throw (первый шаг
+    // пошаговой аттестации, полная — П11). Всё, чего нет в REQUIRED_FINISH_SCRIPTS
+    // (в т.ч. .gitignore-нутый refresh-core-indexes, отсутствующий на чужом клоне
+    // по замыслу), остаётся мягким пропуском — иначе П03 сломал бы чужую установку,
+    // а это тот же провал, что дыра.
+    if (REQUIRED_FINISH_SCRIPTS.has(script)) {
+      throw new Error(`required pipeline script missing: ${script}`)
+    }
+    return { skipped: true, reason: `${script} missing` }
+  }
   const result = spawnSync(process.execPath, [file, ...args], { encoding: 'utf8', env: process.env, timeout: COMMAND_TIMEOUT_MS * 5 })
   return {
     skipped: false,
@@ -400,14 +498,78 @@ function failRunState(payload, code = 1) {
 
 async function writeRunState(state) {
   await ensureDir(STATE)
-  await fs.writeFile(path.join(STATE, 'last-run.json'), `${JSON.stringify(state, null, 2)}\n`, 'utf8')
+  // local_engine_missing is stamped on EVERY state write (single writer), so a
+  // cloud fallback that stood in for an absent local engine is always on the record.
+  const enriched = { ...state, local_engine_missing: [...localEnginesMissing] }
+  await fs.writeFile(path.join(STATE, 'last-run.json'), `${JSON.stringify(enriched, null, 2)}\n`, 'utf8')
 }
 
-function validateDeepRun({ synthesize, processed }) {
+function sidecarPresentFor(file, hash) {
+  if (!hash) return false
+  if (existsSync(path.join(EXTRACTS, `${hash}.txt`))) return true
+  if ((isVideo(file) || isAudio(file)) && existsSync(path.join(TRANSCRIPTS, `${hash}.txt`))) return true
+  return false
+}
+
+function c2paManifestPresent(file) {
+  if (!isImage(file) && !isVideo(file)) return undefined
+  const dir = path.dirname(file)
+  const name = path.basename(file)
+  const stem = name.replace(/\.[^.]+$/, '')
+  const candidates = [
+    `${file}.c2pa`,
+    `${file}.c2pa.json`,
+    path.join(dir, `${stem}.c2pa`),
+    path.join(dir, `${stem}.c2pa.json`),
+    path.join(dir, `${stem}.manifest.json`)
+  ]
+  for (const candidate of candidates) {
+    if (!existsSync(candidate)) continue
+    try { readFileSync(candidate) } catch {}
+    return true
+  }
+  return false
+}
+
+async function appendRunObservation(row) {
+  await ensureDir(STATE)
+  await fs.appendFile(path.join(STATE, 'run-observability.jsonl'), `${JSON.stringify(row)}\n`, 'utf8')
+}
+
+function observationFor(file, hash, overrides = {}) {
+  const ext = path.extname(file).toLowerCase()
+  const tier = tierOf(file)
+  const row = {
+    ts: new Date().toISOString(),
+    run_id: RUN_ID,
+    file,
+    ext,
+    tier,
+    sidecar_present: sidecarPresentFor(file, hash),
+    engines_tried: enginesFor(file),
+    engine_used: '',
+    llm_extract_used: false,
+    deep: DEEP_ALLOWED && tier >= 1,
+    ...overrides
+  }
+  const c2pa = c2paManifestPresent(file)
+  if (typeof c2pa === 'boolean') row.c2pa_manifest = c2pa
+  return row
+}
+
+function validateDeepRun({ synthesize, processed, inboxCount, cachedOnly = 0, observations = [] }) {
   const failures = []
-  if (!DEEP) failures.push('deep mode was required but run did not use --deep')
-  if (processed <= 0) return failures
-  if (!synthesize || synthesize.skipped) failures.push('deep synthesis did not run')
+  const deepRows = observations.filter(row => row.tier >= 1)
+  const missingDeep = deepRows.filter(row => row.deep !== true)
+  if (missingDeep.length) failures.push(`deep stage missing for ${missingDeep.length} tier>=1 units`)
+  if (processed <= 0) {
+    // Zero processed with a non-empty inbox is a strict-run failure: something was
+    // there to handle and nothing was. Zero-in / zero-out stays legal.
+    if (inboxCount > 0 && cachedOnly <= 0) failures.push('нечего обработать при непустом инбоксе')
+    return failures
+  }
+  if (deepRows.length === 0) return failures
+  if (!synthesize || (synthesize.skipped && Number(synthesize.atomized || 0) <= 0 && Number(synthesize.written || 0) <= 0)) failures.push('deep synthesis did not run')
   if (synthesize?.degraded) failures.push('deep synthesis degraded to local template')
   if (processed > 0 && Number(synthesize?.atomized || 0) <= 0) failures.push('deep synthesis produced zero atoms')
   if (processed > 0 && ENRICH_REQUIRED && Number(synthesize?.enriched || 0) <= 0) failures.push('deep enrichment produced zero enriched clusters')
@@ -499,11 +661,56 @@ async function writeActionBrief(finishResult) {
   return out
 }
 
+// Скрипты, которые finishRun обязан найти в scripts/. Все восемь git-tracked —
+// значит на чистом клоне они присутствуют, и пропажа любого = реальная дыра, а не
+// частичная копия. Это единственный источник правды об «обязательном»: то, чего
+// здесь нет (напр. .gitignore:48 mnemazine-refresh-core-indexes.mjs, которого на
+// чужом клоне нет по замыслу), runLocalNodeScript мягко пропускает.
+const REQUIRED_FINISH_SCRIPTS = new Set([
+  'mnemazine-tool-decision-queue.mjs',
+  'mnemazine-vault-quality-gate.mjs',
+  'mnemazine-refresh-graphify.mjs',
+  'mnemazine-semantic-graph-task.mjs',
+  'mnemazine-weekly-brief-html.mjs',
+  'mnemazine-report-quality-gate.mjs',
+  'mnemazine-postrun-knowledge-report.mjs',
+  'mnemazine-human-layer-gate.mjs'
+])
+
+// Один элемент finish.* «в порядке», если: он был легально пропущен (стадия
+// выключена env-ом или скрипт не обязателен), отработал зелёным, ИЛИ это граф с
+// кодом 2 — задокументированный semantic-pending при --mark-semantic-pending.
+function finishGateOk(key, entry) {
+  if (!entry || typeof entry !== 'object') return false
+  if (entry.skipped === true) return true
+  if (entry.ok === true) return true
+  if (key === 'graph' && entry.code === 2) return true
+  return false
+}
+
+// result.ok больше не литерал: прогон зелёный только если ноль файлов упало И
+// каждый обязательный элемент finish.* в легальном состоянии. Коды гейтов,
+// собранные finishRun, наконец читаются — до архива они решали, после архива
+// теперь не «советуют», а считаются. finish === null (черновая ветка/FINISH=0):
+// решает только failed.
+function computeRunOk(failed, finish) {
+  if (Number(failed || 0) !== 0) return false
+  if (!finish || finish.skipped === true) return true
+  for (const [key, entry] of Object.entries(finish)) {
+    if (key === 'brief') continue // путь к файлу, не гейт
+    if (!finishGateOk(key, entry)) return false
+  }
+  return true
+}
+
 async function finishRun(runStartedAt) {
   const result = {}
   result.tool_queue = runLocalNodeScript('mnemazine-tool-decision-queue.mjs', ['--changed-since', runStartedAt, '--session', new Date().toISOString().slice(0, 10)])
   result.quality = runLocalNodeScript('mnemazine-vault-quality-gate.mjs', ['--changed-since', runStartedAt, '--max-failures', '50'])
-  result.graph = runLocalNodeScript('mnemazine-refresh-graphify.mjs', ['--vault', VAULT, '--mode', 'auto', '--json'])
+  result.graph = runLocalNodeScript('mnemazine-refresh-graphify.mjs', ['--vault', VAULT, '--mode', process.env.MNEMAZINE_FINISH_GRAPH_MODE || 'code', '--mark-semantic-pending', '--json'])
+  result.semantic_graph_task = process.env.MNEMAZINE_FINISH_SEMANTIC_ASYNC === '0'
+    ? { skipped: true, reason: 'disabled by MNEMAZINE_FINISH_SEMANTIC_ASYNC=0' }
+    : runLocalNodeScript('mnemazine-semantic-graph-task.mjs', ['--start', '--vault', VAULT])
   result.weekly = runLocalNodeScript('mnemazine-weekly-brief-html.mjs')
   const weeklyReport = result.weekly?.stdout?.match(/\/[^\s]+\.html/)?.[0]
   result.report_quality = weeklyReport
@@ -535,17 +742,30 @@ async function main() {
   const toArchive = []
   const synthSourceRefs = new Set()
   let failed = 0
-  const canLlmExtract = DEEP && llmAvailable()
+  const observations = []
+  const canLlmExtract = llmAvailable()
   for (const [index, entry] of entries.entries()) {
     const file = path.join(INBOX, entry.name)
+    let observation = observationFor(file, '', { engines_tried: enginesFor(file) })
     // Per-file isolation: one file's recognition failure must NEVER break the
     // others. Any throw here is contained — the file stays in inbox for a retry.
     try {
       const hash = await sha256(file)
+      observation = observationFor(file, hash)
       if (cache[hash]) {
         if (await hasFinalKnowledgeForHash(hash)) {
           toArchive.push({ file, hash })
           cachedOnly += 1
+          observation.engine_used = 'cache'
+          observations.push(observation)
+          await appendRunObservation(observation)
+          continue
+        }
+        if (DRAFT_ONLY && cache[hash].status === 'draft_complete') {
+          cachedOnly += 1
+          observation.engine_used = 'cache'
+          observations.push(observation)
+          await appendRunObservation(observation)
           continue
         }
         const cachedText = await cachedExtractionText(cache[hash])
@@ -553,16 +773,34 @@ async function main() {
           synthSourceRefs.add(cache[hash].source_ref || sourceRef(hash))
           toArchive.push({ file, hash })
           processed += 1
+          observation.engine_used = 'cache'
+          observations.push(observation)
+          await appendRunObservation(observation)
           continue
         }
         delete cache[hash]
       }
       // Local-first recognition (0 tokens): Apple Vision OCR / markitdown / whisper.
-      let text = await extract(file)
+      const extraction = await extract(file)
+      observation.engines_tried = extraction.engines_tried || observation.engines_tried
+      observation.engine_used = extraction.engine_used || ''
+      let text = extraction.text
+      // Two outcomes are now distinct. A MISSING engine is not «движок ничего не
+      // нашёл»: under require-local we STOP here (exit 3, before any state write)
+      // instead of letting the cloud silently stand in. Otherwise the cloud may
+      // take over — but the substitution is recorded on run state, not silent.
+      if (extraction.engines_missing.length) {
+        for (const name of extraction.engines_missing) localEnginesMissing.add(name)
+        if (REQUIRE_LOCAL) {
+          console.error(JSON.stringify({ require_local_stop: true, file: entry.name, local_engine_missing: extraction.engines_missing }))
+          process.exit(3)
+        }
+      }
       // Only if local produced nothing usable AND deep is on: LLM recognition.
-      if (!hasUsableExtraction(text) && canLlmExtract && (isImage(file) || isVideo(file) || isMarkitdownDocument(file))) {
+      if (!hasUsableExtraction(text) && observation.deep && canLlmExtract && (isImage(file) || isVideo(file) || isAudio(file) || isMarkitdownDocument(file))) {
         try {
           const llmText = await llmExtract(file)
+          observation.llm_extract_used = true
           if (hasUsableExtraction(llmText)) text = llmText
         } catch (err) {
           console.error(JSON.stringify({ file: entry.name, llm_extract_error: String(err.message).slice(0, 200) }))
@@ -579,9 +817,13 @@ async function main() {
         toArchive.push({ file, hash })
         processed += 1
       }
+      observations.push(observation)
+      await appendRunObservation(observation)
     } catch (err) {
       // Isolated failure: log, leave file in inbox, keep going.
       failed += 1
+      observations.push(observation)
+      await appendRunObservation(observation)
       console.error(JSON.stringify({ file: entry.name, extract_error: String(err.message).slice(0, 200) }))
     }
     if (PROGRESS_EVERY > 0 && (index + 1) % PROGRESS_EVERY === 0) {
@@ -589,12 +831,13 @@ async function main() {
     }
   }
   await fs.writeFile(CACHE, JSON.stringify(cache, null, 2), 'utf8')
+  const hasDeepUnits = observations.some(row => row.deep === true && row.engine_used)
   let synthesize = { skipped: true, reason: processed > 0 ? 'disabled' : 'no newly extracted sources' }
   if (SYNTHESIZE && processed > 0) {
     // Stages: extraction+understanding already done above; synthesize runs
     // research/verification/atomization (deep) and writes vault atoms.
     const synthArgs = [path.join(ROOT, 'scripts/mnemazine-synthesize.mjs')]
-    if (DEEP) synthArgs.push('--deep')
+    if (hasDeepUnits) synthArgs.push('--deep')
     const synthEnv = { ...process.env }
     if (synthSourceRefs.size) synthEnv.MNEMAZINE_SYNTH_SOURCE_REFS = [...synthSourceRefs].join(',')
     const synth = spawnSync(process.execPath, synthArgs, { encoding: 'utf8', env: synthEnv })
@@ -608,17 +851,27 @@ async function main() {
     vaultMarkdownFiles = null
   }
   if (REQUIRE_DEEP) {
-    const deepFailures = validateDeepRun({ synthesize, processed })
+    const deepFailures = validateDeepRun({ synthesize, processed, cachedOnly, inboxCount: entries.length, observations })
     if (deepFailures.length) {
       await writeRunState({ ok: false, failures: deepFailures, inbox: entries.length, processed, cached_only: cachedOnly, failed, deep: DEEP, deep_required: REQUIRE_DEEP, enrich_required: ENRICH_REQUIRED, strict_archive_knowledge: STRICT_ARCHIVE_KNOWLEDGE, synthesize, vault: VAULT, started_at: runStartedAt, finished_at: new Date().toISOString() })
       console.error(JSON.stringify({ ok: false, failures: deepFailures, synthesize }, null, 2))
       process.exit(1)
     }
   }
-  const quality = spawnSync(process.execPath, [path.join(ROOT, 'scripts/mnemazine-vault-quality-gate.mjs'), '--changed-since', runStartedAt, '--max-failures', '50'], { stdio: 'inherit', env: process.env })
+  const qualityArgs = [path.join(ROOT, 'scripts/mnemazine-vault-quality-gate.mjs'), '--changed-since', runStartedAt, '--max-failures', '50']
+  if (processed === 0 && cachedOnly > 0) qualityArgs.push('--allow-empty')
+  const quality = spawnSync(process.execPath, qualityArgs, { stdio: 'inherit', env: process.env })
   if (quality.status !== 0) {
     await writeRunState({ ok: false, failure: 'run vault quality failed', inbox: entries.length, processed, cached_only: cachedOnly, failed, deep: DEEP, deep_required: REQUIRE_DEEP, enrich_required: ENRICH_REQUIRED, strict_archive_knowledge: STRICT_ARCHIVE_KNOWLEDGE, synthesize, vault: VAULT, started_at: runStartedAt, finished_at: new Date().toISOString() })
     process.exit(quality.status || 1)
+  }
+  if (DRAFT_ONLY) {
+    for (const item of toArchive) if (cache[item.hash]) cache[item.hash].status = 'draft_complete'
+    await fs.writeFile(CACHE, JSON.stringify(cache, null, 2), 'utf8')
+    const result = { ok: computeRunOk(failed, null), draft_only: true, inbox: entries.length, processed, cached_only: cachedOnly, failed, archived: 0, deep: DEEP, deep_required: REQUIRE_DEEP, enrich_required: ENRICH_REQUIRED, strict_archive_knowledge: STRICT_ARCHIVE_KNOWLEDGE, synthesize, vault: VAULT, started_at: runStartedAt, finished_at: new Date().toISOString() }
+    await writeRunState(result)
+    console.log(JSON.stringify(result, null, 2))
+    return
   }
   const missingFinalNotes = []
   vaultMarkdownFiles = null
@@ -633,7 +886,7 @@ async function main() {
   }
   // Deep + final stage before archive: Russian humanizer digest + human-layer
   // gate. If this fails, sources stay in inbox for a safe retry.
-  if (DEEP) {
+  if (hasDeepUnits) {
     const digest = spawnSync(process.execPath, [path.join(ROOT, 'scripts/mnemazine-digest.mjs'), '--changed-since', runStartedAt], { stdio: 'inherit', env: process.env })
     if (digest.status !== 0) {
       await failRunState({
@@ -645,6 +898,42 @@ async function main() {
         started_at: runStartedAt,
         extra: { failure: 'digest failed before archive' }
       }, digest.status || 1)
+    }
+    // План П13 fixup: humanize-пас МЕЖДУ генерацией ноты и sweep. Конвейер (digest/
+    // LLM) рождает слоп и падал бы о собственный sweep. Пас очеловечивает каждую
+    // свежую ноту ДО сторожа: гейт → автоправка → повторный гейт; не чинится за 2
+    // итерации → прогон честно падает 1 с именем ноты. Sweep ниже остаётся байтовым
+    // бэкстопом на дочищенном тексте.
+    const humanizePass = spawnSync(process.execPath, [path.join(ROOT, 'scripts/mnemazine-humanize-gate.mjs'), '--pass', '--vault', VAULT, '--changed-since', runStartedAt], { encoding: 'utf8', env: process.env })
+    if (humanizePass.stdout) process.stdout.write(humanizePass.stdout)
+    if (humanizePass.stderr) process.stderr.write(humanizePass.stderr)
+    if (humanizePass.status !== 0) {
+      await failRunState({
+        inbox: entries.length,
+        processed,
+        cached_only: cachedOnly,
+        failed,
+        synthesize,
+        started_at: runStartedAt,
+        extra: { failure: 'humanize pass could not clear slop before archive' }
+      }, humanizePass.status || 1)
+    }
+    // План П13 шаг 6: гейт сохранности/читаемости по нотам, изменённым с runStartedAt.
+    // Фатален настоящий слоп (hard bans кроме сквозного em-dash); em-dash и низкий score —
+    // advisory, чтобы сторож не краснил живой прогон на дочищенном тексте.
+    const preserve = spawnSync(process.execPath, [path.join(ROOT, 'scripts/mnemazine-humanize-gate.mjs'), '--sweep', '--vault', VAULT, '--changed-since', runStartedAt], { encoding: 'utf8', env: process.env })
+    if (preserve.stdout) process.stdout.write(preserve.stdout)
+    if (preserve.stderr) process.stderr.write(preserve.stderr)
+    if (preserve.status !== 0) {
+      await failRunState({
+        inbox: entries.length,
+        processed,
+        cached_only: cachedOnly,
+        failed,
+        synthesize,
+        started_at: runStartedAt,
+        extra: { failure: 'humanize preservation gate failed before archive' }
+      }, preserve.status || 1)
     }
     const refs = [...new Set(toArchive.map(item => sourceRef(item.hash)))]
     const humanArgs = [path.join(ROOT, 'scripts/mnemazine-human-layer-gate.mjs'), '--notes-only', '--changed-since', runStartedAt]
@@ -667,12 +956,17 @@ async function main() {
   const archived = []
   for (const item of toArchive) archived.push(await archiveFile(item.file, item.hash))
   const finish = FINISH ? await finishRun(runStartedAt) : { skipped: true }
-  const result = { ok: true, inbox: entries.length, processed, cached_only: cachedOnly, failed, archived: archived.length, deep: DEEP, deep_required: REQUIRE_DEEP, enrich_required: ENRICH_REQUIRED, strict_archive_knowledge: STRICT_ARCHIVE_KNOWLEDGE, synthesize, finish, vault: VAULT, started_at: runStartedAt, finished_at: new Date().toISOString() }
+  const result = { ok: computeRunOk(failed, finish), inbox: entries.length, processed, cached_only: cachedOnly, failed, archived: archived.length, deep: DEEP, deep_required: REQUIRE_DEEP, enrich_required: ENRICH_REQUIRED, strict_archive_knowledge: STRICT_ARCHIVE_KNOWLEDGE, synthesize, finish, vault: VAULT, started_at: runStartedAt, finished_at: new Date().toISOString() }
   await writeRunState(result)
   console.log(JSON.stringify(result, null, 2))
 }
 
-main().catch(err => {
-  console.error(err)
-  process.exit(1)
-})
+// Запуск main только когда файл исполняется напрямую (node .../mnemazine-run.mjs),
+// а не импортируется. Импорт нужен пробе runLocalNodeScript (harness на две строки)
+// и любому будущему потребителю экспортов — он не должен гонять пайплайн.
+if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+  main().catch(err => {
+    console.error(err)
+    process.exit(1)
+  })
+}

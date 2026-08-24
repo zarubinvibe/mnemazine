@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+  kb-lint — nightly deterministic vault lint for Mnemazine (launchd template).
+
+  This is a TEMPLATE. launchd starts jobs with an empty PATH, so node is
+  called by absolute path — generate a concrete plist locally
+  (machine-specific paths stay out of the repo):
+
+    sed -e "s#__NODE__#$(command -v node)#g" \
+        -e "s#__NODE_BIN__#$(dirname "$(command -v node)")#g" \
+        -e "s#__ROOT__#$PWD#g" \
+        scripts/com.mnemazine.kb-lint.plist.template \
+        > ~/Library/LaunchAgents/com.mnemazine.kb-lint.plist
+    launchctl load ~/Library/LaunchAgents/com.mnemazine.kb-lint.plist
+
+  Deactivate:
+    launchctl unload ~/Library/LaunchAgents/com.mnemazine.kb-lint.plist
+
+  Runs nightly at 03:30. Markdown report lands in the vault
+  (99 Система/_lint/), process log in /tmp/kb-lint.log.
+-->
+<plist version="1.0">
+<dict>
+  <key>Label</key>
+  <string>com.mnemazine.kb-lint</string>
+  <key>ProgramArguments</key>
+  <array>
+    <string>__NODE__</string>
+    <string>__ROOT__/scripts/mnemazine-kb-lint.mjs</string>
+    <string>--json</string>
+  </array>
+  <key>StartCalendarInterval</key>
+  <dict>
+    <key>Hour</key>
+    <integer>3</integer>
+    <key>Minute</key>
+    <integer>30</integer>
+  </dict>
+  <key>EnvironmentVariables</key>
+  <dict>
+    <key>PATH</key>
+    <string>__NODE_BIN__:/usr/local/bin:/usr/bin:/bin</string>
+  </dict>
+  <key>StandardOutPath</key>
+  <string>/tmp/kb-lint.log</string>
+  <key>StandardErrorPath</key>
+  <string>/tmp/kb-lint.log</string>
+  <key>RunAtLoad</key>
+  <false/>
+</dict>
+</plist>

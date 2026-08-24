@@ -30,15 +30,16 @@ If deep mode is requested directly but no LLM engine is available, plain `node s
 
 ## The LLM bridge
 
-All LLM calls go through one provider-abstracted module: `scripts/mnemazine-llm.mjs` (`llmJson(prompt, schema, {provider, tools})`). When `MNEMAZINE_LLM` is unset, Mnemazine uses Claude CLI when available and falls back to Codex CLI otherwise. Pin the engine explicitly with `MNEMAZINE_LLM=claude` or `MNEMAZINE_LLM=codex`. There is no third LLM client. `mnemazine-codex.mjs` remains as a thin back-compat shim.
+All LLM calls go through one module: `scripts/mnemazine-llm.mjs` (`llmJson(prompt, schema, {provider, tools})`). There is **no hard-coded list of engines**. The available CLIs live as data in `config/cli-registry.json` (base: `claude`, `codex`, `kimi`) plus the gitignored `config/cli-registry.local.json` overlay. Adding a CLI is one JSON entry and zero code edits. `scripts/mnemazine-cli-router.mjs` validates the registry, merges the overlay (which may add a CLI or tweak `model`/`effort`/`cost_tier`, but never repin a base CLI's `invoke`/`probe`/`data_classes`/`capabilities` or grant the `pd` class), and selects a CLI by data class → capability → cost tier → availability. The code branches on the declared **capability** of the chosen entry, never on a CLI name.
+
+Each registry entry declares: `probe`/`invoke` (argv prefixes), `model`, `effort`, `data_classes`, `capabilities` (e.g. `json_schema_inline`, `json_schema_file`, `json_in_prompt`, `web_search`, `stdin_prompt`, `long_context`), `cost_tier` (`cheap|standard|premium`), and `local`. A stage that needs web search only routes to a `web_search` carrier; if none carries it the call fails with a named cause. Pin the engine with `MNEMAZINE_LLM=<registry-name>` (the owner's default is set in `.mnemazine/config.local.sh`).
 
 ### Environment variables
 
 | Variable | Default | Purpose |
 |----------|---------|---------|
-| `MNEMAZINE_LLM` | auto | Engine: `claude` or `codex`. When unset: Claude if available, otherwise Codex. |
-| `MNEMAZINE_CLAUDE_BIN` | auto-discover | Claude CLI: auto-found via login-shell PATH, common installs (npm/Homebrew/standalone/Desktop), or VSCode. Override to pin. |
-| `MNEMAZINE_CODEX_BIN` | `/Applications/Codex.app/Contents/Resources/codex` | Path to the Codex binary. |
+| `MNEMAZINE_LLM` | registry default | Pin a registry entry by name (e.g. `codex`, `claude`, `kimi`). Unset: the router picks from the registry, preferring an available binary. |
+| `MNEMAZINE_<NAME>_BIN` | auto-discover | Override the binary for registry entry `<NAME>` (e.g. `MNEMAZINE_CLAUDE_BIN`, `MNEMAZINE_CODEX_BIN`). Resolved otherwise via env → login-shell PATH → known install paths → bare PATH. |
 | `MNEMAZINE_LLM_TIMEOUT_MS` | `420000` | Per-call timeout. |
 | `MNEMAZINE_DEEP` | unset | `1` enables deep mode (enrich + atomize + verify + digest). |
 | `MNEMAZINE_ENRICH` | `1` within deep | `0` (or `--no-enrich`) skips the enrichment stage. |
@@ -64,6 +65,17 @@ Strict runs (`npm start` / `--require-deep`) fail instead of archiving when enri
 ### Digest (Russian human-readable summary)
 
 After Graphify, `scripts/mnemazine-digest.mjs` (`npm run digest`) writes a humanizer-style Russian **Справка** into each note — *Что это / О чём / Почему важно мне / Связи* — plus one session summary note mapping all atoms. Connections (*Связи*) are derived directly from note metadata: atoms sharing a `cluster_id` (siblings from one source) and atoms sharing a source-URL host. Deterministic, no model key needed. (`graphify update` builds only the intra-note structural code-graph; richer note-to-note semantic links would need the separate `graphify --update` pass and are not relied upon here.) This is the reuse surface: open one note, understand the knowledge and how it connects. Idempotent (skips notes that already have a Справка unless `--force`).
+
+### Humanize preservation gate (П13)
+
+The digest rewrites/append prose, and rewriting loses facts. Two guards hold that with a non-zero exit code, not a prompt line:
+
+- **Fact preservation, inside the digest.** Before each write, `scripts/mnemazine-digest.mjs` runs `preservationCheck` (from `scripts/mnemazine-humanize-gate.mjs`): every invariant of the old note — numbers, `http(s)://` URLs, paths/filenames, `[[wikilinks]]`, versions, ISO dates, latin tool-names, fenced/inline code, frontmatter, the whole `## Достоверность` block, number tables, quotes, and every spec heading — must survive into the new text (byte-exact for untouchable zones). A loss (e.g. the `--force` strip from the first `## Справка` to EOF nuking a later `## Достоверность`) means the file is **not** rewritten, the discrepancy is logged, and the digest exits non-zero — which fails the run.
+- **Readability sweep, in the pipeline.** After the digest, `mnemazine-humanize-gate.mjs --sweep` scans notes changed this run. A run **fails** only on real AI-slop hard bans (`является`, `в современном мире`, `комплексный подход`, …). The em-dash `—` is pervasive in the corpus (95% of all hard bans — dates and titles) and a low cleanliness score are **advisory**, not fatal, so the watchdog never reds a live run on already-clean text. Score becomes fatal only under `MNEMAZINE_HUMANIZE_STRICT=1`.
+
+**Deep-only, by decision not accident.** Both guards live inside the `if (DEEP)` block in `mnemazine-run.mjs` — a non-deep run has no digest and therefore no humanize gate. This is deliberate: humanizing is an LLM rewrite, and only deep runs invoke the LLM. `## Достоверность`, source quotes, and code are never compressed or "improved" — they are copied byte-for-byte.
+
+The corpus campaign (`scripts/mnemazine-humanize-campaign.mjs`) applies the same gate note-by-note over existing notes, in git-committed batches of 50, worst-cleanliness first, and stops if three batches don't move the median. Baseline distribution lives in `.mnemazine/state/humanize-baseline.json` (`--baseline`).
 
 ### Atomization (G4)
 

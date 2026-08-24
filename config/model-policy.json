@@ -1,0 +1,16 @@
+{
+  "tiers": {
+    "0": "haiku",
+    "1": "haiku",
+    "2": "sonnet",
+    "3": "opus"
+  },
+  "roles": {
+    "kb-find": "haiku",
+    "store": "sonnet",
+    "reconcile": "sonnet",
+    "reconcile-2": "sonnet",
+    "proc": "by-tier"
+  },
+  "note": "0/1 — механика, короткий текст и дешёвая классификация из правила владельца Haiku; 2 — стандартный анализ/code/синтез уровня Sonnet; 3 — product-critical, hard synthesis и спорная верификация уровня Opus."
+}

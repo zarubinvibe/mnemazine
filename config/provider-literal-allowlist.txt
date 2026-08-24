@@ -1,0 +1,19 @@
+# provider-literal-allowlist — block 4a (plan П04) acceptance.
+#
+# Block 4a forbids provider-name literals ('claude'|'codex'|'kimi'|'omniroute')
+# used as CLI-connector DECISIONS in scripts/. The grep also catches lines where
+# the same words appear as legal DATA — test fixtures, report keyword tables,
+# archived note tags. Those are listed here, one per line, with the reason.
+#
+# Rule: grep(scripts/) minus cli-router minus these entries == 0.
+# Format: <path>:<line> — reason. Never narrow silently; every line carries a why.
+
+scripts/mnemazine-verify.mjs:194 — selftest env MNEMAZINE_LLM='codex' driving the fake-codex stub, not a runtime provider decision
+scripts/mnemazine-verify.mjs:202 — same selftest, second (assumed-verdict) case; test fixture env
+scripts/mnemazine-postrun-knowledge-report.mjs:238 — topic-scoring keyword weight table; 'codex'/'claude' are report classification data
+scripts/mnemazine-postrun-knowledge-report.mjs:255 — report action heuristic (text.includes); keyword data, no provider call
+scripts/mnemazine-postrun-knowledge-report.mjs:265 — report cluster heuristic (text.includes); keyword data, no provider call
+scripts/mnemazine-rebuild-gate.mjs:451 — night-instrument selftest asserting the plan parser reads executor 'codex' from a fixture; test data
+scripts/_archive/mnemazine-atomize-coding-tools-wave.mjs:39 — archived wave-script note tags; frozen data, not live code
+scripts/_archive/mnemazine-atomize-agency-worktrees-localai-agents-wave.mjs:276 — archived wave-script note tags; frozen data
+scripts/_archive/mnemazine-atomize-architecture-wave.mjs:291 — archived wave-script note tags; frozen data

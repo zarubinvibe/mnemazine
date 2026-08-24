@@ -6,16 +6,23 @@
 set -euo pipefail
 
 REPO="${MNEMAZINE_ROOT:-$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)}"
+ENV_REMOTE_INBOX="${MNEMAZINE_REMOTE_INBOX:-}"
 # Live host/key/paths live in a gitignored config, never hardcoded here.
 [ -f "$REPO/.mnemazine/config.env" ] && . "$REPO/.mnemazine/config.env"
 # Non-secret personal overrides (e.g. MNEMAZINE_INBOX), gitignored.
 [ -f "$REPO/.mnemazine/config.local.sh" ] && . "$REPO/.mnemazine/config.local.sh"
+[ -n "$ENV_REMOTE_INBOX" ] && export MNEMAZINE_REMOTE_INBOX="$ENV_REMOTE_INBOX"
 VPS="${MNEMAZINE_VPS:-deploy@YOUR_VPS_HOST}"
 KEY="${MNEMAZINE_VPS_KEY:-$HOME/.ssh/id_rsa}"
 REMOTE_INBOX="${MNEMAZINE_REMOTE_INBOX:-mnemazine/inbox/}"
 REMOTE_INBOX="${REMOTE_INBOX%/}/"
-# Inbox honours MNEMAZINE_INBOX (from config.env); defaults to repo-local inbox.
-LOCAL_INBOX="${MNEMAZINE_INBOX:-$REPO/inbox}"
+# Inbox must be explicit: otherwise Telegram traffic splits into a repo-local
+# inbox that the desktop protocol does not use.
+if [ -z "${MNEMAZINE_INBOX:-}" ]; then
+  echo "Set MNEMAZINE_INBOX in $REPO/.mnemazine/config.env; sync refuses to use $REPO/inbox silently." >&2
+  exit 1
+fi
+LOCAL_INBOX="$MNEMAZINE_INBOX"
 LOCAL_INBOX="${LOCAL_INBOX%/}/"
 STAGING="${LOCAL_INBOX}.staging/"
 # Export so the protocol runner reads the same inbox.

@@ -1,0 +1,32 @@
+{
+  "claude": {
+    "probe":  ["claude", "auth", "status", "--json"],
+    "invoke": ["claude", "-p", "--output-format", "json"],
+    "model":  "opus",
+    "effort": "max",
+    "data_classes": ["personal", "text", "public", "infra"],
+    "capabilities": ["json_schema_inline", "json_in_prompt", "web_search", "stdin_prompt", "long_context"],
+    "cost_tier": "premium",
+    "local": false
+  },
+  "codex": {
+    "probe":  ["codex", "login", "status"],
+    "invoke": ["codex", "--ask-for-approval", "never", "exec", "--skip-git-repo-check", "-s", "read-only", "--ephemeral"],
+    "model":  "gpt-5.6",
+    "effort": "max",
+    "data_classes": ["text", "public", "infra"],
+    "capabilities": ["json_schema_file", "json_in_prompt", "web_search", "stdin_prompt"],
+    "cost_tier": "standard",
+    "local": false
+  },
+  "kimi": {
+    "probe":  ["kimi", "provider", "list", "--json"],
+    "invoke": ["kimi", "-p"],
+    "model":  "kimi-code/k3",
+    "effort": "max",
+    "data_classes": ["text", "public", "infra"],
+    "capabilities": ["json_in_prompt", "long_context"],
+    "cost_tier": "cheap",
+    "local": false
+  }
+}

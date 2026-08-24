@@ -3,6 +3,7 @@ import { promises as fs } from 'node:fs'
 import { existsSync, readFileSync } from 'node:fs'
 import path from 'node:path'
 import { resolveVault } from './mnemazine-paths.mjs'
+import { SPEC_TYPES } from './mnemazine-note-spec.mjs'
 
 const ROOT = process.env.MNEMAZINE_ROOT || path.resolve(process.cwd())
 const argv = process.argv.slice(2)
@@ -100,6 +101,20 @@ function latinCount(text) {
   return (String(text || '').match(/[A-Za-z]/g) || []).length
 }
 
+function languageLayerText(text) {
+  return String(text || '')
+    .replace(/^---\s*\n[\s\S]*?\n---\s*\n?/, '\n')
+    .replace(/```[\s\S]*?```/g, ' ')
+    .replace(/`[^`]*`/g, ' ')
+    .replace(/!\[[^\]]*\]\([^)]+\)/g, ' ')
+    .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
+    .replace(/\[\[[^\]|]+\|([^\]]+)\]\]/g, '$1')
+    .replace(/\[\[[^\]]+\]\]/g, ' ')
+    .replace(/https?:\/\/\S+/g, ' ')
+    .replace(/\b(?:source_ref|source_hash|cluster_id|processor_model|verification_status|local-media|processed_notes):\S*/gi, ' ')
+    .replace(/\b[a-f0-9]{16,}\b/gi, ' ')
+}
+
 const rawMarkers = [
   ['english-section', /^##\s+(What This Is|Why It Matters|How To Use It|Source|Verification|Related Notes|Reuse)\b/gm],
   ['github-metadata-en', /\bGitHub metadata:/g],
@@ -131,8 +146,10 @@ function markerFailures(text) {
 function noteFailures(text) {
   const failures = markerFailures(text)
   const type = text.match(/^type:\s*"?([^"\n]+)"?/m)?.[1]?.trim() || ''
+  // Состав типов знания — из единого модуля П05, а не литерала: переименование типа
+  // в спеке не должно молча ослеплять этот гейт (план П16 шаг 2).
   const isDigest = type === 'knowledge-digest'
-  const isKnowledge = type === 'knowledge-note' || /^#\s+/.test(text)
+  const isKnowledge = SPEC_TYPES.has(type) || /^#\s+/.test(text)
   if (!isDigest && !isKnowledge) return failures
 
   const required = isDigest
@@ -145,8 +162,11 @@ function noteFailures(text) {
     failures.push({ rule: 'missing-use-section', details: ['Как использовать / Что добавила Mnemazine / Зачем это нужно'] })
   }
 
-  if (cyrillicCount(text) < 120) failures.push({ rule: 'weak-russian-layer', details: `cyrillic_chars=${cyrillicCount(text)}` })
-  if (latinCount(text) > cyrillicCount(text) * 2.2) failures.push({ rule: 'english-dominant-layer', details: `latin=${latinCount(text)}, cyrillic=${cyrillicCount(text)}` })
+  const languageText = languageLayerText(text)
+  const cyrillic = cyrillicCount(languageText)
+  const latin = latinCount(languageText)
+  if (cyrillic < 120) failures.push({ rule: 'weak-russian-layer', details: `cyrillic_chars=${cyrillic}` })
+  if (latin > cyrillic * 2.2) failures.push({ rule: 'english-dominant-layer', details: `latin=${latin}, cyrillic=${cyrillic}` })
   return failures
 }
 
@@ -174,11 +194,21 @@ function reportFailures(text) {
   return failures
 }
 
+// Служебная секция vault — сервис, не знание: человеческий слой её не судит (П22).
+// «99 Система» — живой корпус владельца, «00 System» — публичный близнец, куда
+// install.sh кладёт «Mnemazine Protocol.md». Ровно то же исключение, что в
+// vault-quality-gate.isServicePath.
+function isVaultServiceNote(file) {
+  const rel = path.relative(VAULT, file).replace(/\\/g, '/')
+  return /^99 Система\//.test(rel) || /^00 System\//.test(rel)
+}
+
 async function listNotes() {
   if (!existsSync(VAULT)) return []
   const files = await walk(VAULT, file => file.endsWith('.md'))
   const out = []
   for (const file of files) {
+    if (isVaultServiceNote(file)) continue
     const stat = await fs.stat(file)
     if (CHANGED_SINCE_MS && stat.mtimeMs >= CHANGED_SINCE_MS) {
       out.push(file)

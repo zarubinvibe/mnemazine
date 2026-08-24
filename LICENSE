@@ -1,21 +1,45 @@
-MIT License
+# Mnemazine Community License 1.0
 
-Copyright (c) 2026 Mnemazine contributors
+Утверждена правообладателем 23.08.2026.
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+## Mnemazine Community License 1.0 (RU)
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+Автор и правообладатель: Зарубин Филипп Андреевич («Лицензиар»).
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+### 1. Права, предоставляемые всем
+
+Каждому разрешается бесплатно: получать, запускать, изучать и изменять исходный код; создавать форки; предлагать изменения (pull request); распространять неизменённые или изменённые копии — при сохранении этого файла лицензии и указания авторства.
+
+### 2. Индивидуальное использование — бесплатно
+
+Физическое лицо вправе бесплатно использовать программу для любых собственных задач, включая задачи собственной предпринимательской деятельности, которую это лицо ведёт единолично (самозанятость, ИП без наёмных работников, личная практика). Тестирование, обучение, исследования, некоммерческие проекты — свободны для всех.
+
+### 3. Организационное использование — по отдельному соглашению
+
+Использование программы внутри организации (юридического лица, команды, коллектива с двумя и более участниками), встраивание в продукты или услуги организации, развёртывание для сотрудников или клиентов — требует коммерческой лицензии, заключаемой с Лицензиаром напрямую. Контакт: указан в README репозитория.
+
+### 4. Производные работы
+
+Изменённые версии распространяются только под этой же лицензией с сохранением её условий (пункты 2–3 применяются к производным). Вклад (pull request), принятый в основной репозиторий, лицензируется его автором Лицензиару неисключительно и безвозмездно с правом сублицензирования.
+
+### 5. Отсутствие гарантий
+
+Программа предоставляется «как есть». Лицензиар не несёт ответственности за любой ущерб, связанный с использованием программы, в максимальной степени, допускаемой применимым правом.
+
+### 6. Прекращение
+
+Нарушение условий прекращает права по лицензии автоматически. Права восстанавливаются, если нарушение устранено в течение 30 дней с момента, когда нарушитель узнал о нём.
+
+---
+
+## Mnemazine Community License 1.0 (EN, courtesy translation — RU text prevails)
+
+Copyright holder: Filipp Zarubin ("Licensor").
+
+1. **Rights for everyone.** Anyone may, free of charge: obtain, run, study and modify the source code; fork it; propose changes; redistribute exact or modified copies — provided this license file and attribution are preserved.
+2. **Individual use — free.** A natural person may use the software free of charge for any of their own purposes, including business activity they conduct alone (sole practice, no employees). Testing, education, research and noncommercial projects are free for all.
+3. **Organizational use — by separate agreement.** Use within an organization (a legal entity or any team of two or more), embedding into an organization's products or services, or deployment for employees or customers requires a commercial license from the Licensor. Contact: see repository README.
+4. **Derivatives** must be distributed under this same license; sections 2–3 apply to derivatives. Contributions accepted into the main repository are licensed to the Licensor non-exclusively, free of charge, with the right to sublicense.
+5. **No warranty.** The software is provided "as is"; the Licensor disclaims liability to the maximum extent permitted by law.
+6. **Termination.** Breach terminates the license automatically; rights are reinstated if the breach is cured within 30 days of the violator becoming aware of it.
+

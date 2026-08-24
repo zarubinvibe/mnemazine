@@ -13,6 +13,9 @@ function arg(name, fallback = '') {
 
 const REPORT = arg('report', '')
 const REPORTS = path.resolve(arg('reports', process.env.MNEMAZINE_REPORTS || path.join(ROOT, 'reports')))
+// fail-closed: «no reports found» больше не зелёный. Ноль отчётов = exit 2,
+// если не передан явный --allow-empty.
+const ALLOW_EMPTY = argv.includes('--allow-empty')
 
 const rawMarkers = [
   /raw\s+ocr/i,
@@ -81,8 +84,12 @@ async function checkReport(file) {
 
 const reports = await listReports()
 if (!reports.length) {
-  console.log(JSON.stringify({ ok: true, checked: 0, note: 'no reports found' }, null, 2))
-  process.exit(0)
+  if (ALLOW_EMPTY) {
+    console.log(JSON.stringify({ ok: true, checked: 0, note: 'no reports found (--allow-empty)' }, null, 2))
+    process.exit(0)
+  }
+  console.error(JSON.stringify({ ok: false, checked: 0, error: 'нет отчётов для проверки: 0 найдено (--allow-empty чтобы разрешить)' }, null, 2))
+  process.exit(2)
 }
 
 const failures = []

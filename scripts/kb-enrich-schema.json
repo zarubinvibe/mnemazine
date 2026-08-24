@@ -1,0 +1,15 @@
+{
+  "type": "object",
+  "properties": {
+    "path": { "type": "string" },
+    "action": { "type": "string", "enum": ["deep", "light", "skip"] },
+    "verified": { "type": "string" },
+    "sources": { "type": "array", "items": { "type": "string" } },
+    "lines_before": { "type": "number" },
+    "lines_after": { "type": "number" },
+    "summary": { "type": "string" },
+    "community": { "type": "array", "items": { "type": "string" } }
+  },
+  "required": ["path", "action", "verified", "sources", "lines_before", "lines_after", "summary", "community"],
+  "additionalProperties": false
+}

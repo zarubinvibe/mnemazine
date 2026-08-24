@@ -22,7 +22,8 @@ function arg(name, fallback = '') {
   return hit.includes('=') ? hit.split('=').slice(1).join('=') : argv[argv.indexOf(hit) + 1] || fallback
 }
 
-const VAULT = resolveVault({ cli: arg('vault') })
+const SELFTEST = argv.includes('--selftest')
+const VAULT = SELFTEST ? '' : resolveVault({ cli: arg('vault') })
 // Default state dir matches README:224 (~/Desktop/Mnemazine/.mnemazine/state),
 // the canonical pickup for the weekly-brief export. Override with MNEMAZINE_STATE
 // / --state-dir, or point --state straight at the downloaded file.
@@ -110,7 +111,7 @@ function spawnRunner(root) {
 }
 
 async function main() {
-  if (argv.includes('--selftest')) return selftest()
+  if (SELFTEST) return selftest()
   const state = JSON.parse(await fs.readFile(STATE_FILE, 'utf8').catch(() => '{}'))
   const result = { read: 0, work: 0, forget: 0, missing: 0, invalid: 0 }
   for (const [id, action] of Object.entries(state)) {

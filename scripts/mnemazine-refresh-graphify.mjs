@@ -39,8 +39,11 @@ const MODEL_LADDER = (arg('models', process.env.MNEMAZINE_GRAPHIFY_MODELS || (BA
 const TIMEOUT_MS = Number(arg('timeout-seconds', String(CONFIG.timeout_seconds || '900'))) * 1000
 const SMOKE_TIMEOUT_MS = Number(arg('smoke-timeout-seconds', String(CONFIG.smoke_timeout_seconds || '120'))) * 1000
 const SHRINK_THRESHOLD = Number(arg('shrink-threshold', String(CONFIG.shrink_threshold || '0.85')))
-const MAX_CONCURRENCY = arg('max-concurrency', process.env.MNEMAZINE_GRAPHIFY_MAX_CONCURRENCY || String(CONFIG.max_concurrency || (BACKEND === 'kimi' ? '3' : '')))
+// Per-backend concurrency default lives in config (data), not a code literal:
+// graphify org-concurrency caps map by backend name. New backend = config edit.
+const MAX_CONCURRENCY = arg('max-concurrency', process.env.MNEMAZINE_GRAPHIFY_MAX_CONCURRENCY || String(CONFIG.max_concurrency || CONFIG.backend_max_concurrency?.[BACKEND] || ''))
 const ALLOW_PARTIAL_SEMANTIC = arg('allow-partial-semantic', process.env.MNEMAZINE_GRAPHIFY_ALLOW_PARTIAL || String(CONFIG.allow_partial_semantic ? 1 : 0)) !== '0'
+const MARK_SEMANTIC_PENDING = hasFlag('mark-semantic-pending') || process.env.MNEMAZINE_GRAPHIFY_MARK_SEMANTIC_PENDING === '1'
 const JSON_OUT = hasFlag('json')
 const GRAPHIFY_OUT = path.join(VAULT, 'graphify-out')
 const GRAPH_PATH = path.join(GRAPHIFY_OUT, 'graph.json')
@@ -199,9 +202,9 @@ async function pruneBackups(keep = GRAPHIFY_BACKUPS_KEEP) {
   }
 }
 
-async function writeNeedsUpdate() {
+async function writeNeedsUpdate(reason = 'semantic graph needs update') {
   await ensureGraphifyOut()
-  await fs.writeFile(NEEDS_UPDATE_PATH, '1', 'utf8')
+  await fs.writeFile(NEEDS_UPDATE_PATH, `${reason}\n`, 'utf8')
 }
 
 async function clearNeedsUpdate() {
@@ -568,6 +571,7 @@ async function main() {
     api_key_env: API_KEY_ENV_BY_BACKEND[BACKEND] || null,
     max_concurrency: MAX_CONCURRENCY || null,
     allow_partial_semantic: ALLOW_PARTIAL_SEMANTIC,
+    mark_semantic_pending: MARK_SEMANTIC_PENDING,
     ollama_base_url: BACKEND === 'ollama' ? OLLAMA_BASE_URL : null,
     before: initialBefore,
     code_refresh: null,
@@ -589,10 +593,12 @@ async function main() {
   }
 
   const afterCode = await graphSummary(GRAPH_PATH)
-  const semanticPending = result.semantic_pending_before || existsSync(NEEDS_UPDATE_PATH) || (await newestNonCodeMtimeMs()) > afterCode.mtimeMs || MODE === 'semantic'
+  const semanticPending = MARK_SEMANTIC_PENDING || result.semantic_pending_before || existsSync(NEEDS_UPDATE_PATH) || (await newestNonCodeMtimeMs()) > afterCode.mtimeMs || MODE === 'semantic'
 
   if (MODE === 'code' || (MODE === 'auto' && !semanticPending)) {
-    if (MODE !== 'semantic' && semanticPending) await writeNeedsUpdate()
+    if (MODE !== 'semantic' && semanticPending) await writeNeedsUpdate(MARK_SEMANTIC_PENDING
+      ? `deferred: code graph refreshed at ${new Date().toISOString()}; run npm run graph:semantic:async`
+      : 'semantic graph needs update')
     result.after = await graphSummary(GRAPH_PATH)
     result.semantic_pending_after = existsSync(NEEDS_UPDATE_PATH)
     result.ok = MODE === 'code' ? true : !result.semantic_pending_after

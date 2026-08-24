@@ -8,5 +8,8 @@
   ],
   "timeout_seconds": 900,
   "smoke_timeout_seconds": 120,
-  "shrink_threshold": 0.85
+  "shrink_threshold": 0.85,
+  "backend_max_concurrency": {
+    "kimi": 3
+  }
 }

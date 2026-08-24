@@ -1,9 +1,10 @@
 #!/usr/bin/env node
-import { promises as fs } from 'node:fs'
+import { promises as fs, readFileSync } from 'node:fs'
 import path from 'node:path'
 import crypto from 'node:crypto'
-import { llmAvailable, llmJson, fenceUntrusted } from './mnemazine-llm.mjs'
+import { activeProvider, llmAvailable, llmJson, fenceUntrusted, providerCostTier } from './mnemazine-llm.mjs'
 import { verifyLocal, verifyDeep, isPublicHttpUrl } from './mnemazine-verify.mjs'
+import { SPEC_VERIFIED } from './mnemazine-note-spec.mjs'
 import { resolveVault } from './mnemazine-paths.mjs'
 
 const ROOT = process.env.MNEMAZINE_ROOT || path.resolve(process.cwd())
@@ -24,12 +25,22 @@ const MIN_CLUSTER_CHARS = Number(arg('min-cluster-chars', '80'))
 // and never needs codex. Flag also honoured via MNEMAZINE_DEEP=1.
 const DEEP = argv.includes('--deep') || argv.includes('--atomize') || process.env.MNEMAZINE_DEEP === '1'
 const MAX_ATOMS = Number(arg('max-atoms', process.env.MNEMAZINE_MAX_ATOMS || '20'))
+// Long material (video transcripts, books) was silently cut to the first 4000
+// chars per record, so atoms only ever covered the intro. Knobs, defaults kept.
+const MAX_RECORD_CHARS = Number(process.env.MNEMAZINE_MAX_RECORD_CHARS || '4000')
+const MAX_MATERIAL_CHARS = Number(process.env.MNEMAZINE_MAX_MATERIAL_CHARS || '24000')
 // Enrichment is on within --deep unless explicitly disabled (it needs the network).
 const ENRICH = DEEP && process.env.MNEMAZINE_ENRICH !== '0' && !argv.includes('--no-enrich')
-const ENRICH_TIMEOUT_MS = Number(process.env.MNEMAZINE_ENRICH_TIMEOUT_MS || '60000')
+// Enrichment web calls can be slow; default to the generous ceiling for any
+// provider (env overrides). No branch on a CLI name — a longer timeout never
+// harms a faster CLI.
+const ENRICH_TIMEOUT_MS = Number(process.env.MNEMAZINE_ENRICH_TIMEOUT_MS || '420000')
 const STRICT_ENRICH = DEEP && process.env.MNEMAZINE_STRICT_ENRICH !== '0' && !argv.includes('--allow-raw-atomize')
 const MIN_ADDED_FACTS = Number(process.env.MNEMAZINE_MIN_ADDED_FACTS || '2')
 const CLUSTER_CHUNK_SIZE = Number(arg('cluster-chunk-size', process.env.MNEMAZINE_CLUSTER_CHUNK_SIZE || '25'))
+const ATOMIZER_PROVIDER = process.env.MNEMAZINE_ATOMIZER_LLM || process.env.MNEMAZINE_LLM || undefined
+const VERIFIER_PROVIDER = process.env.MNEMAZINE_VERIFIER_LLM || process.env.MNEMAZINE_LLM || undefined
+const RESOLVED_ATOMIZER_PROVIDER = activeProvider({ provider: ATOMIZER_PROVIDER })
 const SOURCE_REF_FILTER = new Set(String(process.env.MNEMAZINE_SYNTH_SOURCE_REFS || '')
   .split(',')
   .map(s => s.trim())
@@ -51,6 +62,9 @@ const sourceHints = [
   { re: /terraform|pulumi|infrastructure|iac/i, name: 'Terraform docs', url: 'https://developer.hashicorp.com/terraform/docs' },
   { re: /bff|backend for frontend/i, name: 'Backends for Frontends pattern', url: 'https://learn.microsoft.com/en-us/azure/architecture/patterns/backends-for-frontends' },
   { re: /worktree|git stash/i, name: 'git worktree docs', url: 'https://git-scm.com/docs/git-worktree' },
+  { re: /стартап|фаундер|основател|узк(?:ая|ой|ую|ом)\s+ниш|mvp|партизан|голиаф|airbnb|uber|клиент/i, name: "Paul Graham Do Things That Don't Scale", url: 'https://www.paulgraham.com/ds.html' },
+  { re: /стартап|фаундер|основател|узк(?:ая|ой|ую|ом)\s+ниш|mvp|партизан|голиаф|airbnb|uber|клиент/i, name: 'Sam Altman Startup Playbook', url: 'https://playbook.samaltman.com/' },
+  { re: /стартап|фаундер|основател|узк(?:ая|ой|ую|ом)\s+ниш|mvp|партизан|голиаф|airbnb|uber|клиент/i, name: 'Y Combinator Startup Playbook', url: 'https://www.ycombinator.com/blog/startup-playbook/' },
   { re: /moneyprinter|short-form|reels|tiktok|youtube shorts/i, name: 'MoneyPrinterTurbo', url: 'https://github.com/harry0703/MoneyPrinterTurbo' }
 ]
 
@@ -61,6 +75,7 @@ const clusterRules = [
   { id: 'engineering-ops', title: 'Engineering operations and reproducible delivery', re: /observability|terraform|pulumi|worktree|staging|environment|deploy|bff|backend/i },
   { id: 'design-frontend', title: 'Design systems and frontend quality', re: /design|frontend|ui|component|playwright|browser|layout|wcag/i },
   { id: 'tool-radar', title: 'Open-source tool radar and selection', re: /github\.com|open source|langflow|dify|open-webui|openhands|crawl4ai|coolify|papermark|twenty|crowdsec/i },
+  { id: 'startup-strategy', title: 'Startup strategy and founder-led growth', re: /стартап|фаундер|основател|корпораци|гигант|голодн|узк(?:ая|ой|ую|ом)\s+ниш|mvp|партизан|голиаф|airbnb|uber/i },
   { id: 'content-growth', title: 'Content experiments and growth loops', re: /ad |ads|hook|cta|offer|short-form|reels|tiktok|youtube|content|moneyprinter/i },
   { id: 'research-workflow', title: 'Research workflow and source verification', re: /research|source|citation|academic|verify|evidence/i }
 ]
@@ -101,6 +116,12 @@ const topicTemplates = {
     why: 'Screenshots with GitHub stars are weak evidence. Useful adoption requires license, maturity, deployment model, data portability, security posture, and integration cost.',
     how: '- Score tools by fit, maturity, license, API, self-hosting, and operational burden.\n- Tie tools to concrete projects.\n- Re-check source repositories before adopting.',
     next: 'Сделать schema для tool-radar и заполнять её из извлечённых GitHub-ссылок.'
+  },
+  'startup-strategy': {
+    what: 'Startup strategy is the operating pattern for small teams beating larger incumbents: narrow focus, fast customer feedback, founder-led trust, and manual work before scale.',
+    why: 'The captured carousel is useful only if it becomes a reusable decision rule, not motivational noise.',
+    how: '- Pick a narrow ignored segment.\n- Talk to customers directly.\n- Ship small changes faster than incumbents can route approvals.\n- Treat manual founder service as learning, not as permanent process.',
+    next: 'Привязать startup strategy к ближайшему проекту: ниша, скорость, founder-led trust, ручной сервис.'
   },
   'content-growth': {
     what: 'Content growth loops treat ads, hooks, CTAs, short-form scripts, and publishing as experiments with feedback.',
@@ -158,6 +179,12 @@ const topicTemplatesRu = {
     why: 'Скриншот со stars - слабое evidence. Нужны license, maturity, deployment model, data portability, security posture и integration cost.',
     how: ['Оценивать fit, maturity, license, API, self-hosting и operational burden.', 'Связывать инструмент с конкретным проектом.', 'Перед adoption перепроверять primary source.'],
     next: 'Сделать schema для tool-radar и заполнять её из GitHub links.'
+  },
+  'startup-strategy': {
+    what: 'Startup strategy - это набор ходов, где маленькая команда обходит крупного игрока не бюджетом, а узкой нишей, скоростью, прямым контактом с клиентом и founder-led доверием.',
+    why: 'Такие карточки легко превращаются в мотивационный шум. Польза появляется, когда из них выходит конкретное правило для проекта: кого выбрать, что урезать, как быстро проверить и где основатель должен говорить лично.',
+    how: ['Выбрать один узкий сегмент, который крупный игрок игнорирует.', 'Не копировать весь продукт корпорации, а закрыть одну боль лучше.', 'Собирать обратную связь напрямую от клиентов.', 'Выкатывать маленькие изменения быстрее корпоративного цикла согласований.', 'Ручной сервис основателя использовать как обучение, а не как вечный процесс.'],
+    next: 'Привязать startup strategy к ближайшему проекту: ниша, скорость, founder-led trust, ручной сервис.'
   },
   'content-growth': {
     what: 'Контентные петли роста рассматривают ads, hooks, CTA, scripts и публикации как эксперименты с обратной связью.',
@@ -254,6 +281,7 @@ function clusterTitleRu(id) {
     'engineering-ops': 'Инженерные операции и воспроизводимая доставка',
     'design-frontend': 'Дизайн-системы и качество фронтенда',
     'tool-radar': 'Радар инструментов и выбор open-source',
+    'startup-strategy': 'Стратегия стартапа и founder-led рост',
     'content-growth': 'Контентные эксперименты и петли роста',
     'research-workflow': 'Исследовательский workflow и проверка источников',
     misc: 'Прочие сигналы знаний'
@@ -305,20 +333,52 @@ async function fetchText(url, limit = 40000) {
   }
 }
 
+function looksLikeCode(text) {
+  // JS-heavy pages (YouTube et al) leak `(function() {window.ytplayer={};` and
+  // `ytcfg.set({"KEY":...})` into "external facts". Prose has no braces/arrows
+  // and is mostly letters and spaces.
+  const value = String(text || '')
+  if (/[{}]|=>|\);|\w+\.\w+\(|^\(function/.test(value)) return true
+  const letters = (value.match(/[\p{L}\s.,;:!?()'"-]/gu) || []).length
+  return letters / Math.max(1, value.length) < 0.85
+}
+
 function readmePoints(readme, max = 6) {
   const points = []
   for (const line of stripHtmlText(readme).split('\n')) {
     const clean = compact(line.replace(/^#+\s*/, '').replace(/^[-*]\s+/, ''), 220)
     if (clean.length < 32) continue
+    if (/^[,.;:]/.test(clean) || /^https?:\/\//i.test(clean)) continue
     if (/^(install|usage|license|contributing|table of contents|badges?)$/i.test(clean)) continue
     if (/^!\[|^<img|^\[!?\[|^window\.|^document\.|^function\s/i.test(line.trim())) continue
     if (/\b(src|href|alt|title)=["'][^"']*["']/i.test(clean)) continue
     if (/https?:\/\/\S+\.(?:svg|png|jpe?g|gif|webp)(?:\?\S*)?$/i.test(clean)) continue
     if (/<[a-z][\s\S]*>/i.test(clean)) continue
+    if (looksLikeCode(clean)) continue
     points.push(clean)
     if (points.length >= max) break
   }
   return points
+}
+
+function latinCount(text) {
+  return (String(text || '').match(/[A-Za-z]/g) || []).length
+}
+
+function cyrillicCount(text) {
+  return (String(text || '').match(/[А-Яа-яЁё]/g) || []).length
+}
+
+function russianSourceSignal(text, fallback = 'проверяемый сигнал первоисточника') {
+  const clean = compact(text, 180)
+  if (!clean) return fallback
+  const low = clean.toLowerCase()
+  if (/critical vulnerab|vulnerab/.test(low)) return 'заявленный security-риск marketplace skills'
+  if (/secure|validated|hardened|confidence/.test(low)) return 'позиционирование как проверенный каталог skills'
+  if (/registry|library|catalog/.test(low)) return 'каталог skills и reusable capabilities'
+  if (/agent|skill|claude|cursor|copilot|antigravity/.test(low)) return 'поддержка skills для AI coding agents и IDE'
+  if (latinCount(clean) > Math.max(40, cyrillicCount(clean) * 2)) return fallback
+  return clean
 }
 
 function htmlDescription(html) {
@@ -390,14 +450,16 @@ async function enrichClusterFromGithub(cluster, sources) {
   const readme = rawReadme.text
   const release = await fetchJson(`https://api.github.com/repos/${repoRef.owner}/${repoRef.repo}/releases/latest`)
   const points = readmePoints(readme)
+  const description = russianSourceSignal(api.description, 'англоязычное описание GitHub; точная формулировка сохранена в primary source')
+  const pointSignals = points.map(point => russianSourceSignal(point, 'README-сигнал требует ручной сверки')).filter(Boolean)
   const license = api.license?.spdx_id || api.license?.name || 'лицензия неизвестна'
   const pushed = api.pushed_at ? api.pushed_at.slice(0, 10) : 'unknown'
   const releaseLine = release?.tag_name ? `${release.tag_name} (${String(release.published_at || '').slice(0, 10) || 'дата неизвестна'})` : 'GitHub API не вернул latest release'
   const addedFacts = [
-    `${api.full_name}: ${api.description || 'официальный GitHub-репозиторий'}.`,
+    `${api.full_name}: ${description}.`,
     `Метаданные GitHub: ${api.stargazers_count} звёзд, ${api.forks_count} форков, ${api.open_issues_count} открытых issues, лицензия ${license}, основной язык ${api.language || 'unknown'}.`,
     `Свежесть репозитория: основная ветка ${api.default_branch || 'unknown'}, последний push ${pushed}, последний release ${releaseLine}.`,
-    ...points.slice(0, 5).map(point => `Сигнал README: ${point}`)
+    ...pointSignals.slice(0, 5).map(point => `Сигнал README: ${point}.`)
   ]
   const addedSources = [
     api.html_url,
@@ -406,10 +468,10 @@ async function enrichClusterFromGithub(cluster, sources) {
   ].filter(Boolean)
   const enriched = [
     `Расширение по официальному GitHub для ${api.full_name}.`,
-    `Описание: ${api.description || 'GitHub не дал описание.'}`,
+    `Описание: ${description}.`,
     `Метаданные: ${api.stargazers_count} звёзд, ${api.forks_count} форков, ${api.open_issues_count} открытых issues, ${license}, язык ${api.language || 'unknown'}, последний push ${pushed}.`,
     `Последний release: ${releaseLine}.`,
-    points.length ? `Из README извлечены стабильные сигналы:\n${points.map(point => `- ${point}`).join('\n')}` : 'README не дал устойчивых feature-пунктов без ручной проверки.',
+    pointSignals.length ? `Из README извлечены рабочие сигналы:\n${pointSignals.map(point => `- ${point}`).join('\n')}` : 'README не дал устойчивых feature-пунктов без ручной проверки.',
     `Локальные source refs: ${cluster.records.map(r => r.source_ref).join(', ')}.`
   ].join('\n\n')
   return { enriched, addedSources, addedFacts, github: { api, readmeUrl, release, points } }
@@ -450,13 +512,15 @@ function atomsFromGithub(part, sources) {
   const api = github.api
   const repo = api.full_name
   const sourceUrls = [api.html_url, github.readmeUrl, github.release?.html_url].filter(Boolean)
-  const points = github.points || []
+  const points = (github.points || []).map(point => russianSourceSignal(point, 'README-сигнал требует ручной сверки')).filter(Boolean)
   const license = api.license?.spdx_id || api.license?.name || 'unknown license'
   const releaseLine = github.release?.tag_name || 'no latest release returned'
+  const description = russianSourceSignal(api.description, 'англоязычное описание GitHub; точная формулировка в primary source')
   return [
     {
       title: `${repo}: проверенная карточка инструмента`,
-      what: `${repo} - официальный GitHub-репозиторий инструмента из inbox. GitHub показывает: ${api.stargazers_count} stars, ${api.forks_count} forks, ${api.open_issues_count} open issues, лицензия ${license}, основной язык ${api.language || 'unknown'}, последний push ${api.pushed_at ? api.pushed_at.slice(0, 10) : 'unknown'}.`,
+      source_refs: part.records.map(record => record.source_ref).filter(Boolean),
+      what: `${repo} - официальный GitHub-репозиторий инструмента из inbox. Описание: ${description}. GitHub показывает: ${api.stargazers_count} stars, ${api.forks_count} forks, ${api.open_issues_count} open issues, лицензия ${license}, основной язык ${api.language || 'unknown'}, последний push ${api.pushed_at ? api.pushed_at.slice(0, 10) : 'unknown'}.`,
       why: 'Это превращает скриншот или карточку со звёздами в проверяемую запись: есть primary source, дата свежести, лицензия и базовый риск.',
       how: ['Сначала смотреть метаданные: лицензия, свежесть, stars, forks, issues.', 'Перед установкой открыть README и issues, скриншот считать только подсказкой.', 'Решение фиксировать отдельно: установить сейчас, протестировать позже или забыть.'],
       sources: sourceUrls,
@@ -464,7 +528,8 @@ function atomsFromGithub(part, sources) {
     },
     {
       title: `${repo}: что реально обещает README`,
-      what: points.length ? points.slice(0, 4).join(' ') : `${repo} имеет официальный README, но Mnemazine не нашла в нём устойчивые продуктовые тезисы без ручной проверки.`,
+      source_refs: part.records.map(record => record.source_ref).filter(Boolean),
+      what: points.length ? `README даёт проверяемые сигналы: ${points.slice(0, 4).join('; ')}.` : `${repo} имеет официальный README, но Mnemazine не нашла в нём устойчивые продуктовые тезисы без ручной проверки.`,
       why: 'README ближе к рабочей правде, чем подпись на скриншоте. Он показывает, что авторы реально поддерживают и документируют.',
       how: points.slice(0, 5).map(point => `Проверить по README: ${point}`),
       sources: sourceUrls,
@@ -472,6 +537,7 @@ function atomsFromGithub(part, sources) {
     },
     {
       title: `${repo}: риск эксплуатации и поддержки`,
+      source_refs: part.records.map(record => record.source_ref).filter(Boolean),
       what: `Поверхность риска: ${api.open_issues_count} open issues, последний release ${releaseLine}, последний push ${api.pushed_at ? api.pushed_at.slice(0, 10) : 'unknown'}, лицензия ${license}.`,
       why: 'Популярный репозиторий всё равно может быть плохой зависимостью, если релизы, лицензия или issue-профиль не подходят под workflow.',
       how: ['Проверить issues на security, потерю данных и ошибки установки.', 'Сначала гонять в одноразовом workspace, не добавлять сразу в глобальные правила агента.', 'Если это станет Skill/MCP/plugin, записать source ledger и usage ledger.'],
@@ -480,6 +546,7 @@ function atomsFromGithub(part, sources) {
     },
     {
       title: `${repo}: решение для Mnemazine`,
+      source_refs: part.records.map(record => record.source_ref).filter(Boolean),
       what: `Этот атом связывает локальный захват с primary GitHub evidence по ${repo}. Это не команда установить, а кандидат на разбор.`,
       why: 'Полезная память - не "увидел репозиторий", а решение: что инструмент делает, подходит ли он, какой риск остаётся и что делать дальше.',
       how: ['Хранить репозиторий как кандидата в рабочие возможности, не как инструкцию к установке.', 'Если принять, зеркалировать docs/skill metadata и логировать usage.', 'Если отклонить, записать причину, чтобы репозиторий не возвращался шумом.'],
@@ -497,6 +564,7 @@ function atomsFromSources(part, sources) {
   return [
     {
       title: `${clusterTitleRu(part.id)}: проверенный рабочий паттерн`,
+      source_refs: part.records.map(record => record.source_ref).filter(Boolean),
       what: `${template.what} Источники добавили проверяемые опорные факты: ${facts.slice(0, 2).join(' ')}`,
       why: template.why,
       how: [...how, ...facts.slice(2, 4).map(fact => `Проверить по источнику: ${fact}`)].slice(0, 5),
@@ -535,6 +603,7 @@ function topicSignals(cluster, sources) {
     'engineering-ops': ['Повторяются инженерные сигналы: воспроизводимые окружения, IaC, worktrees, observability, release checks и secret injection.', sourceLine],
     'design-frontend': ['Повторяются UI-сигналы: DESIGN.md, taste rules, frontend structure, Playwright/browser checks и WCAG constraints.', sourceLine],
     'tool-radar': ['Повторяются tool-radar сигналы: GitHub repos, self-hosting, AI tools и open-source alternatives.', sourceLine],
+    'startup-strategy': ['Повторяются startup-сигналы: узкая ниша, скорость внедрения, прямой контакт с клиентом, founder-led доверие и ручной сервис до scale.', sourceLine],
     'content-growth': ['Повторяются growth-сигналы: ad variants, hooks, CTA, short-form generation, metrics и winner/loser loops.', sourceLine],
     'research-workflow': ['Повторяются research-сигналы: сбор источников, проверка claims, evidence, drafting и revision.', sourceLine],
     misc: ['Слабые misc-сигналы отделены от сильных knowledge atoms.', sourceLine]
@@ -589,10 +658,12 @@ function makeNote(cluster) {
     : 'Публичного источника в extraction не было; это локальный memory atom, а не внешне подтверждённый claim.'
   return `---
 title: "${title.replace(/"/g, '\\"')}"
-type: "knowledge-note"
+type: "synthesis"
+subject: world
 source_type: "synthesis-cluster"
+source: "session:${SESSION}/${cluster.id}"
 source_ref: "session:${SESSION}/${cluster.id}"
-verified: false
+verified: ${specVerified(localVerdict.status)}
 verification_status: "${localVerdict.status}"
 verification: "${sourceStatus}"
 status: "draft"
@@ -628,7 +699,12 @@ ${sourceRefs.length > 30 ? `- ... ещё ${sourceRefs.length - 30} source refs �
 Публичные источники:
 ${sourceLines.join('\n')}
 
-## Проверка
+## 🎯 Как это поможет мне
+
+- ${template.next}
+- Тема: ${clusterTitleRu(cluster.id)} — черновик собран, но требует проверки перед применением.
+
+## Достоверность
 
 - **Автоматический fact-check не запускался.** Это unverified synthesis cluster (\`status: draft\`). URL из extraction или topic hints - указатели, не подтверждение конкретного claim.
 - Повышать до \`status: final\` только после проверки человеком или verify gate по primary sources.
@@ -638,7 +714,7 @@ ${sourceLines.join('\n')}
 ## Связанные заметки
 
 - [[Mnemazine Protocol]]
-- [[${clusterTitle(cluster.id)}]]
+- [[${clusterTitleRu(cluster.id)}]]
 
 ## Следующее действие
 
@@ -656,35 +732,56 @@ const ATOM_SCHEMA = {
       items: {
         type: 'object',
         additionalProperties: false,
-        required: ['title', 'what', 'why', 'how', 'next', 'sources'],
+        required: ['title', 'what', 'why', 'how', 'next', 'sources', 'source_refs'],
         properties: {
           title: { type: 'string' },
           what: { type: 'string' },
           why: { type: 'string' },
           how: { type: 'array', items: { type: 'string' } },
           next: { type: 'string' },
-          sources: { type: 'array', items: { type: 'string' } }
+          sources: { type: 'array', items: { type: 'string' } },
+          source_refs: { type: 'array', items: { type: 'string' } }
         }
       }
     }
   }
 }
 
+// Owner projects come from the vault (99 Система/_ПРОЕКТЫ.md), never hardcoded —
+// the spec gate rejects a "как это поможет мне" block that names no real project.
+let OWNER_PROJECTS = null
+function ownerProjects() {
+  if (OWNER_PROJECTS) return OWNER_PROJECTS
+  try {
+    const text = readFileSync(path.join(VAULT, '99 Система', '_ПРОЕКТЫ.md'), 'utf8')
+    OWNER_PROJECTS = [...text.matchAll(/^##\s+(.+?)\s*$/gm)].map(m => m[1]).filter(Boolean)
+  } catch { OWNER_PROJECTS = [] }
+  return OWNER_PROJECTS
+}
+
 function atomPrompt(cluster, sources, materialOverride) {
   // When enrichment ran, atomize the EXPANDED knowledge; else the raw capture.
   const text = materialOverride
-    ? String(materialOverride).slice(0, 28000)
-    : cluster.records.map(r => compact(r.text, 4000)).join('\n---\n').slice(0, 24000)
+    ? String(materialOverride).slice(0, Math.max(28000, MAX_MATERIAL_CHARS))
+    : cluster.records.map(r => `SOURCE_REF: ${r.source_ref}\n${compact(r.text, MAX_RECORD_CHARS)}`).join('\n---\n').slice(0, MAX_MATERIAL_CHARS)
   const urls = sources.map(s => s.url).join(', ') || 'none detected'
-  return `You are Mnemazine's atomization agent. Split the enriched research material below into FOCUSED, atomic knowledge notes — one idea per atom, up to ${MAX_ATOMS}. Do NOT merge unrelated ideas; do NOT invent facts not present in the material. Each atom: a precise title, a one-paragraph "what", a one-paragraph "why it matters", 2-5 concrete "how to use" bullets, one "next action", and the subset of source URLs that support it (from: ${urls}; [] only if truly local/private).
+  const refs = cluster.records.map(r => r.source_ref).filter(Boolean).join(', ')
+  return `You are Mnemazine's atomization agent. Split the enriched research material below into FOCUSED, atomic knowledge notes — one idea per atom, up to ${MAX_ATOMS}. Do NOT merge unrelated ideas; do NOT invent facts not present in the material. Each atom: a precise title, a one-paragraph "what", a one-paragraph "why it matters", 2-5 concrete "how to use" bullets, one "next action", the subset of source URLs that support it (from: ${urls}; [] only if truly local/private), and the subset of local source_refs that support this exact atom (from: ${refs}; never include an unrelated source_ref just because it is in the same cluster).
 
 Пиши значения JSON на русском языке. Return ONLY JSON matching the schema.
+
+Заголовок атома (title) — живой русский без канцелярита: запрещены «является/являются», «данный», «осуществляет», «представляет собой». Пиши «X — Y», а не «X является Y»: заголовок уходит в имя файла и в ссылки, канцелярит оттуда расползается по всей базе.
+
+Поле "next" (следующее действие) обязано НАЧИНАТЬСЯ с имени проекта владельца, которому этот атом полезен, — дословно одним из списка: ${ownerProjects().join(' · ') || 'Саморазвитие/инструментарий'}. Если ни один проект по теме не подходит, пиши «Саморазвитие/инструментарий». Формат: «&lt;Проект&gt;: &lt;одно конкретное действие&gt;». Проект не выдумывать и не переименовывать.
 
 ${fenceUntrusted('MATERIAL', text)}`
 }
 
 async function atomizeCluster(cluster, sources, materialOverride) {
-  const result = await llmJson(atomPrompt(cluster, sources, materialOverride), ATOM_SCHEMA)
+  const result = await llmJson(atomPrompt(cluster, sources, materialOverride), ATOM_SCHEMA, {
+    provider: ATOMIZER_PROVIDER,
+    label: `atomize:${cluster.id}`
+  })
   const atoms = Array.isArray(result?.atoms) ? result.atoms : []
   return atoms.filter(a => a && a.title && a.what).slice(0, MAX_ATOMS)
 }
@@ -717,10 +814,12 @@ ${fenceUntrusted('MATERIAL', text)}`
 }
 
 async function enrichCluster(cluster, sources) {
-  const text = cluster.records.map(r => compact(r.text, 6000)).join('\n---\n').slice(0, 24000)
+  const text = cluster.records.map(r => compact(r.text, Math.max(6000, MAX_RECORD_CHARS))).join('\n---\n').slice(0, MAX_MATERIAL_CHARS)
   const res = await llmJson(enrichPrompt(text, sources), ENRICH_SCHEMA, {
-    tools: ['WebSearch', 'WebFetch', 'mcp__firecrawl', 'mcp__tavily'],
-    timeoutMs: ENRICH_TIMEOUT_MS
+    provider: VERIFIER_PROVIDER,
+    tools: ['WebSearch', 'WebFetch'],
+    timeoutMs: ENRICH_TIMEOUT_MS,
+    label: `enrich:${cluster.id}`
   })
   const enriched = typeof res?.enriched === 'string' ? res.enriched.trim() : ''
   const addedSources = Array.isArray(res?.sources) ? res.sources.filter(isPublicHttpUrl) : []
@@ -735,9 +834,60 @@ function atomFingerprint(atom, clusterId = '') {
   return crypto.createHash('sha1').update(key).digest('hex').slice(0, 10)
 }
 
+function words(value) {
+  return String(value || '')
+    .toLowerCase()
+    .split(/[^a-zа-яё0-9]+/i)
+    .filter(word => word.length >= 4)
+}
+
+function localSourceRefsForAtom(cluster, atom) {
+  const valid = new Set(cluster.records.map(record => record.source_ref).filter(Boolean))
+  const explicit = Array.isArray(atom.source_refs)
+    ? atom.source_refs.filter(ref => valid.has(ref))
+    : []
+  if (explicit.length) return [...new Set(explicit)]
+
+  const atomText = `${atom.title || ''}\n${atom.what || ''}\n${(atom.sources || []).join('\n')}`.toLowerCase()
+  const tokens = new Set(words(atomText))
+  const scored = cluster.records
+    .map(record => {
+      const text = String(record.text || '').toLowerCase()
+      let score = 0
+      for (const source of atom.sources || []) {
+        const url = String(source || '').toLowerCase()
+        if (url && text.includes(url.replace(/^https?:\/\//, '').replace(/^www\./, ''))) score += 8
+        try {
+          const parsed = new URL(url)
+          const pathBits = parsed.pathname.split('/').filter(Boolean).slice(0, 2).join('/')
+          if (pathBits && text.includes(pathBits.toLowerCase())) score += 6
+          if (parsed.hostname && text.includes(parsed.hostname.replace(/^www\./, ''))) score += 3
+        } catch {}
+      }
+      for (const token of tokens) if (text.includes(token)) score += 1
+      return { ref: record.source_ref, score }
+    })
+    .filter(item => item.ref && item.score > 0)
+    .sort((a, b) => b.score - a.score)
+  const best = scored[0]?.score || 0
+  return scored.filter(item => item.score === best).map(item => item.ref)
+}
+
+// NOTE-SPEC enum is the single truth for `verified:` (SPEC_VERIFIED). Deep verify
+// speaks verified|assumed|unknown, so map it here instead of writing a boolean the
+// spec gate rejects.
+function specVerified(status) {
+  const map = { verified: SPEC_VERIFIED[0], assumed: SPEC_VERIFIED[2], unknown: SPEC_VERIFIED[5] }
+  return map[status] || SPEC_VERIFIED[5]
+}
+
 function makeAtomNote(cluster, atom, verdict) {
   const how = (atom.how || []).filter(Boolean).map(h => `- ${compact(h, 240)}`).join('\n') || '- Проверить и применить в контексте.'
-  const sourceRefs = cluster.records.map(record => `- ${record.source_ref}`).join('\n')
+  const localRefs = localSourceRefsForAtom(cluster, atom)
+  const sourceRefs = (localRefs.length ? localRefs : cluster.records.map(record => record.source_ref))
+    .filter(Boolean)
+    .map(ref => `- ${ref}`)
+    .join('\n')
   const addedFacts = (cluster.enrichment?.addedFacts || []).map(f => `- ${compact(f, 300)}`).join('\n') || '- Внешние факты не записаны.'
   const srcs = (atom.sources || []).filter(isPublicHttpUrl)
   const sourceLines = srcs.length
@@ -748,10 +898,12 @@ function makeAtomNote(cluster, atom, verdict) {
   const isVerified = v.status === 'verified'
   return `---
 title: "${String(atom.title).replace(/"/g, '\\"').slice(0, 120)}"
-type: "knowledge-note"
+type: "synthesis"
+subject: world
 source_type: "synthesis-atom"
+source: "session:${SESSION}/${cluster.id}#${fp}"
 source_ref: "session:${SESSION}/${cluster.id}#${fp}"
-verified: ${isVerified}
+verified: ${specVerified(v.status)}
 verification_status: "${v.status}"
 verification: "llm-atomized; ${String(v.note || 'sources unverified').replace(/"/g, "'")}"
 status: "${isVerified ? 'final' : 'draft'}"
@@ -787,7 +939,12 @@ ${sourceLines}
 Факты, добавленные до атомизации:
 ${addedFacts}
 
-## Проверка
+## 🎯 Как это поможет мне
+
+- ${compact(atom.next, 240) || 'Применить в ближайшей задаче по теме кластера.'}
+- Тема: ${clusterTitleRu(cluster.id)} — смотреть сюда, когда всплывёт этот вопрос.
+
+## Достоверность
 
 - Статус проверки: **${v.status}**${v.note ? ` (${v.note})` : ''}.
 ${isVerified
@@ -807,6 +964,25 @@ ${isVerified
 }
 
 await fs.mkdir(path.join(VAULT, '01 Concepts'), { recursive: true })
+// One runnable check for the source-scrape junk filter: real prose survives,
+// leaked page JS does not. Run: node scripts/mnemazine-synthesize.mjs --selftest
+if (argv.includes('--selftest')) {
+  const junk = [
+    '(function() {window.ytplayer={};',
+    'ytcfg.set({"CLIENT_CANARY_STATE":"none","DEVICE":"ceng\\u003dUSER_DEFINED"});',
+    'document.querySelector("#player").play();'
+  ]
+  const prose = [
+    'Obsidian хранит заметки как обычные markdown-файлы в локальной папке без облака.',
+    'Wikilinks connect notes into a graph you can open and inspect from the sidebar.'
+  ]
+  for (const line of junk) if (!looksLikeCode(line)) throw new Error(`selftest: junk passed the filter: ${line}`)
+  for (const line of prose) if (looksLikeCode(line)) throw new Error(`selftest: prose rejected by the filter: ${line}`)
+  if (readmePoints(junk.concat(prose).join('\n'), 6).length !== prose.length) throw new Error('selftest: readmePoints kept the wrong lines')
+  console.log(JSON.stringify({ ok: true, selftest: 'source-scrape junk filter' }))
+  process.exit(0)
+}
+
 const records = await listRecords()
 const clusters = new Map()
 for (const record of records) {
@@ -847,8 +1023,19 @@ async function processPart(part, parts, index) {
       let material
       if (ENRICH) {
         try {
-          const deterministic = await enrichClusterFromGithub(part, sources) || await enrichClusterFromSources(part, sources)
-          const { enriched, addedSources, addedFacts } = deterministic || await enrichCluster(part, sources)
+          // GitHub API/README is a real primary source, so it stays first. The
+          // generic page-scrape path builds a canned topic template and skips the
+          // LLM atomizer, so it only runs when the LLM enricher gave nothing.
+          let deterministic = await enrichClusterFromGithub(part, sources)
+          let llmEnriched = null
+          if (!deterministic) {
+            llmEnriched = await enrichCluster(part, sources).catch(() => null)
+            if (!llmEnriched?.enriched || (llmEnriched.addedFacts || []).length < MIN_ADDED_FACTS) {
+              deterministic = await enrichClusterFromSources(part, sources)
+              if (deterministic) llmEnriched = null
+            }
+          }
+          const { enriched, addedSources, addedFacts } = deterministic || llmEnriched || { enriched: '', addedSources: [], addedFacts: [] }
           if (enriched && enriched.length > 200) {
             material = enriched
             for (const u of addedSources) if (!sources.some(s => s.url === u)) sources.push({ name: hostOf(u) || 'Source', url: u })
@@ -875,15 +1062,25 @@ async function processPart(part, parts, index) {
         : await atomizeCluster(part, sources, material)
       let wroteAtom = false
       const allowedSourceUrls = new Set(sources.map(source => source.url).filter(isPublicHttpUrl))
+      // Atom verdicts are independent read-only calls, so they are collected in
+      // parallel (same verifyDeep args — call quality is unchanged). File writes
+      // and counters stay serial. Cap via MNEMAZINE_VERIFY_CONCURRENCY.
+      const pendingAtoms = []
       for (const atom of atoms) {
         atom.sources = (atom.sources || []).filter(url => allowedSourceUrls.has(url))
         const out = path.join(VAULT, '01 Concepts', `synthesis-${slugify(atom.title)}-${atomFingerprint(atom, part.id)}.md`)
         if (await fs.access(out).then(() => true).catch(() => false)) { skipped += 1; continue }
-        const verdict = part.enrichment?.deterministic
-          ? { status: 'verified', checked: atom.sources || [], evidence: part.enrichment.kind === 'github' ? 'Fetched GitHub API/README/release for primary-source enrichment.' : 'Fetched public source pages from configured source hints.', note: `deterministic ${part.enrichment.kind} source check` }
+        pendingAtoms.push({ atom, out, verdict: null })
+      }
+      const VERIFY_CONCURRENCY = Math.max(1, Number(process.env.MNEMAZINE_VERIFY_CONCURRENCY || '8'))
+      await mapLimit(pendingAtoms, VERIFY_CONCURRENCY, async (entry) => {
+        entry.verdict = part.enrichment?.deterministic
+          ? { status: 'verified', checked: entry.atom.sources || [], evidence: part.enrichment.kind === 'github' ? 'Fetched GitHub API/README/release for primary-source enrichment.' : 'Fetched public source pages from configured source hints.', note: `deterministic ${part.enrichment.kind} source check` }
           : DEEP
-            ? await verifyDeep(`${atom.what}\n${atom.why}`, atom.sources)
-            : verifyLocal(atom.sources)
+            ? await verifyDeep(`${entry.atom.what}\n${entry.atom.why}`, entry.atom.sources, { provider: VERIFIER_PROVIDER, label: `verify:${part.id}` })
+            : verifyLocal(entry.atom.sources)
+      })
+      for (const { atom, out, verdict } of pendingAtoms) {
         if (STRICT_ENRICH && verdict.status !== 'verified') {
           console.error(`[synthesize] strict verification rejected atom "${atom.title}": ${verdict.status}`)
           continue
@@ -893,8 +1090,16 @@ async function processPart(part, parts, index) {
         wroteAtom = true
       }
       if (wroteAtom) return // atomized this cluster — skip the template note
-      if (STRICT_ENRICH) throw new Error(`strict verification failed for cluster ${part.id}: no verified atoms`)
-      console.error(`[synthesize] atomize produced no atoms for cluster ${part.id}; using template note`)
+      // Strict verify rejected every atom. Writing nothing leaves the source
+      // "unvisited": the next run re-atomizes it, gets fresh fingerprints and
+      // re-verifies from scratch — the loop that burned 1755 verify calls on one
+      // source. Fall through to the honest draft note instead (its own verdict
+      // fields stay unverified), so the source has an artifact and stops recurring.
+      if (STRICT_ENRICH) {
+        console.error(`[synthesize] strict verification rejected all atoms for cluster ${part.id}; writing honest draft note instead of looping`)
+      } else {
+        console.error(`[synthesize] atomize produced no atoms for cluster ${part.id}; using template note`)
+      }
     } catch (err) {
       if (STRICT_ENRICH) throw err
       console.error(`[synthesize] atomize failed for cluster ${part.id}: ${err.message}; using template note`)
@@ -922,7 +1127,10 @@ for (const cluster of clusters.values()) {
 }
 // Swarm only helps when each task spawns an agent (deep); local template writes
 // stay serial. Cap concurrency so we are cheap+fast, not a fork bomb.
-const CONCURRENCY = Number(arg('concurrency', process.env.MNEMAZINE_CONCURRENCY || '4'))
+// Premium-tier CLIs are rate-limited/expensive → run atomization serial; cheaper
+// tiers parallelize. Read from the registry (cost_tier), never a name list.
+const DEFAULT_CONCURRENCY = providerCostTier(RESOLVED_ATOMIZER_PROVIDER) === 'premium' ? '1' : '4'
+const CONCURRENCY = Number(arg('concurrency', process.env.MNEMAZINE_CONCURRENCY || DEFAULT_CONCURRENCY))
 await mapLimit(tasks, useAtomize ? CONCURRENCY : 1, async ({ part, parts, index }) => {
   // Outer guard: a part must never break the swarm, even on an unexpected throw.
   try { await processPart(part, parts, index) }

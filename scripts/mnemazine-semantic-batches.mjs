@@ -30,8 +30,12 @@ const BATCH_SIZE = Math.max(1, Number(arg('batch-size', process.env.MNEMAZINE_SE
 const START = Math.max(0, Number(arg('start', '0')))
 const LIMIT = Number(arg('limit', '0'))
 const EXCERPT_CHARS = Math.max(300, Number(arg('excerpt-chars', process.env.MNEMAZINE_SEMANTIC_EXCERPT_CHARS || '900')))
+const MAX_TOKENS = Math.max(120, Number(arg('max-tokens', process.env.MNEMAZINE_SEMANTIC_MAX_TOKENS || '360')))
+const CACHE_DIR = path.resolve(arg('cache-dir', process.env.MNEMAZINE_SEMANTIC_CACHE_DIR || path.join(VAULT, '.mnemazine/semantic-cache')))
+const USE_CACHE = !flag('no-cache')
 const DRY_RUN = flag('dry-run')
 const CLUSTER_ONLY = !flag('no-cluster')
+const CACHE_VERSION = 1
 
 async function walk(dir) {
   const out = []
@@ -88,7 +92,7 @@ async function ollamaJson(noteText) {
   const body = {
     model: MODEL,
     temperature: 0,
-    max_tokens: 360,
+    max_tokens: MAX_TOKENS,
     messages: [{
       role: 'user',
       content: `Extract 3-5 durable concept nodes and 2-4 relationships from this note. Return ONLY JSON: {"nodes":[{"id":"short-id","label":"Label"}],"edges":[{"source":"id","target":"id","relation":"relates_to"}]}.\n\nNote:\n${noteText}`
@@ -106,7 +110,13 @@ async function ollamaJson(noteText) {
 
 async function extractFile(file) {
   const rel = path.relative(VAULT, file)
-  const text = excerpt(await fs.readFile(file, 'utf8'))
+  const raw = await fs.readFile(file, 'utf8')
+  const text = excerpt(raw)
+  const cache = cachePath(rel, raw)
+  if (USE_CACHE) {
+    const cached = await readCache(cache)
+    if (cached) return { rel, graph: cached.graph, cached: true, cache }
+  }
   const parsed = BACKEND === 'ollama'
     ? await ollamaJson(text)
     : (() => { throw new Error(`unsupported backend ${BACKEND}`) })()
@@ -133,7 +143,45 @@ async function extractFile(file) {
       source_file: rel
     }))
     .filter(edge => edge.source && edge.target && edge.source !== edge.target)
-  return { rel, graph: { nodes, links } }
+  const graph = { nodes, links }
+  if (USE_CACHE) await writeCache(cache, { rel, graph })
+  return { rel, graph, cached: false, cache }
+}
+
+function cachePath(rel, rawText) {
+  const key = crypto.createHash('sha256').update(JSON.stringify({
+    version: CACHE_VERSION,
+    rel,
+    backend: BACKEND,
+    model: MODEL,
+    excerpt_chars: EXCERPT_CHARS,
+    max_tokens: MAX_TOKENS,
+    text_sha256: crypto.createHash('sha256').update(rawText).digest('hex')
+  })).digest('hex')
+  return path.join(CACHE_DIR, `${key}.json`)
+}
+
+async function readCache(file) {
+  if (!existsSync(file)) return null
+  try {
+    const cached = JSON.parse(await fs.readFile(file, 'utf8'))
+    return cached?.graph?.nodes && cached?.graph?.links ? cached : null
+  } catch {
+    return null
+  }
+}
+
+async function writeCache(file, value) {
+  await fs.mkdir(path.dirname(file), { recursive: true })
+  await fs.writeFile(file, `${JSON.stringify({
+    version: CACHE_VERSION,
+    backend: BACKEND,
+    model: MODEL,
+    excerpt_chars: EXCERPT_CHARS,
+    max_tokens: MAX_TOKENS,
+    created_at: new Date().toISOString(),
+    ...value
+  }, null, 2)}\n`, 'utf8')
 }
 
 function run(command, args) {
@@ -160,7 +208,10 @@ async function main() {
     selected: selected.length,
     start: START,
     batch_size: BATCH_SIZE,
-    excerpt_chars: EXCERPT_CHARS
+    excerpt_chars: EXCERPT_CHARS,
+    max_tokens: MAX_TOKENS,
+    cache_dir: CACHE_DIR,
+    cache: USE_CACHE
   }
   if (DRY_RUN) {
     console.log(JSON.stringify({ ok: true, dry_run: true, ...plan }, null, 2))
@@ -181,7 +232,9 @@ async function main() {
       batch.results.push({
         file: extracted.rel,
         nodes: extracted.graph.nodes.length,
-        edges: extracted.graph.links.length
+        edges: extracted.graph.links.length,
+        cached: extracted.cached,
+        cache: extracted.cache
       })
     }
     await writeGraph(GRAPH, base)

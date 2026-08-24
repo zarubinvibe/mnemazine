@@ -8,6 +8,7 @@ import {
   readGraph,
   writeGraph
 } from './mnemazine-graph-utils.mjs'
+import { resolveVault } from './mnemazine-paths.mjs'
 
 const argv = process.argv.slice(2)
 
@@ -21,7 +22,7 @@ function hasFlag(name) {
   return argv.includes(`--${name}`)
 }
 
-const graphPath = path.resolve(arg('graph', path.join(process.env.HOME || '.', 'Мозг/graphify-out/graph.json')))
+const graphPath = path.resolve(arg('graph') || path.join(resolveVault({ requireExists: false }), 'graphify-out', 'graph.json'))
 const outPath = arg('out', '')
 const apply = hasFlag('apply')
 

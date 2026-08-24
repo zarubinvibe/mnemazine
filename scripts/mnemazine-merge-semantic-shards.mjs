@@ -49,7 +49,7 @@ function withoutSourceFiles(graph, files) {
 async function main() {
   const vault = resolveVault({ cli: arg('vault') })
   const graphPath = path.resolve(arg('graph', path.join(vault, 'graphify-out/graph.json')))
-  const shardsDir = path.resolve(arg('shards-dir', path.join(vault, '.mnemazine/semantic-shards')))
+  const shardsDir = path.resolve(arg('shards-dir', process.env.MNEMAZINE_SEMANTIC_SHARDS_DIR || path.join(vault, '.mnemazine/semantic-shards')))
   const manifestPath = arg('manifest', '')
   const noBackup = flag('no-backup')
   if (!existsSync(graphPath)) throw new Error(`graph not found: ${graphPath}`)

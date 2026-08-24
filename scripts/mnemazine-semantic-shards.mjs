@@ -5,6 +5,7 @@ import path from 'node:path'
 import os from 'node:os'
 import { spawn } from 'node:child_process'
 import { graphStats, mergeGraphObjects, readGraph, writeGraph } from './mnemazine-graph-utils.mjs'
+import { resolveVault } from './mnemazine-paths.mjs'
 
 const argv = process.argv.slice(2)
 const ROOT = path.resolve(process.cwd())
@@ -19,7 +20,7 @@ function hasFlag(name) {
   return argv.includes(`--${name}`)
 }
 
-const VAULT = path.resolve(arg('vault', process.env.MNEMAZINE_VAULT || path.join(process.env.HOME || '.', 'Мозг')))
+const VAULT = resolveVault({ cli: arg('vault') })
 const GRAPHIFY_OUT = path.join(VAULT, 'graphify-out')
 const GRAPH_PATH = path.join(GRAPHIFY_OUT, 'graph.json')
 const BACKEND = arg('backend', process.env.MNEMAZINE_GRAPHIFY_BACKEND || 'openai')
@@ -54,15 +55,19 @@ async function keychain(service) {
   return result.stdout.trim()
 }
 
+// Graph-backend credential map as DATA (env vars + keychain service per backend),
+// not a per-provider code branch. New backend = one row here.
+// ponytail: graph-backend axis, separate from the CLI-connector registry.
+const BACKEND_CREDENTIALS = {
+  openai: { env: ['OPENAI_API_KEY'], keychain: 'mnemazine/openai_api_key' },
+  kimi: { env: ['KIMI_API_KEY', 'MOONSHOT_API_KEY'], keychain: 'mnemazine/moonshot_api_key' }
+}
+
 async function apiEnv() {
-  if (BACKEND === 'openai') {
-    return { OPENAI_API_KEY: process.env.OPENAI_API_KEY || await keychain('mnemazine/openai_api_key') }
-  }
-  if (BACKEND === 'kimi') {
-    const key = process.env.KIMI_API_KEY || process.env.MOONSHOT_API_KEY || await keychain('mnemazine/moonshot_api_key')
-    return { KIMI_API_KEY: key, MOONSHOT_API_KEY: key }
-  }
-  return {}
+  const spec = BACKEND_CREDENTIALS[BACKEND]
+  if (!spec) return {}
+  const key = spec.env.map(name => process.env[name]).find(Boolean) || await keychain(spec.keychain)
+  return Object.fromEntries(spec.env.map(name => [name, key]))
 }
 
 async function walkMarkdown(dir) {

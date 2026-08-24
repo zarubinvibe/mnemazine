@@ -6,3 +6,5 @@ reportlab
 pillow
 openai-whisper
 graphifyy
+pymorphy3
+razdel

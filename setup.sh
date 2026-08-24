@@ -11,14 +11,9 @@ ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 DRY="${MNEMAZINE_SETUP_DRYRUN:-0}"
 KNOWN_HOSTS="$ROOT/.mnemazine/known_hosts"
 
-# ---- ui helpers -------------------------------------------------------------
-b() { printf '\033[1m%s\033[0m\n' "$*"; }
-ok() { printf '  \033[32m✓\033[0m %s\n' "$*"; }
-no() { printf '  \033[31m✗\033[0m %s\n' "$*"; }
-note() { printf '  • %s\n' "$*"; }
-stage() { printf '\n\033[1m\033[36m── Этап %s ──\033[0m %s\n' "$1" "$2"; }
-miss() { printf '\n  \033[33mДруг, значит %s тебе не оставим.\033[0m %s\n' "$1" "${2:-}"; }
-halt() { printf '\n\033[1mУстанови вот это, потом запусти setup.sh снова — перейдём к следующему этапу.\033[0m\n'; exit 1; }
+# ---- ui helpers (shared with install.sh) -----------------------------------
+# shellcheck source=scripts/mnemazine-ui.sh
+. "$ROOT/scripts/mnemazine-ui.sh"
 
 # ask_choice "Question?" "opt1" "opt2" ... -> sets REPLY_IDX (1-based) and REPLY_VAL
 ask_choice() {
@@ -28,22 +23,22 @@ ask_choice() {
   for i in "${!opts[@]}"; do printf '  %d) %s\n' $((i+1)) "${opts[$i]}"; done
   local sel
   while true; do
-    printf 'Выбери [1-%d]: ' "${#opts[@]}"
+    printf '%s' "$(L "Выбери [1-${#opts[@]}]: " "Choose [1-${#opts[@]}]: ")"
     if ! read -r sel; then
-      printf '\nНет TTY (ввод закрыт). Запусти setup.sh интерактивно или используй install.sh без вопросов.\n' >&2
+      printf '\n%s\n' "$(L 'Нет TTY (ввод закрыт). Запусти setup.sh интерактивно или install.sh без вопросов.' 'No TTY (input closed). Run setup.sh interactively, or install.sh without questions.')" >&2
       exit 1
     fi
     if [[ "$sel" =~ ^[0-9]+$ ]] && [ "$sel" -ge 1 ] && [ "$sel" -le "${#opts[@]}" ]; then
       REPLY_IDX="$sel"; REPLY_VAL="${opts[$((sel-1))]}"; return 0
     fi
-    no "Не понял. Введи число от 1 до ${#opts[@]}."
+    no "$(L "Не понял. Введи число от 1 до ${#opts[@]}." "Didn't get it. Enter a number from 1 to ${#opts[@]}.")"
   done
 }
 
 ask_text() { # ask_text "prompt" [silent] -> REPLY_TXT
   local p="$1" silent="${2:-}"
-  if [ "$silent" = "secret" ]; then printf '%s: ' "$p"; read -rs REPLY_TXT || { printf '\nНет TTY.\n' >&2; exit 1; }; printf '\n'
-  else printf '%s: ' "$p"; read -r REPLY_TXT || { printf '\nНет TTY.\n' >&2; exit 1; }; fi
+  if [ "$silent" = "secret" ]; then printf '%s: ' "$p"; read -rs REPLY_TXT || { printf '\n%s\n' "$(L 'Нет TTY.' 'No TTY.')" >&2; exit 1; }; printf '\n'
+  else printf '%s: ' "$p"; read -r REPLY_TXT || { printf '\n%s\n' "$(L 'Нет TTY.' 'No TTY.')" >&2; exit 1; }; fi
 }
 
 run() { # run a command unless dry-run
@@ -55,106 +50,153 @@ sq() {
   printf "'%s'" "$(printf "%s" "$1" | sed "s/'/'\\\\''/g")"
 }
 
-b "Mnemazine — установка по шагам."
-note "Каждый этап завершается прежде чем начнётся следующий."
-[ "$DRY" = "1" ] && note "DRY RUN — ничего не ставится и не деплоится."
+keychain_account() {
+  printf '%s' "${MNEMAZINE_TELEGRAM_KEYCHAIN_ACCOUNT:-telegram-bot}"
+}
+
+keychain_store_token() {
+  local token="$1" account
+  account="$(keychain_account)"
+  if ! command -v security >/dev/null 2>&1; then
+    if [ "$DRY" = "1" ]; then
+      note "[dry] security add-generic-password -s mnemazine-telegram -a $account -w <token>"
+      return 0
+    fi
+    no "$(L 'macOS Keychain недоступен: команда security не найдена.' 'macOS Keychain unavailable: the security command is missing.')"
+    halt
+  fi
+  run security add-generic-password -U -s mnemazine-telegram -a "$account" -w "$token"
+  ok "$(L "Токен сохранён в Keychain: service=mnemazine-telegram account=$account." "Token stored in Keychain: service=mnemazine-telegram account=$account.")"
+}
+
+keychain_read_token() {
+  local account
+  account="$(keychain_account)"
+  security find-generic-password -s mnemazine-telegram -a "$account" -w 2>/dev/null
+}
+
+b "$(L 'Mnemazine — установка по шагам.' 'Mnemazine — step-by-step install.')"
+note ""
+note "$(L 'Что это. Система превращает то, что вы сохраняете — скриншоты, статьи, PDF, видео —' 'What this is. The system turns what you save — screenshots, articles, PDFs, videos —')"
+note "$(L 'в готовые заметки: разбирает материал, проверяет источник, связывает с тем, что уже есть.' 'into finished notes: it reads the material, checks the source, links it to what you already have.')"
+note "$(L 'Заметки лежат обычными файлами Markdown — их читает Obsidian и любой редактор.' 'Notes are plain Markdown files — Obsidian and any editor can read them.')"
+note ""
+note "$(L 'Что сейчас будет. Семь коротких этапов, примерно пять минут. Четыре вопроса — меню:' 'What happens now. Seven short stages, about five minutes. Four questions are menus:')"
+note "$(L 'куда класть входящие, чем разбирать материал, нужен ли Telegram-бот, есть ли сервер.' 'where incoming files land, what parses the material, whether you want a Telegram bot, whether you have a server.')"
+note "$(L 'Ничего необратимого: прервать можно в любой момент через Ctrl+C.' 'Nothing is irreversible: stop at any moment with Ctrl+C.')"
+note "$(L 'Посмотреть весь путь, ничего не устанавливая: MNEMAZINE_SETUP_DRYRUN=1 bash setup.sh' 'Preview the whole path without installing: MNEMAZINE_SETUP_DRYRUN=1 bash setup.sh')"
+note ""
+note "$(L 'Каждый этап завершается прежде чем начнётся следующий.' 'Each stage finishes before the next begins.')"
+[ "$DRY" = "1" ] && note "$(L 'DRY RUN — ничего не ставится и не деплоится.' 'DRY RUN — nothing is installed or deployed.')"
 
 # ---- Stage 1: base environment (hard gate) ---------------------------------
-stage 1 "Базовое окружение (обязательно)"
+stage "1/7" "$(L 'Базовое окружение (обязательно)' 'Base environment (required)')"
 fail=0
-if command -v git >/dev/null 2>&1; then ok "git"; else no "git нет"; note "macOS: xcode-select --install · Linux: apt install git"; fail=1; fi
+if command -v git >/dev/null 2>&1; then ok "git"; else no "$(L 'git нет' 'git missing')"; note "macOS: xcode-select --install · Linux: apt install git"; fail=1; fi
 if command -v node >/dev/null 2>&1; then
   ver="$(node -p 'process.versions.node.split(".")[0]' 2>/dev/null || echo 0)"
-  if [ "$ver" -ge 20 ]; then ok "node $(node -v)"; else no "node слишком старый ($(node -v)), нужен >=20"; note "https://nodejs.org или nvm install 20"; fail=1; fi
-else no "node нет (нужен >=20)"; note "https://nodejs.org или: brew install node"; fail=1; fi
+  if [ "$ver" -ge 20 ]; then ok "node $(node -v)"; else no "$(L "node слишком старый ($(node -v)), нужен >=20" "node too old ($(node -v)), need >=20")"; note "https://nodejs.org · nvm install 20"; fail=1; fi
+else no "$(L 'node нет (нужен >=20)' 'node missing (need >=20)')"; note "https://nodejs.org · brew install node"; fail=1; fi
 [ "$fail" = "1" ] && halt
-ok "База готова."
+ok "$(L 'База готова.' 'Base ready.')"
 
 # ---- Stage 2: local engines (optional, degrade gracefully) -----------------
-stage 2 "Локальные движки распознавания (по желанию — экономят токены)"
+stage "2/7" "$(L 'Локальные движки распознавания (по желанию — экономят токены)' 'Local recognition engines (optional — they save tokens)')"
+note "$(L 'Зачем: текст со скриншотов и речь из видео читаются на вашем компьютере, без облака и без токенов.' 'Why: text on screenshots and speech in video are read on your machine — no cloud, no tokens.')"
+note "$(L 'Чего нет — подскажу команду установки; можно поставить позже, система будет работать и без них.' 'Anything missing gets an exact install command; you can add it later — the system works without it.')"
 have_py=0; have_ff=0; have_whisper=0; have_swift=0
-command -v python3 >/dev/null 2>&1 && { ok "python3 (markitdown: PDF/DOCX/PPTX/XLSX/HTML)"; have_py=1; } || miss "разбор офис-файлов локально" "поставь python3 — иначе их распознает LLM в deep-режиме."
-command -v ffmpeg  >/dev/null 2>&1 && { ok "ffmpeg (видео-кадры/аудио)"; have_ff=1; } || miss "локальную обработку видео/аудио" "brew install ffmpeg / apt install ffmpeg."
-command -v whisper >/dev/null 2>&1 && { ok "whisper (транскрипт речи)"; have_whisper=1; } || miss "локальный транскрипт речи" "pip install openai-whisper — иначе только субтитры/LLM."
+command -v python3 >/dev/null 2>&1 && { ok "python3 (markitdown: PDF/DOCX/PPTX/XLSX/HTML)"; have_py=1; } || miss "$(L 'Разбор офис-файлов локально не оставим:' 'No local office-file parsing:')" "$(L 'поставь python3 — иначе их распознает LLM в deep-режиме.' 'install python3 — otherwise the LLM reads them in deep mode.')"
+command -v ffmpeg  >/dev/null 2>&1 && { ok "ffmpeg $(L '(видео-кадры/аудио)' '(video frames/audio)')"; have_ff=1; } || miss "$(L 'Локальную обработку видео/аудио не оставим:' 'No local video/audio processing:')" "brew install ffmpeg · apt install ffmpeg."
+command -v whisper >/dev/null 2>&1 && { ok "whisper $(L '(транскрипт речи)' '(speech transcript)')"; have_whisper=1; } || miss "$(L 'Локальный транскрипт речи не оставим:' 'No local speech transcript:')" "$(L 'pip install openai-whisper — иначе только субтитры/LLM.' 'pip install openai-whisper — otherwise only subtitles/LLM.')"
 if [ "$(uname)" = "Darwin" ]; then
-  command -v swiftc >/dev/null 2>&1 && { ok "swiftc (Apple Vision OCR картинок)"; have_swift=1; } || miss "Apple Vision OCR" "xcode-select --install — картинки распознает LLM."
+  command -v swiftc >/dev/null 2>&1 && { ok "swiftc (Apple Vision OCR)"; have_swift=1; } || miss "Apple Vision OCR:" "$(L 'xcode-select --install — иначе картинки распознает LLM.' 'xcode-select --install — otherwise images are read by the LLM.')"
 else
-  miss "Apple Vision OCR" "доступен только на macOS — на этом устройстве картинки распознает LLM."
+  miss "Apple Vision OCR:" "$(L 'доступен только на macOS — на этом устройстве картинки распознает LLM.' 'macOS only — images are read by the LLM on this device.')"
 fi
-note "Это не блокеры. Каркас поставится и без них."
+note "$(L 'Это не блокеры. Каркас поставится и без них.' 'These are not blockers. The skeleton installs without them.')"
 
 # ---- Stage 3: inbox location (required question) ---------------------------
-stage 3 "Куда класть inbox?"
-ask_choice "Входящие материалы будут падать сюда:" \
-  "На рабочий стол — $HOME/Desktop/Mnemazine Inbox" \
-  "Внутри репозитория — $ROOT/inbox"
+stage "3/7" "$(L 'Куда класть inbox?' 'Where does the inbox go?')"
+note "$(L 'Зачем: это единственная папка, куда вы бросаете материал. Всё остальное система делает сама.' 'Why: this is the one folder you drop material into. The system handles everything after that.')"
+ask_choice "$(L 'Входящие материалы будут падать сюда:' 'Incoming material lands here:')" \
+  "$(L 'На рабочий стол' 'On the Desktop') — $HOME/Desktop/Mnemazine Inbox" \
+  "$(L 'Внутри репозитория' 'Inside the repo') — $ROOT/inbox"
 if [ "$REPLY_IDX" = "1" ]; then INBOX="$HOME/Desktop/Mnemazine Inbox"; else INBOX="$ROOT/inbox"; fi
 ok "Inbox: $INBOX"
 
 # ---- Stage 4: LLM provider (deep mode) -------------------------------------
-stage 4 "LLM-провайдер для deep-режима (атомизация/обогащение/проверка)"
+stage "4/7" "$(L 'LLM-провайдер для deep-режима (атомизация/обогащение/проверка)' 'LLM provider for deep mode (atomize/enrich/verify)')"
+note "$(L 'Зачем: глубокий режим режет материал на отдельные мысли, ищет источники и проверяет утверждения.' 'Why: deep mode splits material into separate ideas, finds sources and checks claims.')"
+note "$(L 'Без него система тоже работает — извлекает текст и раскладывает файлы, но не проверяет факты.' 'Without it the system still works — it extracts text and files things away, but does not verify facts.')"
 has_claude=0; has_codex=0
 command -v claude >/dev/null 2>&1 && has_claude=1
 command -v codex  >/dev/null 2>&1 && has_codex=1
 if [ "$has_claude" = "1" ] || [ "$has_codex" = "1" ]; then
-  opts=(); [ "$has_claude" = "1" ] && opts+=("Claude CLI"); [ "$has_codex" = "1" ] && opts+=("Codex CLI"); opts+=("Без deep — только локальный разбор")
-  ask_choice "Найдены провайдеры. Чем работать?" "${opts[@]}"
+  opts=(); [ "$has_claude" = "1" ] && opts+=("Claude CLI"); [ "$has_codex" = "1" ] && opts+=("Codex CLI"); opts+=("$(L 'Без deep — только локальный разбор' 'No deep — local parsing only')")
+  ask_choice "$(L 'Найдены провайдеры. Чем работать?' 'Providers found. Which one?')" "${opts[@]}"
   case "$REPLY_VAL" in
     "Claude CLI") LLM=claude ;; "Codex CLI") LLM=codex ;; *) LLM="" ;;
   esac
-  [ -n "$LLM" ] && ok "Провайдер: $LLM" || ok "Deep выключен (conservative, 0 токенов)."
+  [ -n "$LLM" ] && ok "$(L "Провайдер: $LLM" "Provider: $LLM")" || ok "$(L 'Deep выключен (conservative, 0 токенов).' 'Deep off (conservative, 0 tokens).')"
 else
   LLM=""
-  miss "deep-режим (атомизация/обогащение через LLM)" "не найден ни claude, ни codex CLI. Каркас и локальный разбор работают."
+  miss "$(L 'deep-режим (атомизация/обогащение через LLM) не оставим:' 'no deep mode (LLM atomize/enrich):')" "$(L 'не найден ни claude, ни codex CLI. Каркас и локальный разбор работают.' 'neither claude nor codex CLI found. Skeleton and local parsing still work.')"
 fi
 
 # ---- Stage 5: Telegram bot --------------------------------------------------
-stage 5 "Telegram-бот для приёма входящих"
+stage "5/7" "$(L 'Telegram-бот для приёма входящих' 'Telegram bot for intake')"
+note "$(L 'Зачем: увидели что-то с телефона — отправили боту, и материал уже в инбоксе. Шаг необязательный.' 'Why: spot something on your phone, send it to the bot, and it is already in the inbox. Optional step.')"
 BOT_TOKEN=""; BOT_MODE="none"
-ask_choice "Подключить Telegram-бота? (шлёшь боту — падает в inbox)" "Да" "Нет"
+ask_choice "$(L 'Подключить Telegram-бота? (шлёшь боту — падает в inbox)' 'Connect a Telegram bot? (send it a file — it lands in the inbox)')" "$(L 'Да' 'Yes')" "$(L 'Нет' 'No')"
 if [ "$REPLY_IDX" = "1" ]; then
-  ask_text "Вставь токен бота от @BotFather" secret; BOT_TOKEN="$REPLY_TXT"
+  ask_text "$(L 'Вставь токен бота от @BotFather' 'Paste the bot token from @BotFather')" secret; BOT_TOKEN="$REPLY_TXT"
   if [ -z "$BOT_TOKEN" ]; then
-    miss "Telegram-бота" "токен пустой — пропускаем."
+    miss "$(L 'Telegram-бота не оставим:' 'no Telegram bot:')" "$(L 'токен пустой — пропускаем.' 'token empty — skipping.')"
+    note "$(L 'Как включить бота позже — docs/telegram-intake.md.' 'How to enable the bot later — docs/telegram-intake.md.')"
   else
-    ok "Токен принят (в git не пишем)."
-    b "Бот должен идти через VPS (всегда-онлайн, принимает пока твоё устройство спит)."
-    ask_choice "Есть VPS для бота?" "Да, есть VPS" "Нет VPS"
+    ok "$(L 'Токен принят (в git не пишем).' 'Token accepted (never written to git).')"
+    keychain_store_token "$BOT_TOKEN"
+    BOT_TOKEN=""
+    b "$(L 'Бот должен идти через VPS (всегда-онлайн, принимает пока твоё устройство спит).' 'The bot needs a VPS (always-on, receives while your device sleeps).')"
+    ask_choice "$(L 'Есть VPS для бота?' 'Do you have a VPS for the bot?')" "$(L 'Да, есть VPS' 'Yes, I have a VPS')" "$(L 'Нет VPS' 'No VPS')"
     if [ "$REPLY_IDX" = "1" ]; then
-      ask_text "VPS (user@host)"; BOT_VPS="$REPLY_TXT"
-      ask_text "Путь к SSH-ключу (Enter = ~/.ssh/id_rsa)"; BOT_KEY="${REPLY_TXT:-$HOME/.ssh/id_rsa}"
-      ask_text "SSH fingerprint хоста (SHA256:..., из панели VPS или ssh-keygen -lf)"; BOT_FP="$REPLY_TXT"
-      [ -z "$BOT_FP" ] && { no "fingerprint пустой — небезопасно."; halt; }
+      ask_text "$(L 'VPS (user@host)' 'VPS (user@host)')"; BOT_VPS="$REPLY_TXT"
+      ask_text "$(L 'Путь к SSH-ключу (Enter = ~/.ssh/id_rsa)' 'SSH key path (Enter = ~/.ssh/id_rsa)')"; BOT_KEY="${REPLY_TXT:-$HOME/.ssh/id_rsa}"
+      ask_text "$(L 'SSH fingerprint хоста (SHA256:..., из панели VPS или ssh-keygen -lf)' 'Host SSH fingerprint (SHA256:..., from the VPS panel or ssh-keygen -lf)')"; BOT_FP="$REPLY_TXT"
+      [ -z "$BOT_FP" ] && { no "$(L 'fingerprint пустой — небезопасно.' 'fingerprint empty — unsafe.')"; halt; }
       if [ "$DRY" != "1" ]; then
         mkdir -p "$ROOT/.mnemazine"
         touch "$KNOWN_HOSTS"
         MNEMAZINE_VPS="$BOT_VPS" MNEMAZINE_VPS_KEY="$BOT_KEY" MNEMAZINE_VPS_HOST_FINGERPRINT="$BOT_FP" bash "$ROOT/scripts/mnemazine-pin-vps-host.sh"
       fi
       if [ "$DRY" != "1" ] && ! ssh -i "$BOT_KEY" -o UserKnownHostsFile="$KNOWN_HOSTS" -o StrictHostKeyChecking=yes -o ConnectTimeout=10 "$BOT_VPS" 'command -v node >/dev/null && command -v pm2 >/dev/null' 2>/dev/null; then
-        no "VPS недоступен или нет node+pm2."
+        no "$(L 'VPS недоступен или нет node+pm2.' 'VPS unreachable or missing node+pm2.')"
         halt
       fi
-      BOT_MODE="vps"; ok "VPS на связи (node+pm2 есть)."
+      BOT_MODE="vps"; ok "$(L 'VPS на связи (node+pm2 есть).' 'VPS reachable (node+pm2 present).')"
     else
-      miss "бота через VPS" "Без VPS постоянного приёма нет. Можешь запускать бота локально, пока устройство включено."
+      miss "$(L 'бота через VPS не оставим:' 'no bot over a VPS:')" "$(L 'Без VPS постоянного приёма нет. Можешь запускать бота локально, пока устройство включено.' 'Without a VPS there is no round-the-clock intake. You can run the bot locally while your device is on.')"
+      note "$(L 'Как жить без VPS — docs/telegram-intake.md.' 'Living without a VPS — docs/telegram-intake.md.')"
       BOT_MODE="manual"
     fi
   fi
 else
-  note "Бот пропущен."
+  note "$(L 'Бот пропущен.' 'Bot skipped.')"
+  note "$(L 'Захочешь позже — docs/telegram-intake.md.' 'If you want it later — docs/telegram-intake.md.')"
 fi
 
 # ---- Stage 6: build the skeleton -------------------------------------------
-stage 6 "Ставлю каркас Mnemazine"
-ok "Запускаю install.sh (vault, папки, venv, OCR-сборка)…"
-if ! MNEMAZINE_FROM_SETUP=1 MNEMAZINE_ROOT="$ROOT" MNEMAZINE_INBOX="$INBOX" run bash "$ROOT/install.sh"; then
-  no "install.sh завершился с ошибкой — каркас не собран."
+stage "6/7" "$(L 'Ставлю каркас Mnemazine' 'Building the Mnemazine skeleton')"
+note "$(L 'Зачем: создаю папки базы знаний и служебные файлы. Ничего за пределами проекта без спроса не трогаю.' 'Why: creating the knowledge-base folders and service files. Nothing outside the project is touched without asking.')"
+ok "$(L 'Запускаю install.sh (vault, папки, venv, OCR-сборка)…' 'Running install.sh (vault, folders, venv, OCR build)…')"
+if ! MNEMAZINE_FROM_SETUP=1 MNEMAZINE_YES=1 MNEMAZINE_ROOT="$ROOT" MNEMAZINE_INBOX="$INBOX" run bash "$ROOT/install.sh"; then
+  no "$(L 'install.sh завершился с ошибкой — каркас не собран.' 'install.sh failed — skeleton not built.')"
   halt
 fi
 
 # deploy bot if VPS path chosen
 if [ "$BOT_MODE" = "vps" ]; then
-  stage 6.1 "Деплой бота на VPS"
+  stage "6.1" "$(L 'Деплой бота на VPS' 'Deploying the bot to the VPS')"
   REMOTE_ROOT="mnemazine"
   REMOTE_INBOX="$REMOTE_ROOT/inbox"
   REMOTE_BOT="$REMOTE_ROOT/bot"
@@ -166,46 +208,82 @@ if [ "$BOT_MODE" = "vps" ]; then
 MNEMAZINE_VPS="$BOT_VPS"
 MNEMAZINE_VPS_KEY="$BOT_KEY"
 MNEMAZINE_REMOTE_INBOX="$REMOTE_INBOX"
+MNEMAZINE_INBOX="$INBOX"
 MNEMAZINE_REMOTE_MUTATION=1
+MNEMAZINE_PUSH_REPORTS=0
 CFG
     umask 022
-    ok "Записал .mnemazine/config.env (chmod 600, gitignored)."
+    ok "$(L 'Записал .mnemazine/config.env (chmod 600, gitignored).' 'Wrote .mnemazine/config.env (chmod 600, gitignored).')"
   fi
   if [ "$DRY" = "1" ]; then
     note "[dry] scp bot → $BOT_VPS:$REMOTE_BOT/ ; pm2 start с токеном"
   else
     SSH_OPTS=(-i "$BOT_KEY" -o "UserKnownHostsFile=$KNOWN_HOSTS" -o StrictHostKeyChecking=yes)
-    ssh "${SSH_OPTS[@]}" "$BOT_VPS" "mkdir -p $REMOTE_BOT $REMOTE_INBOX" || { no "Не смог создать папки на VPS."; halt; }
-    ssh "${SSH_OPTS[@]}" "$BOT_VPS" "cat > $REMOTE_BOT/mnemazine-telegram-bot.mjs" < "$ROOT/scripts/mnemazine-telegram-bot.mjs" || { no "Не смог загрузить bot script на VPS."; halt; }
+    BOT_TOKEN_FROM_KEYCHAIN="$(keychain_read_token)" || { no "$(L 'Не смог прочитать токен из Keychain.' 'Could not read the token from Keychain.')"; halt; }
+    ssh "${SSH_OPTS[@]}" "$BOT_VPS" "mkdir -p $REMOTE_BOT $REMOTE_INBOX" || { no "$(L 'Не смог создать папки на VPS.' 'Could not create folders on the VPS.')"; halt; }
+    ssh "${SSH_OPTS[@]}" "$BOT_VPS" "cat > $REMOTE_BOT/mnemazine-telegram-bot.mjs" < "$ROOT/scripts/mnemazine-telegram-bot.mjs" || { no "$(L 'Не смог загрузить bot script на VPS.' 'Could not upload the bot script to the VPS.')"; halt; }
     {
-      printf 'TELEGRAM_BOT_TOKEN=%s\n' "$(sq "$BOT_TOKEN")"
+      printf 'TELEGRAM_BOT_TOKEN=%s\n' "$(sq "$BOT_TOKEN_FROM_KEYCHAIN")"
       printf 'MNEMAZINE_INBOX=%s\n' "$(sq "$REMOTE_INBOX")"
-    } | ssh "${SSH_OPTS[@]}" "$BOT_VPS" "umask 177; cat > $REMOTE_BOT/.env" || { no "Не смог записать .env на VPS."; halt; }
+    } | ssh "${SSH_OPTS[@]}" "$BOT_VPS" "umask 177; cat > $REMOTE_BOT/.env" || { no "$(L 'Не смог записать .env на VPS.' 'Could not write .env on the VPS.')"; halt; }
+    BOT_TOKEN_FROM_KEYCHAIN=""
     # Idempotent: start, or restart if the process already exists (rerun-safe).
-    ssh "${SSH_OPTS[@]}" "$BOT_VPS" "cd $REMOTE_BOT && set -a && . ./.env && set +a && pm2 start mnemazine-telegram-bot.mjs --name mnemazine-bot --update-env 2>/dev/null || pm2 restart mnemazine-bot --update-env; pm2 save" || { no "Не смог запустить pm2 на VPS."; halt; }
-    ok "Бот запущен на VPS (bootstrap-режим)."
-    note "Напиши боту сообщение, затем на VPS: pm2 logs mnemazine-bot — увидишь свой chat_id."
-    note "Закрой доступ: перезапусти с ALLOWED_CHAT_IDS=<chat_id> (см. docs/telegram-intake.md)."
+    ssh "${SSH_OPTS[@]}" "$BOT_VPS" "cd $REMOTE_BOT && set -a && . ./.env && set +a && pm2 start mnemazine-telegram-bot.mjs --name mnemazine-bot --update-env 2>/dev/null || pm2 restart mnemazine-bot --update-env; pm2 save" || { no "$(L 'Не смог запустить pm2 на VPS.' 'Could not start pm2 on the VPS.')"; halt; }
+    ok "$(L 'Бот запущен на VPS (bootstrap-режим).' 'Bot started on the VPS (bootstrap mode).')"
+    note "$(L 'Напиши боту сообщение, затем на VPS: pm2 logs mnemazine-bot — увидишь свой chat_id.' 'Message the bot, then on the VPS: pm2 logs mnemazine-bot — you will see your chat_id.')"
+    note "$(L 'Закрой доступ: пустой ALLOWED_CHAT_IDS отвергает всех (fail-closed). Перезапусти с ALLOWED_CHAT_IDS=<chat_id> — см. docs/telegram-intake.md.' 'Lock it down: an empty ALLOWED_CHAT_IDS rejects everyone (fail-closed). Restart with ALLOWED_CHAT_IDS=<chat_id> — see docs/telegram-intake.md.')"
   fi
 elif [ "$BOT_MODE" = "manual" ]; then
-  stage 6.1 "Бот локально (вручную)"
-  note "Запусти когда нужно:"
-  note "TELEGRAM_BOT_TOKEN=<токен> MNEMAZINE_INBOX=$INBOX node $ROOT/scripts/mnemazine-telegram-bot.mjs"
+  stage "6.1" "$(L 'Бот локально (вручную)' 'Bot locally (manual)')"
+  note "$(L 'Запусти когда нужно:' 'Run it when you need it:')"
+  note "TELEGRAM_BOT_TOKEN=<$(L 'токен' 'token')> MNEMAZINE_INBOX=$INBOX node $ROOT/scripts/mnemazine-telegram-bot.mjs"
+  note "$(L 'Подробнее и как закрыть бота на себя — docs/telegram-intake.md.' 'Details and how to lock the bot to yourself — docs/telegram-intake.md.')"
 fi
 
 # ---- Stage 7: done ----------------------------------------------------------
-stage 7 "Готово"
-ok "Каркас: $ROOT"
+stage "7/7" "$(L 'Готово' 'Done')"
+ok "$(L "Каркас: $ROOT" "Skeleton: $ROOT")"
 ok "Inbox: $INBOX"
-[ -n "$LLM" ] && ok "Deep-провайдер: $LLM" || note "Deep выключен — включишь позже через MNEMAZINE_LLM."
-note "Открой папку vault в Obsidian."
-note "Открой проект: $ROOT"
-note "Клади файлы: $INBOX"
-note "В чате агента: Mnemazine"
-note "В терминале: npm start"
-note "Если ~/.local/bin есть в PATH: mnemazine"
-[ "$BOT_MODE" = "vps" ] && note "Mini App + ежедневный pull: см. docs/telegram-intake.md (этапы 2-3)."
-b "Всё. Пользуйся."
+[ -n "$LLM" ] && ok "$(L "Deep-провайдер: $LLM" "Deep provider: $LLM")" || note "$(L 'Deep выключен — включишь позже через MNEMAZINE_LLM.' 'Deep off — enable later via MNEMAZINE_LLM.')"
+note "$(L 'Открой папку vault в Obsidian.' 'Open the vault folder in Obsidian.')"
+note "$(L "Открой проект: $ROOT" "Open the project: $ROOT")"
+note "$(L "Клади файлы: $INBOX" "Drop files into: $INBOX")"
+note "$(L 'В чате агента: Mnemazine' 'In the agent chat: Mnemazine')"
+note "$(L 'В терминале: npm start' 'In the terminal: npm start')"
+note "$(L 'Признак жизни: npm run doctor' 'Sign of life: npm run doctor')"
+note "$(L 'Если ~/.local/bin есть в PATH: mnemazine' 'If ~/.local/bin is on your PATH: mnemazine')"
+
+# First real result beats any amount of documentation: offer one demo pass so the
+# user sees a finished note before deciding whether this belongs in their life.
+if [ "$DRY" != "1" ] && [ -f "$ROOT/demo/inbox/example-guide.md" ]; then
+  ask_choice "$(L 'Показать, как это работает, прямо сейчас? Возьму демо-файл из репозитория и сделаю из него заметку.' 'Want to see it work right now? I will take a demo file from the repo and turn it into a note.')" \
+    "$(L 'Да, покажи' 'Yes, show me')" "$(L 'Нет, я сам' 'No, I will do it myself')"
+  if [ "$REPLY_IDX" = "1" ]; then
+    demo_dir="$(mktemp -d "${TMPDIR:-/tmp}/mnemazine-first-run.XXXXXX")"
+    mkdir -p "$demo_dir/inbox" "$demo_dir/vault"
+    cp "$ROOT/demo/inbox/example-guide.md" "$demo_dir/inbox/"
+    note "$(L 'Прогон идёт в отдельной песочнице — ваша база знаний не тронута.' 'The run happens in a sandbox — your own knowledge base is untouched.')"
+    if MNEMAZINE_INBOX="$demo_dir/inbox" MNEMAZINE_VAULT="$demo_dir/vault" \
+       MNEMAZINE_REPORTS="$demo_dir/reports" MNEMAZINE_STATE="$demo_dir/state" \
+       MNEMAZINE_CACHE="$demo_dir/cache.json" MNEMAZINE_EXTRACTS="$demo_dir/extracts" \
+       MNEMAZINE_ARCHIVE="$demo_dir/archive" MNEMAZINE_DEEP=0 MNEMAZINE_REQUIRE_DEEP=0 \
+       MNEMAZINE_FINISH=0 node "$ROOT/scripts/mnemazine-run.mjs" >/dev/null 2>&1; then
+      first_note="$(find "$demo_dir/vault" -name '*.md' | head -1)"
+      if [ -n "$first_note" ]; then
+        ok "$(L 'Готовая заметка:' 'Here is the finished note:')"
+        printf '\n'; sed -n '1,24p' "$first_note"; printf '\n'
+        note "$(L 'Так же будет с вашими файлами — только с проверкой источников, если включён deep-режим.' 'Your own files go the same way — with source checks too, when deep mode is on.')"
+      else
+        note "$(L 'Демо-прогон прошёл, но заметки не видно — напишите нам, это баг.' 'The demo ran but produced no note — tell us, that is a bug.')"
+      fi
+    else
+      note "$(L 'Демо-прогон не завершился. Установка в порядке: проверьте npm run doctor.' 'The demo run did not finish. The install is fine: check npm run doctor.')"
+    fi
+    rm -rf "$demo_dir"
+  fi
+fi
+[ "$BOT_MODE" = "vps" ] && note "$(L 'Mini App + ежедневный pull: см. docs/telegram-intake.md (этапы 2-3).' 'Mini App + daily pull: see docs/telegram-intake.md (stages 2-3).')"
+b "$(L 'Всё. Пользуйся.' 'All set. Enjoy.')"
 
 # Author greeting last, so it is what the user sees at the end (not buried
 # mid-flow inside install.sh, which stays silent under MNEMAZINE_FROM_SETUP).

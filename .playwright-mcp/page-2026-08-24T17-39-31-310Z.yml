@@ -1,0 +1,186 @@
+- generic [ref=f33e1]:
+  - generic [ref=f33e8]:
+    - generic [ref=f33e10]:
+      - link [ref=f33e13] [cursor=pointer]:
+        - /url: /
+      - generic [ref=f33e27]:
+        - link [ref=f33e29] [cursor=pointer]:
+          - /url: /accounts/login/?next=%2Ftemalebedev%2F&source=desktop_nav
+          - text: Войти
+        - link [ref=f33e31] [cursor=pointer]:
+          - /url: /accounts/emailsignup/
+          - text: Зарегистрироваться
+    - main [ref=f33e32]:
+      - generic [ref=f33e34]:
+        - generic [ref=f33e35]:
+          - link [ref=f33e39] [cursor=pointer]:
+            - /url: /temalebedev/
+          - heading [level=2] [ref=f33e47]:
+            - generic [ref=f33e48]: temalebedev
+          - list [ref=f33e53]:
+            - listitem [ref=f33e54]:
+              - link [ref=f33e56] [cursor=pointer]:
+                - /url: "#"
+                - generic [ref=f33e57]:
+                  - generic [ref=f33e58]: 1,5 млн
+                  - text: подписчиков
+            - listitem [ref=f33e59]:
+              - link [ref=f33e61] [cursor=pointer]:
+                - /url: "#"
+                - generic [ref=f33e62]:
+                  - generic [ref=f33e63]: "955"
+                  - text: подписок
+          - generic [ref=f33e65]:
+            - generic [ref=f33e66]:
+              - generic [ref=f33e67]: Artemy Lebedev
+              - generic [ref=f33e68]: her
+            - link [ref=f33e71] [cursor=pointer]:
+              - /url: https://www.threads.com/@temalebedev?xmt=AQG0Mm9dJqkhD4y6QRuvLO7PTpNh72ccjIUbUfFiLbXzXjI
+              - generic [ref=f33e75]: temalebedev
+            - button [ref=f33e78] [cursor=pointer]:
+              - generic [ref=f33e79]: "💰 Любая хуйня за ваши деньги в новой рубрике #нативнаяинтеграция ! ❓По всем вопросам: reklama@tema.ru"
+            - link [ref=f33e86] [cursor=pointer]:
+              - /url: https://l.instagram.com/?u=https%3A%2F%2Fvk.com%2Ftemalebedev&e=AUBuEfvolmm__Chg-UtO73ofjizLhdXQKHjfxhWXnL5mFuQd6vthAyZ2jDd6GGpDDOzRj0KVPjINKsTLYXZO_HirkeBNPEG1NE14vQmPRWRwr3jzDTJS1c9u5juLfs957g-0BRuBfh8eknH81AaznIL2REw
+              - generic [ref=f33e87]: vk.com/temalebedev
+          - menu [ref=f33e89]:
+            - list [ref=f33e93]:
+              - listitem [ref=f33e94]
+              - listitem [ref=f33e95]
+              - listitem [ref=f33e96]:
+                - link [ref=f33e99] [cursor=pointer]:
+                  - /url: /stories/highlights/17849549188370324/
+                  - button [ref=f33e100]:
+                    - button [ref=f33e101]
+                    - generic [ref=f33e105]: Гусь-Хрустальны
+              - listitem [ref=f33e108]:
+                - link [ref=f33e111] [cursor=pointer]:
+                  - /url: /stories/highlights/17994064705194729/
+                  - button [ref=f33e112]:
+                    - button [ref=f33e113]
+                    - generic [ref=f33e117]: Айвазовскисосет
+              - listitem [ref=f33e120]:
+                - link [ref=f33e123] [cursor=pointer]:
+                  - /url: /stories/highlights/17997231439122681/
+                  - button [ref=f33e124]:
+                    - button [ref=f33e125]
+                    - generic [ref=f33e128]: С новым!
+              - listitem [ref=f33e131]:
+                - link [ref=f33e134] [cursor=pointer]:
+                  - /url: /stories/highlights/17987126833123534/
+                  - button [ref=f33e135]:
+                    - button [ref=f33e136]
+                    - generic [ref=f33e140]: ЛюбВар
+              - listitem [ref=f33e143]:
+                - link [ref=f33e146] [cursor=pointer]:
+                  - /url: /stories/highlights/17974321066185814/
+                  - button [ref=f33e147]:
+                    - button [ref=f33e148]
+                    - generic [ref=f33e152]: Бесит
+              - listitem [ref=f33e155]:
+                - link [ref=f33e158] [cursor=pointer]:
+                  - /url: /stories/highlights/17879583610275717/
+                  - button [ref=f33e159]:
+                    - button [ref=f33e160]
+                    - generic [ref=f33e164]: Highlights
+        - tablist [ref=f33e168]:
+          - link [ref=f33e170] [cursor=pointer]:
+            - /url: /temalebedev/
+          - link [ref=f33e183] [cursor=pointer]:
+            - /url: "#"
+          - link [ref=f33e188] [cursor=pointer]:
+            - /url: "#"
+        - generic [ref=f33e194]:
+          - generic [ref=f33e197]:
+            - generic [ref=f33e198]:
+              - link [ref=f33e200] [cursor=pointer]:
+                - /url: /temalebedev/p/DcZUjgsOs8E/
+              - link [ref=f33e205] [cursor=pointer]:
+                - /url: /krystalin/reel/DcYoUYzs7WA/
+              - link [ref=f33e210] [cursor=pointer]:
+                - /url: /temalebedev/p/DcYJ-aNDoNK/
+            - generic [ref=f33e214]:
+              - link [ref=f33e216] [cursor=pointer]:
+                - /url: /temalebedev/reel/DcWFhfwsWtw/
+              - link [ref=f33e221] [cursor=pointer]:
+                - /url: /temalebedev/reel/DcThVgFMQZQ/
+              - link [ref=f33e226] [cursor=pointer]:
+                - /url: /temalebedev/p/DcTGX-KAHpJ/
+            - generic [ref=f33e230]:
+              - link [ref=f33e232] [cursor=pointer]:
+                - /url: /temalebedev/reel/DcRaUjculba/
+              - link [ref=f33e237] [cursor=pointer]:
+                - /url: /temalebedev/reel/DcQMTpLu7Iw/
+              - link [ref=f33e242] [cursor=pointer]:
+                - /url: /temalebedev/p/DcOnwhOMXwL/
+            - generic [ref=f33e246]:
+              - link [ref=f33e248] [cursor=pointer]:
+                - /url: /temalebedev/p/DcMUdrNOTET/
+              - link [ref=f33e253] [cursor=pointer]:
+                - /url: /temalebedev/reel/DcLMFKIOLu_/
+              - link [ref=f33e258] [cursor=pointer]:
+                - /url: /temalebedev/p/DcJz1K8uedo/
+          - button [ref=f33e262] [cursor=pointer]:
+            - generic [ref=f33e263]: Ещё публикации от temalebedev
+    - contentinfo [ref=f33e265]:
+      - generic [ref=f33e266]:
+        - generic [ref=f33e268]:
+          - link [ref=f33e270] [cursor=pointer]:
+            - /url: https://about.meta.com/
+            - generic [ref=f33e271]: Meta
+          - link [ref=f33e273] [cursor=pointer]:
+            - /url: https://about.instagram.com/
+            - generic [ref=f33e274]: Информация
+          - link [ref=f33e276] [cursor=pointer]:
+            - /url: https://about.instagram.com/blog/
+            - generic [ref=f33e277]: Блог
+          - link [ref=f33e279] [cursor=pointer]:
+            - /url: https://about.instagram.com/about-us/careers
+            - generic [ref=f33e280]: Вакансии
+          - link [ref=f33e282] [cursor=pointer]:
+            - /url: https://help.instagram.com/
+            - generic [ref=f33e283]: Помощь
+          - link [ref=f33e285] [cursor=pointer]:
+            - /url: https://developers.facebook.com/docs/instagram
+            - generic [ref=f33e286]: API
+          - link [ref=f33e288] [cursor=pointer]:
+            - /url: /legal/privacy/
+            - generic [ref=f33e289]: Конфиденциальность
+          - link [ref=f33e291] [cursor=pointer]:
+            - /url: /legal/terms/
+            - generic [ref=f33e292]: Условия
+          - link [ref=f33e294] [cursor=pointer]:
+            - /url: /explore/locations/
+            - generic [ref=f33e295]: Места
+          - link [ref=f33e297] [cursor=pointer]:
+            - /url: /popular/
+            - generic [ref=f33e298]: Популярное
+          - link [ref=f33e300] [cursor=pointer]:
+            - /url: /web/lite/
+            - generic [ref=f33e301]: Instagram Lite
+          - link [ref=f33e303] [cursor=pointer]:
+            - /url: https://www.meta.ai/?utm_source=foa_web_footer
+            - generic [ref=f33e304]: Meta AI
+          - link [ref=f33e306] [cursor=pointer]:
+            - /url: https://www.threads.com/
+            - generic [ref=f33e307]: Threads
+          - link [ref=f33e309] [cursor=pointer]:
+            - /url: https://www.facebook.com/help/instagram/261704639352628
+            - generic [ref=f33e310]: Загрузка контактов и лица, не являющиеся пользователями
+          - link [ref=f33e312] [cursor=pointer]:
+            - /url: /accounts/meta_verified/?entrypoint=web_footer
+            - generic [ref=f33e313]: Meta Verified
+        - generic [ref=f33e314]:
+          - generic [ref=f33e315] [cursor=pointer]:
+            - generic [ref=f33e316]: Русский
+            - combobox [ref=f33e322]
+          - generic [ref=f33e323]: © 2026 Instagram from Meta
+  - dialog [ref=f33e336]:
+    - generic [ref=f33e339]:
+      - generic [ref=f33e340]:
+        - status "Загрузка…" [active] [ref=f33e343]
+        - generic [ref=f33e344]:
+          - status "Загрузка…" [ref=f33e345]
+          - status "Загрузка…" [ref=f33e346]
+      - generic [ref=f33e347]:
+        - status "Загрузка…" [ref=f33e348]
+        - status "Загрузка…" [ref=f33e349]

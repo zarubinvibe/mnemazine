@@ -11,6 +11,7 @@ import { promises as fs, readFileSync, existsSync } from 'node:fs'
 import path from 'node:path'
 import { activeProvider, llmAvailable, llmJson, fenceUntrusted } from './mnemazine-llm.mjs'
 import { resolveVault } from './mnemazine-paths.mjs'
+import { preservationCheck } from './mnemazine-humanize-gate.mjs'
 
 const ROOT = process.env.MNEMAZINE_ROOT || path.resolve(process.cwd())
 const argv = process.argv.slice(2)
@@ -84,14 +85,18 @@ ${fenceUntrusted('ЗАМЕТКА', noteText.slice(0, 12000))}`
 const MAX_CONNECTIONS = 6
 async function loadConnections() {
   const byNote = new Map()
-  const notes = [] // { rel, cluster, hosts:Set }
+  const titleByNote = new Map()
+  const notes = [] // { rel, title, cluster, hosts:Set }
   for (const file of await walk(VAULT)) {
     const text = await fs.readFile(file, 'utf8').catch(() => '')
     if (!text) continue
+    const title = titleOf(text, file)
     const cluster = text.match(/^cluster_id:\s*"?([^"\n]+)"?/m)?.[1]?.trim() || null
     const hosts = new Set()
     for (const m of text.matchAll(/https?:\/\/([^/\s)]+)/g)) hosts.add(m[1].replace(/^www\./, ''))
-    notes.push({ rel: path.relative(VAULT, file), cluster, hosts })
+    const rel = path.relative(VAULT, file)
+    titleByNote.set(rel, title)
+    notes.push({ rel, title, cluster, hosts })
   }
   for (const a of notes) {
     const siblings = [], related = []
@@ -103,7 +108,7 @@ async function loadConnections() {
     const list = [...siblings, ...related].slice(0, MAX_CONNECTIONS)
     if (list.length) byNote.set(a.rel, list)
   }
-  return byNote
+  return { byNote, titleByNote }
 }
 
 async function walk(dir) {
@@ -120,6 +125,16 @@ async function walk(dir) {
 
 function titleOf(text, file) {
   return text.match(/^title:\s*"([^"]+)"/m)?.[1] || text.match(/^#\s+(.+)$/m)?.[1]?.trim() || path.basename(file, '.md')
+}
+
+function linkAlias(rel, title) {
+  const raw = title || path.basename(rel, '.md')
+  const cleaned = String(raw).replace(/[\]\|\n\r]+/g, ' ').replace(/\s+/g, ' ').trim()
+  return /[А-Яа-яЁё]/.test(cleaned) ? cleaned : `Заметка: ${cleaned}`
+}
+
+function wikiLink(rel, title) {
+  return `[[${rel.replace(/\.md$/, '')}|${linkAlias(rel, title)}]]`
 }
 
 function clean(text, max = 420) {
@@ -153,8 +168,8 @@ function deterministicDigest(noteText, file) {
   }
 }
 
-function spravkaBlock(d, connections) {
-  const conns = connections.length ? connections.map(c => `- [[${c.replace(/\.md$/, '')}]]`).join('\n') : '- (отдельных связей не найдено)'
+function spravkaBlock(d, connections, titleByNote) {
+  const conns = connections.length ? connections.map(c => `- ${wikiLink(c, titleByNote.get(c))}`).join('\n') : '- (отдельных связей не найдено)'
   return `${SPRAVKA}
 
 **${d.zagolovok}**
@@ -170,9 +185,10 @@ ${conns}
 
 async function main() {
   const modelAvailable = !DETERMINISTIC && llmAvailable(PROVIDER)
-  const connByNote = await loadConnections()
+  const { byNote: connByNote, titleByNote } = await loadConnections()
   const files = await walk(VAULT)
   const summary = []
+  const lostNotes = []
   let written = 0
   for (const file of files) {
     if (LIMIT && written >= LIMIT) break
@@ -195,8 +211,22 @@ async function main() {
     // (No `m` flag: a per-line `$` would stop at the first newline and leave the old
     // Справка in place, duplicating it on every --force run.)
     const stripped = FORCE ? text.replace(new RegExp(`\\n*${SPRAVKA}[\\s\\S]*$`), '\n') : text
-    const block = spravkaBlock(d, connections)
-    await fs.writeFile(file, `${stripped.trimEnd()}\n\n${block}`, 'utf8')
+    const block = spravkaBlock(d, connections, titleByNote)
+    const newText = `${stripped.trimEnd()}\n\n${block}`
+    // План П13 шаг 5: --force вырезает всё от первого ## Справка до EOF — готовый путь
+    // потери фактов. Перед записью гейт сохранности сверяет инварианты (числа/ссылки/
+    // пути/код/frontmatter/заголовки; clean:false — читаемость не при чём, дайджест лишь
+    // дописывает Справку). Потеря → файл не переписывается, расхождение в отчёт, прогон
+    // падает через run.mjs (digest.status !== 0).
+    let guard
+    try { guard = preservationCheck(text, newText, { clean: false }) }
+    catch (err) { guard = { code: 2, lost: [{ kind: 'input', sample: String(err.message).slice(0, 120) }] } }
+    if (guard.code !== 0) {
+      lostNotes.push({ rel, code: guard.code, lost: guard.lost.slice(0, 8) })
+      console.error(JSON.stringify({ digest_preservation_fail: rel, code: guard.code, lost: guard.lost.slice(0, 8) }))
+      continue
+    }
+    await fs.writeFile(file, newText, 'utf8')
     summary.push({ rel, title: titleOf(text, file), zagolovok: d.zagolovok, connections })
     written += 1
   }
@@ -213,14 +243,17 @@ async function main() {
       `## Как использовать\n\n- Открыть связанные заметки из списка ниже.\n- Взять сильные next actions в работу.\n- Проверить слабые или неподтверждённые связи перед публикацией.\n`,
       `## Источник\n\n- source_ref: digest:${SESSION}\n- processed_notes: ${summary.length}\n`,
       `## Проверка\n\nСводка построена локально из заметок vault и связей digest-этапа. Не является внешней факт-проверкой.\n`,
-      `## Связанные заметки\n\n- [[Mnemazine Protocol]]\n`,
+      `## Связанные заметки\n\n- [[Mnemazine Protocol|Протокол Mnemazine]]\n`,
       `## Повторное использование\n\nОбработано заметок: ${summary.length}. Ниже — что узнано и как связано.\n`,
-      ...summary.map(s => `## ${s.zagolovok}\n\n- Заметка: [[${s.rel.replace(/\.md$/, '')}]]\n- Связи: ${s.connections.length ? s.connections.map(c => `[[${c.replace(/\.md$/, '')}]]`).join(', ') : '—'}\n`)
+      ...summary.map(s => `## ${s.zagolovok}\n\n- Заметка: ${wikiLink(s.rel, s.zagolovok || s.title)}\n- Связи: ${s.connections.length ? s.connections.map(c => wikiLink(c, titleByNote.get(c))).join(', ') : '—'}\n`)
     ].join('\n')
     await fs.writeFile(path.join(dir, `Сводка-${SESSION}.md`), body, 'utf8')
   }
 
-  console.log(JSON.stringify({ ok: true, provider: PROVIDER, model_available: modelAvailable, written, summary: summary.length, linked: connByNote.size }, null, 2))
+  const ok = lostNotes.length === 0
+  console.log(JSON.stringify({ ok, provider: PROVIDER, model_available: modelAvailable, written, summary: summary.length, linked: connByNote.size, preservation_failures: lostNotes.length, lost: lostNotes }, null, 2))
+  // Ненулевой код роняет прогон (run.mjs: digest.status !== 0 → failRunState).
+  if (!ok) process.exitCode = 1
 }
 
 main().catch(err => { console.error(err.message || err); process.exit(1) })

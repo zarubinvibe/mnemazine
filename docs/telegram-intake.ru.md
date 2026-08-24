@@ -123,13 +123,28 @@ bash scripts/mnemazine-pin-vps-host.sh
 MNEMAZINE_VPS=deploy@example.com
 MNEMAZINE_VPS_KEY=$HOME/.ssh/id_ed25519_mnemazine
 MNEMAZINE_REMOTE_INBOX=mnemazine/inbox
+MNEMAZINE_INBOX="/path/to/local/Mnemazine Inbox"
 MNEMAZINE_REMOTE_MUTATION=1
+MNEMAZINE_PUSH_REPORTS=0
 ```
 
 `MNEMAZINE_REMOTE_MUTATION=1` ставится осознанно: poller потребляет `.run-now`,
 обновляет `.last-run`, а sync удаляет remote-копии только после локального
 успеха. Без этого флага скрипты падают закрыто. На Linux — cron на 5 минут,
 вызывающий `mnemazine-telegram-poll.sh`.
+
+## Что уезжает на VPS
+
+На VPS уходит только транзитная поверхность бота:
+
+- `mnemazine/bot/mnemazine-telegram-bot.mjs` перезаписывается во время setup.
+- `mnemazine/bot/.env` пишется на VPS под `umask 177`; внутри `TELEGRAM_BOT_TOKEN` и путь remote inbox. Локальный setup читает токен из macOS Keychain service `mnemazine-telegram`, не из файла в git.
+- `mnemazine/inbox/` хранит Telegram-файлы до pull с твоей машины. Забранные файлы удаляются с VPS только после успешного локального протокола.
+- `.search-queue`, `.run-now`, `.last-run` — remote-файлы управления и статуса; Mac poller меняет их только после `MNEMAZINE_REMOTE_MUTATION=1`.
+
+`reports/` больше не заливается пачкой. Аудит показал, что там могут быть структура и содержание живого vault. `MNEMAZINE_PUSH_REPORTS=1` теперь падает закрыто, пока П24 не даст классовый staging-gate и явный экспорт разрешённых классов из `config/data-classes.json`.
+
+Чтобы отозвать доступ, ротируй токен в BotFather и перезапусти бота на VPS. Для безопасной ротации перегони setup или замени только `mnemazine/bot/.env` под `umask 177`, затем `pm2 restart mnemazine-bot --update-env && pm2 save`. SSH-ключ ротируется отдельно, если мог утечь пользователь хоста или ключ рабочей машины.
 
 ## Безопасность
 

@@ -1,0 +1,1213 @@
+{
+  "contract": "migration-contract",
+  "contract_version": 1,
+  "spec_ref": "docs/NOTE-SPEC.md",
+  "spec_version": "NOTE-SPEC 2026-07-25 + subject §18 (2026-08-22)",
+  "schema_ref": "scripts/mnemazine-note-spec.mjs (единая правда П05; config/note.schema.json П06 — когда появится, ссылаться на неё, не дублировать)",
+  "generated_by": "scripts/mnemazine-migration-check.mjs --emit",
+  "generated_at": "2026-08-23T00:02:21.799Z",
+  "vault": "<MNEMAZINE_VAULT>",
+  "corpus": {
+    "files": 1514,
+    "with_frontmatter": 1512,
+    "without_frontmatter": 2
+  },
+  "fields": [
+    {
+      "old_field": "type",
+      "new_field": "type",
+      "notes": 1512,
+      "distinct_values": 4,
+      "rule": "mapType: суффиксное отображение в SPEC_TYPES, умолчание concept; tool-card — только при непустых repo+stars+license+risk; decision механически не ставится; оригинал сохраняется в type_legacy",
+      "implemented_by": "scripts/mnemazine-normalize-old-frontmatter.mjs (mapType)",
+      "new_enum": [
+        "concept",
+        "tool-card",
+        "decision",
+        "synthesis",
+        "agent-research",
+        "reference"
+      ],
+      "decision": null,
+      "values": [
+        {
+          "value": "concept",
+          "notes": 1337,
+          "covered_by": "already-conformant",
+          "maps_to": "concept"
+        },
+        {
+          "value": "reference",
+          "notes": 131,
+          "covered_by": "already-conformant",
+          "maps_to": "reference"
+        },
+        {
+          "value": "synthesis",
+          "notes": 27,
+          "covered_by": "already-conformant",
+          "maps_to": "synthesis"
+        },
+        {
+          "value": "tool-card",
+          "notes": 17,
+          "covered_by": "already-conformant",
+          "maps_to": "tool-card"
+        }
+      ],
+      "standing_legacy_values": [
+        {
+          "value": "knowledge-note",
+          "notes": 38,
+          "covered_by": "rule",
+          "maps_to": "concept",
+          "reason": "repo-local fixture/default selftest; знание/заметка без спецполей = concept"
+        },
+        {
+          "value": "knowledge-digest",
+          "notes": 1,
+          "covered_by": "rule",
+          "maps_to": "synthesis",
+          "reason": "repo-local fixture/default selftest; digest/сводка = synthesis"
+        }
+      ],
+      "human_required": []
+    },
+    {
+      "old_field": "verified",
+      "new_field": "verified",
+      "notes": 1512,
+      "distinct_values": 5,
+      "rule": "mapVerified: значение→SPEC_VERIFIED (ё/е равны); аннотация через пробел/скобку → enum + оригинал в verified_legacy; true/да/подтвержд* и expanded with public sources → подтверждён; пусто/false → не-проверялось; свободный текст → не-проверялось + verified_legacy",
+      "implemented_by": "scripts/mnemazine-normalize-old-frontmatter.mjs (mapVerified)",
+      "new_enum": [
+        "подтверждён",
+        "источник-не-найден",
+        "непроверяемо-методом",
+        "облако-недоступно",
+        "проверено-практикой",
+        "не-проверялось"
+      ],
+      "decision": null,
+      "values": [
+        {
+          "value": "не-проверялось",
+          "notes": 1237,
+          "covered_by": "already-conformant",
+          "maps_to": "не-проверялось"
+        },
+        {
+          "value": "подтверждён",
+          "notes": 243,
+          "covered_by": "already-conformant",
+          "maps_to": "подтверждён"
+        },
+        {
+          "value": "источник-не-найден",
+          "notes": 23,
+          "covered_by": "already-conformant",
+          "maps_to": "источник-не-найден"
+        },
+        {
+          "value": "непроверяемо-методом",
+          "notes": 8,
+          "covered_by": "already-conformant",
+          "maps_to": "непроверяемо-методом"
+        },
+        {
+          "value": "проверено-практикой",
+          "notes": 1,
+          "covered_by": "already-conformant",
+          "maps_to": "проверено-практикой"
+        }
+      ],
+      "standing_legacy_values": [
+        {
+          "value": "expanded with public sources",
+          "notes": 23,
+          "covered_by": "rule",
+          "maps_to": "подтверждён",
+          "reason": "repo-local fixture/default selftest; публичные источники уже добавлены"
+        },
+        {
+          "value": "false",
+          "notes": 15,
+          "covered_by": "rule",
+          "maps_to": "не-проверялось",
+          "reason": "repo-local fixture/default selftest; false не заявляет проверку"
+        }
+      ],
+      "human_required": []
+    },
+    {
+      "old_field": "verification_status",
+      "new_field": "verified",
+      "notes": 598,
+      "distinct_values": 15,
+      "rule": "mapVerificationStatus: поле схлопывается в verified: и после миграции удаляется. Частичная проверка → не-проверялось + legacy; verified/подтвержд*/verified-with-public-sources → подтверждён; unknown/assumed/false/пусто → не-проверялось; источник-не-найден и непроверяемо-методом сохраняют одноимённые значения. Правило 8 мастера: два поля одной семантики = дубль правды.",
+      "implemented_by": "scripts/mnemazine-migration-check.mjs (mapVerificationStatus; контракт П16)",
+      "new_enum": [
+        "подтверждён",
+        "источник-не-найден",
+        "непроверяемо-методом",
+        "облако-недоступно",
+        "проверено-практикой",
+        "не-проверялось"
+      ],
+      "decision": "owner-decided-collapse-into-verified-remove-field",
+      "values": [
+        {
+          "value": "unknown",
+          "notes": 207,
+          "covered_by": "rule",
+          "maps_to": "не-проверялось",
+          "remove_field_after_migration": true
+        },
+        {
+          "value": "verified",
+          "notes": 197,
+          "covered_by": "rule",
+          "maps_to": "подтверждён",
+          "remove_field_after_migration": true
+        },
+        {
+          "value": "подтверждён",
+          "notes": 101,
+          "covered_by": "rule",
+          "maps_to": "подтверждён",
+          "remove_field_after_migration": true
+        },
+        {
+          "value": "assumed",
+          "notes": 40,
+          "covered_by": "rule",
+          "maps_to": "не-проверялось",
+          "remove_field_after_migration": true
+        },
+        {
+          "value": "verified-with-public-sources",
+          "notes": 28,
+          "covered_by": "rule",
+          "maps_to": "подтверждён",
+          "remove_field_after_migration": true
+        },
+        {
+          "value": "подтверждён-частично",
+          "notes": 11,
+          "covered_by": "rule",
+          "maps_to": "не-проверялось",
+          "remove_field_after_migration": true
+        },
+        {
+          "value": "частично-подтверждён",
+          "notes": 5,
+          "covered_by": "rule",
+          "maps_to": "не-проверялось",
+          "remove_field_after_migration": true
+        },
+        {
+          "value": "непроверяемо-методом",
+          "notes": 2,
+          "covered_by": "rule",
+          "maps_to": "непроверяемо-методом",
+          "remove_field_after_migration": true
+        },
+        {
+          "value": "частично подтверждён",
+          "notes": 1,
+          "covered_by": "rule",
+          "maps_to": "не-проверялось",
+          "remove_field_after_migration": true
+        },
+        {
+          "value": "подтверждён-с-поправкой",
+          "notes": 1,
+          "covered_by": "rule",
+          "maps_to": "подтверждён",
+          "remove_field_after_migration": true
+        },
+        {
+          "value": "частично",
+          "notes": 1,
+          "covered_by": "rule",
+          "maps_to": "не-проверялось",
+          "remove_field_after_migration": true
+        },
+        {
+          "value": "подтверждён-с-оговоркой",
+          "notes": 1,
+          "covered_by": "rule",
+          "maps_to": "подтверждён",
+          "remove_field_after_migration": true
+        },
+        {
+          "value": "источник-не-найден",
+          "notes": 1,
+          "covered_by": "rule",
+          "maps_to": "источник-не-найден",
+          "remove_field_after_migration": true
+        },
+        {
+          "value": "частично-подтверждён — реальные инструменты верны, часть демо-скриншотов сфабрикована; финальные слайды (34-36) — методология без проверяемых внешних claims",
+          "notes": 1,
+          "covered_by": "rule",
+          "maps_to": "не-проверялось",
+          "remove_field_after_migration": true
+        },
+        {
+          "value": "подтвержден (продакшн-инцидент пользователя) + контекстная сверка Supabase docs",
+          "notes": 1,
+          "covered_by": "rule",
+          "maps_to": "подтверждён",
+          "remove_field_after_migration": true
+        }
+      ],
+      "standing_legacy_values": [],
+      "human_required": []
+    },
+    {
+      "old_field": "type_legacy",
+      "new_field": "—",
+      "notes": 1350,
+      "distinct_values": 182,
+      "rule": "Археология переогранки — НЕ ТРОГАТЬ: это вход для кампании 3 (legacy-значение говорит о ноте больше, чем выровненный concept) и страховка от неверного отображения.",
+      "implemented_by": null,
+      "new_enum": null,
+      "decision": null,
+      "values": [
+        {
+          "value": "knowledge-note",
+          "notes": 508,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "method",
+          "notes": 100,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "tool",
+          "notes": 81,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "prompt",
+          "notes": 49,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "level2-atom",
+          "notes": 37,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "knowledge",
+          "notes": 34,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "tool-reference",
+          "notes": 33,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "skill-reference",
+          "notes": 32,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "skill-record",
+          "notes": 32,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "architecture-atom",
+          "notes": 21,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "tool-record",
+          "notes": 20,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "architecture",
+          "notes": 15,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "finance-method",
+          "notes": 12,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "canonical-summary",
+          "notes": 12,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "mcp",
+          "notes": 12,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "tool-note",
+          "notes": 11,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "nova-radar",
+          "notes": 11,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "capability-method",
+          "notes": 10,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "workflow",
+          "notes": 10,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "agent-method",
+          "notes": 10,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "capability-note",
+          "notes": 9,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "instruction",
+          "notes": 8,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "business-method",
+          "notes": 7,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "skill-method",
+          "notes": 7,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "capability-boundary",
+          "notes": 7,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "ops-boundary",
+          "notes": 7,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "prompt-pack",
+          "notes": 6,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "method-reference",
+          "notes": 6,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "agent-architecture",
+          "notes": 6,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "mcp-boundary",
+          "notes": 6,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "capability-policy",
+          "notes": 5,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "tool-boundary",
+          "notes": 5,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "knowledge-digest",
+          "notes": 5,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "mcp-method",
+          "notes": 4,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "context-method",
+          "notes": 4,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "checklist",
+          "notes": 4,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "ops-method",
+          "notes": 4,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "quality-gate",
+          "notes": 4,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "architecture-note",
+          "notes": 4,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "business-framework",
+          "notes": 3,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "prompt-method",
+          "notes": 3,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "research-method",
+          "notes": 3,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "business-concept",
+          "notes": 3,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "catalog-reference",
+          "notes": 3,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "agent-reference",
+          "notes": 3,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "skill-boundary",
+          "notes": 3,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "knowledge-method",
+          "notes": 3,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "tool-method",
+          "notes": 3,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "tool-catalog",
+          "notes": 3,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "learning-resource",
+          "notes": 3,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "skill",
+          "notes": 3,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "scraping-tool-record",
+          "notes": 3,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "community-note",
+          "notes": 3,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "tool-card",
+          "notes": 2,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "marketing-boundary",
+          "notes": 2,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "business-atom",
+          "notes": 2,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "business-boundary",
+          "notes": 2,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "learning-boundary",
+          "notes": 2,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "finance-tool-reference",
+          "notes": 2,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "security-tool-reference",
+          "notes": 2,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "media-tool-reference",
+          "notes": 2,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "mcp-reference",
+          "notes": 2,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "platform-comparison",
+          "notes": 2,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "design-method",
+          "notes": 2,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "connector-method",
+          "notes": 2,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "adoption-method",
+          "notes": 2,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "tool-stack",
+          "notes": 2,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "design-boundary",
+          "notes": 2,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "instruction-method",
+          "notes": 2,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "research-boundary",
+          "notes": 2,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "radar-note",
+          "notes": 2,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "catalog",
+          "notes": 2,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "tool-list",
+          "notes": 2,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "productivity-method",
+          "notes": 2,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "notebooklm-intake",
+          "notes": 1,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "legal-knowledge",
+          "notes": 1,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "business-legal-reference",
+          "notes": 1,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "operating-principle",
+          "notes": 1,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "marketing-data-boundary",
+          "notes": 1,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "marketing-data-method",
+          "notes": 1,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "marketing-method",
+          "notes": 1,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "sales-method",
+          "notes": 1,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "sales-boundary",
+          "notes": 1,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "methodology",
+          "notes": 1,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "product-architecture",
+          "notes": 1,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "product",
+          "notes": 1,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "process",
+          "notes": 1,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "design",
+          "notes": 1,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "safety-atom",
+          "notes": 1,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "security",
+          "notes": 1,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "project-plan",
+          "notes": 1,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "learning-method",
+          "notes": 1,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "fact-check-method",
+          "notes": 1,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "business-prompt-system",
+          "notes": 1,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "prompt-boundary",
+          "notes": 1,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "content-method",
+          "notes": 1,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "source-map-atom",
+          "notes": 1,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "workflow-method",
+          "notes": 1,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "prompt-safety",
+          "notes": 1,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "business-check",
+          "notes": 1,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "finance-ai-boundary",
+          "notes": 1,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "personal-finance-method",
+          "notes": 1,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "research-reference",
+          "notes": 1,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "plugin-reference",
+          "notes": 1,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "marketing-tool-reference",
+          "notes": 1,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "automation-method",
+          "notes": 1,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "mcp-ui-method",
+          "notes": 1,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "agent-architecture-reference",
+          "notes": 1,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "architecture-reference",
+          "notes": 1,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "research-tool-reference",
+          "notes": 1,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "coding-tool-reference",
+          "notes": 1,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "agent-workflow",
+          "notes": 1,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "agent-method-reference",
+          "notes": 1,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "marketing-agent-method",
+          "notes": 1,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "evaluation-method",
+          "notes": 1,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "note",
+          "notes": 1,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "mcp-framework",
+          "notes": 1,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "architecture-boundary",
+          "notes": 1,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "sales-ops-plan",
+          "notes": 1,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "safety-gate",
+          "notes": 1,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "agent-ops",
+          "notes": 1,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "analytics-method",
+          "notes": 1,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "analytics-boundary",
+          "notes": 1,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "security-gate",
+          "notes": 1,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "capability-system",
+          "notes": 1,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "security-boundary",
+          "notes": 1,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "learning-map",
+          "notes": 1,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "template",
+          "notes": 1,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "automation-gate",
+          "notes": 1,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "adoption-boundary",
+          "notes": 1,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "safety-boundary",
+          "notes": 1,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "automation-pattern",
+          "notes": 1,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "token-method",
+          "notes": 1,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "model-routing",
+          "notes": 1,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "video-boundary",
+          "notes": 1,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "brand-method",
+          "notes": 1,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "frontend-method",
+          "notes": 1,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "design-skill",
+          "notes": 1,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "design-ops",
+          "notes": 1,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "license-boundary",
+          "notes": 1,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "frontend-quality-gate",
+          "notes": 1,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "model-evaluation",
+          "notes": 1,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "plugin-method",
+          "notes": 1,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "runtime-gate",
+          "notes": 1,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "agent-context-method",
+          "notes": 1,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "capability-map",
+          "notes": 1,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "redirect",
+          "notes": 1,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "orchestration-method",
+          "notes": 1,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "tool-atom",
+          "notes": 1,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "project-structure",
+          "notes": 1,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "provider-boundary",
+          "notes": 1,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "provider-method",
+          "notes": 1,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "remote-control-method",
+          "notes": 1,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "remote-control-boundary",
+          "notes": 1,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "pm-boundary",
+          "notes": 1,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "connector-boundary",
+          "notes": 1,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "tool-evaluation",
+          "notes": 1,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "install-status",
+          "notes": 1,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "tool-overview",
+          "notes": 1,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "weak-source",
+          "notes": 1,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "tool-triage",
+          "notes": 1,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "tool-decision-queue",
+          "notes": 1,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "agent-boundary",
+          "notes": 1,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "writing-boundary",
+          "notes": 1,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "writing-method",
+          "notes": 1,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "content-boundary",
+          "notes": 1,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "implementation-plan",
+          "notes": 1,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "skill-note",
+          "notes": 1,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "safety-method",
+          "notes": 1,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "access-method-reference",
+          "notes": 1,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "publishing-tool-record",
+          "notes": 1,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "database-tool-record",
+          "notes": 1,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "security-media-tool-reference",
+          "notes": 1,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "frontend-architecture",
+          "notes": 1,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "technical-method",
+          "notes": 1,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "technical-concept",
+          "notes": 1,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "risk-boundary",
+          "notes": 1,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "install-boundary",
+          "notes": 1,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "frontend-stack",
+          "notes": 1,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "network-ops",
+          "notes": 1,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "network-boundary",
+          "notes": 1,
+          "covered_by": "archaeology"
+        },
+        {
+          "value": "external-vault-bridge",
+          "notes": 1,
+          "covered_by": "archaeology"
+        }
+      ],
+      "standing_legacy_values": [],
+      "human_required": []
+    },
+    {
+      "old_field": "## Источники (тело) при пустом source:",
+      "new_field": "source: / sources:",
+      "notes": 558,
+      "distinct_values": null,
+      "rule": "Перенос в source:/sources: ТОЛЬКО если провенанс виден в самой ноте (basename интейк-файла, local-media:<hash>, URL → в sources:). Не виден — поле остаётся пустым, нота уходит в список следующей волны. source: НЕ ВЫДУМЫВАТЬ (kimi-master.md, кампания 2).",
+      "implemented_by": "кампания 3 (переогранка головой) + scripts/mnemazine-normalize-old-frontmatter.mjs (перенос sources→source)",
+      "new_enum": null,
+      "decision": null,
+      "values": [],
+      "human_required": []
+    }
+  ],
+  "subject_field": {
+    "note": "Поле subject (§18): enum self|world|mixed. Старый корпус проставляется при переогранке: source_type video|article|repo и нет первого лица в теле → world; не выводится однозначно → mixed (fail-closed); self руками не назначается.",
+    "enum": [
+      "self",
+      "world",
+      "mixed"
+    ]
+  }
+}

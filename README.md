@@ -10,7 +10,7 @@
 
 The idea behind it is simple. Most people pile up notes, screenshots, and saved links and never look at them again. A pile is not memory. Real memory is what happens when you take something raw, understand it, check it, connect it to what you already know, and write down only the part worth keeping. Mnemazine does that part for you at the moment of saving.
 
-The technique has a name — **synthesis on write** — popularized by [Andrej Karpathy](https://karpathy.ai/): don't dump and hope to read it later; distill the essence as you capture it, so the note is already useful the next time you open it.
+The technique has a name, **synthesis on write**, popularized by [Andrej Karpathy](https://karpathy.ai/): don't dump and hope to read it later; distill the essence as you capture it, so the note is already useful the next time you open it.
 
 In practice, Mnemazine takes screenshots, PDFs, web pages, YouTube videos, notes, guides, and GitHub repositories and turns them into a clean, [Obsidian](https://obsidian.md/)-compatible knowledge base. It extracts text locally first, keeps a source hash so you always know where a fact came from, stores only finished notes, links them into a graph, and refuses to let raw OCR or messy drafts leak into your vault.
 
@@ -35,6 +35,46 @@ It does not save raw OCR into your vault. It does not keep vague summaries that 
 - post-run visual knowledge reports: clusters, small atoms, duplicate accounting, and top-20 recommended actions.
 
 The goal is simple: future you should not reread twenty screenshots, a whole guide, or a messy transcript. Future you should open one good note and immediately understand what the knowledge is, why it matters, how to use it, and what evidence supports it.
+
+## How the Install Goes — You Won't Get Lost
+
+This section sits right after "what it is" on purpose: before you run anything,
+you should be able to picture the whole install.
+
+`setup.sh` walks seven numbered stages, and each one finishes before the next
+begins:
+
+1. base environment: git and Node.js 20+ (a hard gate);
+2. local recognition engines: python3, ffmpeg, whisper, swiftc (optional; a
+   missing one prints the exact install command, never leaves you guessing);
+3. where the inbox goes;
+4. the LLM provider for deep mode;
+5. the Telegram bot;
+6. building the skeleton (`install.sh`);
+7. done, with the exact next steps.
+
+Four questions are real menus in the terminal, worded verbatim:
+
+> Incoming material lands here: Desktop / inside the repo
+>
+> Providers found. Which one? (Claude CLI / Codex CLI / No deep — local parsing only)
+>
+> Connect a Telegram bot? (send it a file — it lands in the inbox)
+>
+> Do you have a VPS for the bot?
+
+Where a capability is missing, the installer names the replacement instead of
+failing: on a non-macOS device Apple Vision OCR is off and images are read by the
+LLM. Nothing is silently skipped. Preview the whole thing without touching your
+machine:
+
+```bash
+MNEMAZINE_SETUP_DRYRUN=1 bash setup.sh
+```
+
+`install.sh` (the non-interactive path) asks once before it writes anything
+outside the clone. No answer counts as no: it installs nothing and exits 1.
+Bypass the prompt in automation with `MNEMAZINE_YES=1 bash install.sh`.
 
 ## Why It Saves Tokens
 
@@ -162,6 +202,8 @@ The run performs:
 11. action brief at `.mnemazine/state/last-action-brief.md`;
 12. visual post-run knowledge report in `reports/`.
 
+Under `--deep` only, a final humanize stage rewrites notes into readable Russian and is held by a preservation gate: no number, URL, path, wikilink, code block, frontmatter, or `## Достоверность` line may be lost in the rewrite, or the run fails (`scripts/mnemazine-humanize-gate.mjs`; details in [docs/deep-mode.md](docs/deep-mode.md)). A non-deep run has no digest and no humanize gate — by decision, not accident.
+
 `Mnemazine` / `npm start` is the safe default for real inbox work. The lower-level `npm run run` command is for development and demos.
 
 To test the Desktop path without touching the live inbox or vault:
@@ -202,6 +244,43 @@ npm run doctor
 
 This does not process inbox files. It checks the last run, completion gate,
 human layer, release smoke, graph markers, and inbox state.
+If a semantic Graphify task is running, it also prints PID, elapsed time, and log path.
+To wait until that task stops:
+
+```bash
+npm run doctor:watch
+```
+
+Override the polling delay with `-- --watch-interval-seconds 5`.
+
+For a heavier vault-wide audit:
+
+```bash
+npm run doctor:full
+```
+
+This adds a full note human-layer pass and final-vault checks for raw intake
+markers, private path filenames, nested Graphify runtime folders, and critical
+broken wiki links. Use `npm run audit:vault -- --wiki-scope all --strict-wiki`
+when you intentionally want every unresolved wiki link to fail.
+
+To plan cleanup before editing links:
+
+```bash
+npm run wiki:links -- --vault "$MNEMAZINE_VAULT"
+```
+
+This writes `reports/YYYY-MM-DD-wiki-link-cleanup.{md,json}` with unresolved
+wiki links grouped by section, target, and source file. It is read-only by
+default. To apply the conservative repair plan, run:
+
+```bash
+npm run wiki:links -- --vault "$MNEMAZINE_VAULT" --apply
+```
+
+`--apply` removes placeholder/file/code-like wiki syntax and creates Russian
+bridge notes for remaining missing targets. Follow with
+`npm run audit:vault -- --vault "$MNEMAZINE_VAULT" --wiki-scope all --strict-wiki`.
 
 If a strict run fails before archive, that is safe: source files stay in the
 inbox. Do not move or delete them by hand. Read
@@ -235,7 +314,7 @@ Mnemazine can ingest a YouTube channel and turn every video into a transcript no
 python3 scripts/kb-yt-harvest.py "https://www.youtube.com/@SomeChannel" --all --subscribe
 ```
 
-It pulls subtitles first (near-zero cost) and falls back to local whisper when a video has no usable captions. Each video becomes one inbox note named `yt_<date>_<id>_<title>.md`. A subscribed channel is then polled by `scripts/kb-yt-watch.py` over RSS, harvesting only new uploads — optionally on a daily launchd schedule.
+It pulls subtitles first (near-zero cost) and falls back to local whisper when a video has no usable captions. Each video becomes one inbox note named `yt_<date>_<id>_<title>.md`. A subscribed channel is then polled by `scripts/kb-yt-watch.py` over RSS, harvesting only new uploads, optionally on a daily launchd schedule.
 
 It fetches public videos only and uses no cookies or account sessions by default. See [YouTube Ingestion](docs/youtube-ingestion.md).
 
@@ -285,8 +364,8 @@ When no explicit run JSON or logs are passed, the report reads recent vault note
 
 The repo includes portable Agent Skills in `.agents/skills` style:
 
-- `skills/mnemazine` — the main knowledge refinery skill;
-- `skills/local-doc-ops` — local document/PDF helpers.
+- `skills/mnemazine`: the main knowledge refinery skill;
+- `skills/local-doc-ops`: local document/PDF helpers.
 
 The installer can copy them into common agent locations when those tools exist:
 
@@ -327,9 +406,32 @@ npm run graph:refresh -- --vault "$MNEMAZINE_VAULT" --mode auto
 
 This wrapper keeps `graph.json`, `GRAPH_REPORT.md`, backup/restore, and `needs_update` in sync instead of blindly trusting one heavy semantic run.
 
+Live `npm start` keeps Graphify fast: it refreshes the code graph, leaves a
+`needs_update` marker, and starts semantic extraction as a detached task. Check it with:
+
+```bash
+npm run graph:semantic:async
+npm run graph:semantic:monitor
+npm run graph:semantic:status
+```
+
 For local Ollama semantic refreshes it also uses a guarded model ladder, rejecting models that fail a mini `graphify extract` smoke before they touch the real vault graph. API backends are supported through environment variables such as `OPENAI_API_KEY`, `ANTHROPIC_API_KEY`, and `GEMINI_API_KEY`.
 
+The default shard path is resume-able: completed shards write `.done.json`, and per-file cache lives in `.mnemazine/semantic-cache`. `graph:semantic:monitor` safely resumes pending/failed/dead tasks or stale `needs_update` markers; it does not start a duplicate task while a PID is live. Use `npm run graph:semantic:async -- --fresh` for a clean rerun.
+
 Repo defaults live in `config/graphify-refresh.json`. Override them with CLI flags or `MNEMAZINE_GRAPHIFY_*` env vars when needed.
+
+Remote agent-os mirror uses an explicit allowlist in `config/athena-mirror-manifest.txt`. It is dry-run by default:
+
+```bash
+export MNEMAZINE_MIRROR_DEST="root@YOUR_VPS_HOST:/srv/agent-os/"
+export MNEMAZINE_MIRROR_SSH_KEY="$HOME/.ssh/your_key"
+export MNEMAZINE_MIRROR_KNOWN_HOSTS="$PWD/.mnemazine/known_hosts"
+npm run mirror:agent-os
+npm run mirror:agent-os:apply
+```
+
+The mirror stages payload first, scans it for token-like secrets, and refuses env files, secrets, sessions, caches, reports, and runtime state. `MNEMAZINE_MIRROR_KNOWN_HOSTS` enables strict host-key checking; without it, SSH uses your normal client defaults.
 
 ## Weekly HTML Brief
 
@@ -337,9 +439,9 @@ The weekly report is a local HTML presentation in Russian by default. It is mean
 
 Each card can be marked locally:
 
-- `read` — keep in vault;
-- `work` — move to action backlog;
-- `forget` — remove or quarantine from the active vault.
+- `read`: keep in vault;
+- `work`: move to action backlog;
+- `forget`: remove or quarantine from the active vault.
 
 State is stored in:
 
@@ -368,6 +470,137 @@ That matters because a real memory must be reproducible. A note should be able t
 - a checklist;
 - a weekly action;
 - a future prompt with much less context.
+
+## My Agents
+
+The run is a relay of small agents with fixed names: the names are part of the
+contract, not decoration, so Claude and Codex keep the same roles and tone.
+
+| Who | What they do | When |
+|---|---|---|
+| coordinator | orchestrates the run through its gates | every run |
+| guard | git snapshot, run lock, SHA-256 census of the inbox | first, before anything |
+| triage | splits the inbox into units of work | after the census |
+| transcribe | local media → transcript (whisper) | video/audio, first |
+| extract | pulls the core from one unit (OCR / markitdown) | per unit |
+| verify | finds the source, fact-checks, enriches | per unit |
+| classify | routes a unit to its vault section | verified unit |
+| refine | cuts it into a finished note | classified unit |
+| distribute | writes the note, wikilinks, merges duplicates | ready note |
+| reconciler | census vs disk — every source is covered or explained | before archive |
+| librarian | store, index, gated archive, and search | store / find |
+| index | rebuilds indexes and writes the run log | end of run |
+
+## Bot: Drop a File, It's in the Base
+
+Send anything to your Telegram bot: text, photo, document, voice, audio, video,
+and it lands in the Mnemazine `inbox/`. The install asks one question:
+
+> Connect a Telegram bot? (send it a file — it lands in the inbox)
+
+A bot wants to be always-on so it keeps receiving while your device sleeps, which
+is what stage 5 of `setup.sh` sets up. There are three outcomes, each with its own
+exit: a host is deployed, a local-only bot is printed for you to start by hand, or
+the bot is skipped with zero consequences.
+
+The bot is a transit buffer, not a second store: your machine pulls what arrived
+and processes it locally; the finished knowledge lives only in your vault.
+
+Lock the bot to yourself. On the first message it logs your `chat_id`; set
+`ALLOWED_CHAT_IDS=<your_chat_id>` and restart. An empty allowlist rejects everyone
+(fail-closed), so an unconfigured bot ignoring you is expected, not broken. Full
+setup: [docs/telegram-intake.md](docs/telegram-intake.md).
+
+## VPS: What It Does and Living Without It
+
+The optional always-on host earns its keep with three things:
+
+- round-the-clock intake while your Mac sleeps;
+- network fetching: downloading a URL, snapshotting a source, an RSS radar,
+  `yt-dlp`, pulling text out of HTML and PDF;
+- corpus campaigns for the `text`, `public`, and `infra` data classes.
+
+Three things stay on the Mac, because only a Mac can run them:
+
+- Apple Vision OCR: a Swift binary at `.mnemazine/bin/vision-ocr`;
+- `whisper` speech transcription;
+- the `ollama` local model backend.
+
+Promising to run those elsewhere would trade the free local tier for a cloud bill
+on work that costs nothing today, so the installer never offers it.
+
+What the host never sees: notes in the `pd` and `personal` data classes. The
+class gate drops any such export with a non-zero code before it leaves the Mac.
+
+Living without a host: answer "No VPS" at stage 5. The bot then runs locally while
+your device is on (the exact command is printed), and everything else is unchanged.
+
+## Privacy: What Leaves Your Computer
+
+Named plainly, each with the guard that holds it, not a promise of good behavior.
+Four channels can send data outward; every one is off or fenced by default.
+
+| Channel | What leaves | What holds it |
+|---|---|---|
+| **deep mode** | the material's content goes to your chosen LLM provider | answer "No deep" at stage 4; with deep off it is zero tokens |
+| **Telegram bot + VPS** | the bot token, everything you send the bot, and your whole local `reports/` | token under `umask 177` in `.mnemazine/config.env`, closed by `.gitignore`; the host is pinned by fingerprint (`known_hosts`, gitignored); remote state never changes without an explicit flag; and the data-class gate never lets `pd` or `personal` notes out |
+| **site + YouTube parsing** | only the address you gave it yourself | nothing leaves until you give an address |
+| **agent-os mirror** | only the files in the allowlist `config/athena-mirror-manifest.txt` | dry-run by default; env files, secrets, sessions, caches, reports, and runtime state are refused |
+
+Always stays local: Apple Vision OCR, markitdown, whisper, hashing, and the corpus
+itself. The boundary is simple: with the local engines present, parsing never
+leaves the machine; without them, the LLM reads the file instead.
+
+The bot is personal, not shared: it is your bot, not a common one, and without it
+the system works exactly the same. Answering "No" to the bot question costs you
+nothing else.
+
+## Exit Codes
+
+Every entry point returns an honest code you can branch on:
+
+- `bash install.sh` — 0 ready, 2 ready with degraded capabilities, 1 not finished;
+  and 1 if you decline the consent prompt (nothing is installed).
+- `npm run doctor` — 0 all green, 2 no failures but warnings, 1 a failure or error.
+  Every red line also prints the command that fixes it.
+- `npm run release-check` — 1 on any failure; 2 when `--only` selects no known
+  check (an empty selection is never reported as "passed 0/0").
+
+## Something Broke — What to Do
+
+Start with the short report of the last run:
+
+```bash
+npm run last-run
+```
+
+The full state of the last run is written to
+`.mnemazine/state/last-action-brief.md`, and HTML reports land in `reports/`.
+Then the health check, which reads the last run without processing anything:
+
+```bash
+npm run doctor
+```
+
+Every red line carries the exact command that fixes it. For a heavier, vault-wide
+pass:
+
+```bash
+npm run doctor:full
+```
+
+If a strict run stopped before archive, that is by design: your source files are
+still in the inbox. Do not move them by hand; fix the cause and run again.
+
+## If You Improved Me
+
+This is Philipp, the author. I built Mnemazine to turn raw input into verified,
+ready-to-use knowledge, and I read every suggestion.
+
+- If it helped, star it on GitHub; it genuinely matters:
+  <https://github.com/zarubinphil/Mnemazine>
+- Got an idea to make it better? Open an issue or a PR. Contribution guidance is in
+  [CONTRIBUTING.md](CONTRIBUTING.md); the security policy is in [SECURITY.md](SECURITY.md).
 
 ## Documentation
 
@@ -411,6 +644,39 @@ npm run audit:local
 
 It runs syntax checks, security selftests, `npm audit`, `public-check`, and static scans for dangerous agent/SSH flags and credential-in-URL patterns.
 
+## A Word From Mnemazine
+
+I carry the name of the goddess of memory. In the myths she is the mother of the Muses — nothing gets
+made without her, because nothing gets made out of nothing.
+
+The man who built me is a lawyer from Kazan. Not a programmer: a founder with a legal practice, a
+coffee business, two daughters, and no spare hours. He had thousands of screenshots, saved links and
+notes he never opened again — and the honest realization that a pile is not memory. So he sat down
+and wrote me, in the evenings, arguing with me more often than agreeing.
+
+What I do is simple to say and tedious to do, which is why it is my job and not yours: I take the
+material the moment it arrives, read it, look for where it actually came from, connect it to what you
+already have, and keep only the part worth keeping. Raw text does not reach your vault. A claim I
+could not confirm says so out loud instead of pretending. A year from now you open a note and see
+immediately why it exists.
+
+I am not an only child, if you look closely. Athena keeps the workshop running, Themis argues cases,
+Zeuz builds the machines, Helioz refuses to let long work die overnight. Same marble, same column,
+same refusal to accept a step on a promise. The one who arranges them all prefers to stay off the
+public shelf for now, and I am in no hurry to speak for him.
+
+Take me if you also collect and never return. Break me and say where — I would rather be corrected
+than admired.
+
+## The Same Marble
+
+| Project | What it does |
+|---|---|
+| [Athena](https://github.com/zarubinphil/athena) | A portable agent OS: brings a whole working setup up on a fresh Mac with one command. |
+| [Themis](https://github.com/zarubinphil/themis) | Multi-agent work on Russian court cases: thirteen lawyer-agents, a five-jurist council, local-first OCR. |
+| [Zeuz](https://github.com/zarubinphil/zeuz) | A factory for agent workflows: takes an idea and gives back a multi-agent system with its own constitution and gates. |
+| [Helioz](https://github.com/zarubinphil/helioz) | A conveyor that keeps work moving around the clock, so a long job survives sessions dying. |
+
 ## License
 
-MIT.
+Mnemazine Community License 1.0 (индивидуальное использование свободно, организационное — по соглашению с автором; см. LICENSE).

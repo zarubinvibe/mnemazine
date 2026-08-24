@@ -23,7 +23,7 @@ const DEEP = process.argv.includes('--deep')
 // Synthetic corpus: 3 on-topic clusters + 2 noise notes.
 const FIXTURES = {
   'harness-vs-model.md': '# Harness важнее модели\nСреда и workflow дают до 90% выигрыша. Контекст это бюджет, не свалка. Чинить harness, не менять модель.',
-  'context-budget.md': '# Контекст как бюджет\n73% токенов уходят до промпта. CLAUDE.md короткий роутер до 200 строк. Субагенты изолируют контекст.',
+  'context-budget.md': '# Контекст как бюджет\n73% токенов уходят до промпта; токены тратятся до запроса. CLAUDE.md короткий роутер до 200 строк. Субагенты изолируют контекст.',
   'swarm-fan-out.md': '# Рой и fan-out\nOrchestrator-worker, recon до fan-out, read параллельно write изолировать. Рой ~15x токенов, оправдан при независимости.',
   'autonomy-loops.md': '# Автономные петли\nCircuit breaker и cost cap, keep-or-revert, generator не равно evaluator, status-файлы.',
   'coffee.md': '# Кофе\nЭспрессо, молоко, ростер, обжарка зерна.',

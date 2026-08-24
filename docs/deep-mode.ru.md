@@ -24,21 +24,22 @@ MNEMAZINE_DEEP=1 node scripts/mnemazine-run.mjs
 npm run synthesize -- --deep
 ```
 
-Для рабочего Desktop Inbox используй `npm start` или `mnemazine`. Он сам читает `.mnemazine/config.local.sh`, берёт inbox с рабочего стола, пишет в `~/Мозг`, включает `--deep`, требует атомизацию + обогащение и после этого запускает `complete-check`. Desktop-gate проверяет заметки, изменённые в этом проходе; полный аудит всего vault запускается отдельно через `npm run quality`.
+Для рабочего Desktop Inbox используй `npm start` или `mnemazine`. Он сам читает `.mnemazine/config.local.sh`, берёт inbox с рабочего стола, пишет в личный vault (`$MNEMAZINE_VAULT`), включает `--deep`, требует атомизацию + обогащение и после этого запускает `complete-check`. Desktop-gate проверяет заметки, изменённые в этом проходе; полный аудит всего vault запускается отдельно через `npm run quality`.
 
 Если deep-режим запрошен напрямую, но движок LLM недоступен, обычный `node scripts/mnemazine-run.mjs --deep` откатывается на локальный шаблонный синтез и сообщает `degraded: true` в JSON-выводе. Строгий запуск (`--require-deep` или `npm start`) в такой ситуации падает до архива.
 
 ## Мост LLM
 
-Все вызовы LLM идут через один провайдер-абстрактный модуль: `scripts/mnemazine-llm.mjs` (`llmJson(prompt, schema, {provider, tools})`). Если `MNEMAZINE_LLM` не задан, Mnemazine берёт Claude CLI, когда он доступен, иначе Codex CLI. Можно зафиксировать движок явно: `MNEMAZINE_LLM=claude` или `MNEMAZINE_LLM=codex`. Третьего LLM-клиента нет. `mnemazine-codex.mjs` остаётся тонким shim'ом обратной совместимости.
+Все вызовы LLM идут через один модуль: `scripts/mnemazine-llm.mjs` (`llmJson(prompt, schema, {provider, tools})`). **Жёсткого списка движков нет.** Доступные CLI живут как данные в `config/cli-registry.json` (база: `claude`, `codex`, `kimi`) плюс gitignored-оверлей `config/cli-registry.local.json`. Подключить CLI — одна запись в JSON и ноль правок кода. `scripts/mnemazine-cli-router.mjs` валидирует реестр, сливает оверлей (тот может добавить CLI или подкрутить `model`/`effort`/`cost_tier`, но не пересадить `invoke`/`probe`/`data_classes`/`capabilities` базовой CLI и не выдать класс `pd`) и выбирает CLI по классу данных → возможности → тиру стоимости → доступности. Код ветвится по объявленной **возможности** выбранной записи, никогда по имени CLI.
+
+Каждая запись реестра объявляет: `probe`/`invoke` (префиксы argv), `model`, `effort`, `data_classes`, `capabilities` (например `json_schema_inline`, `json_schema_file`, `json_in_prompt`, `web_search`, `stdin_prompt`, `long_context`), `cost_tier` (`cheap|standard|premium`) и `local`. Стадия, которой нужен веб-поиск, маршрутизируется только к носителю `web_search`; если такого нет — падение с названной причиной. Зафиксировать движок: `MNEMAZINE_LLM=<имя-записи>` (дефолт владельца задаётся в `.mnemazine/config.local.sh`).
 
 ### Переменные окружения
 
 | Переменная | По умолчанию | Назначение |
 |----------|---------|---------|
-| `MNEMAZINE_LLM` | авто | Движок: `claude` или `codex`. Если не задан — Claude при наличии, иначе Codex. |
-| `MNEMAZINE_CLAUDE_BIN` | авто | Claude CLI: авто-поиск через login-shell PATH, типовые установки (npm/Homebrew/standalone/Desktop), VSCode. Переопределите чтобы зафиксировать. |
-| `MNEMAZINE_CODEX_BIN` | `/Applications/Codex.app/Contents/Resources/codex` | Путь к бинарю Codex. |
+| `MNEMAZINE_LLM` | дефолт реестра | Фиксирует запись реестра по имени (`codex`, `claude`, `kimi`…). Не задан — роутер выбирает из реестра, предпочитая доступный бинарь. |
+| `MNEMAZINE_<ИМЯ>_BIN` | авто-поиск | Переопределяет бинарь записи `<ИМЯ>` (например `MNEMAZINE_CLAUDE_BIN`, `MNEMAZINE_CODEX_BIN`). Иначе: env → login-shell PATH → типовые пути установки → голый PATH. |
 | `MNEMAZINE_LLM_TIMEOUT_MS` | `420000` | Таймаут одного вызова. |
 | `MNEMAZINE_DEEP` | не задано | `1` включает deep-режим (enrich + атомизация + проверка + digest). |
 | `MNEMAZINE_ENRICH` | `1` в deep | `0` (или `--no-enrich`) пропускает стадию обогащения. |

@@ -1,0 +1,7 @@
+{
+  "launchd_labels": [
+    "com.mnemazine.kb-lint",
+    "com.mnemazine.kb-yt-watch",
+    "com.mnemazine.telegram-sync"
+  ]
+}

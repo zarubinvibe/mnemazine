@@ -1,0 +1,112 @@
+# Generated from scripts/check-public-release.sh.
+# Do not hand-edit marker rules here; change PRIVATE_MARKER_RULES_DEFAULT there
+# and regenerate with: bash scripts/check-public-release.sh --print-gitleaks-config > .gitleaks.toml
+
+[extend]
+useDefault = true
+
+[[allowlists]]
+paths = [
+  '^scripts/check-public-release\.sh$',
+  '^\.gitleaks\.toml$',
+]
+
+[[allowlists]]
+description = 'Retrieval eval anchors are owner-approved measurement fixtures; keep token rules active, suppress only project/vault marker rules.'
+targetRules = ['vault-name-current', 'owner-projects']
+paths = [
+  '^tests/retrieval-eval\.mjs$',
+]
+
+[[rules]]
+id = 'private-path'
+description = 'Mnemazine private marker: private-path'
+regex = '/Users/'
+tags = ['mnemazine-private']
+
+[[rules]]
+id = 'remote-address'
+description = 'Mnemazine private marker: remote-address'
+regex = '72\.56'
+tags = ['mnemazine-private']
+
+[[rules]]
+id = 'remote-root'
+description = 'Mnemazine private marker: remote-root'
+regex = 'root@[a-z0-9]'
+tags = ['mnemazine-private']
+
+[[rules]]
+id = 'vault-name-current'
+description = 'Mnemazine private marker: vault-name-current'
+regex = 'Мозг'
+tags = ['mnemazine-private']
+
+[[rules]]
+id = 'vault-name-legacy'
+description = 'Mnemazine private marker: vault-name-legacy'
+regex = 'Полезные знания'
+tags = ['mnemazine-private']
+
+[[rules]]
+id = 'owner-projects'
+description = 'Mnemazine private marker: owner-projects'
+regex = 'TODOCUPS|ПКК|AthenaOS|legal-practice|Adventure Book'
+tags = ['mnemazine-private']
+
+[[rules]]
+id = 'owner-name'
+description = 'Mnemazine private marker: owner-name'
+regex = 'Филипп'
+tags = ['mnemazine-private']
+
+[[allowlists]]
+description = 'P21 baseline: commits already present before publication-surface gate; future commits are not allowlisted.'
+commits = [
+  '9efe5760d1f6cbe99e32e3f5426d7548ed21751e',
+  'd59901c95c8b45e1588ab76727318272b3548f04',
+  '192214689236e69f2df148724ffa5238a1b2699a',
+  '818944e401988d7f80cd73a7b44e8189955a08b5',
+  '8600374e7e41fba66ba0b000cf8fb8d91d5892d3',
+  '09de8c6251daad3b4ae10ebf8aa1a4b74e57c8c2',
+  '7d3591301d06d3fb214689338967802a2e418e24',
+  '1d355d5cbfc569928c34367880878f27842a09a4',
+  '3d36b656917cc67b7787e3a8c3baae088e8dece2',
+  '416c24e2483baac1e02a62c3aefcaff6089817e1',
+  '3c99ff1bb934cc7e6fb7711a7fbddbfc4c418ed8',
+  '007ba6c6cca2d2621566ac16b17629baafb4351c',
+  'c082a02210e64331ba52145cbe10baaeca26fbcb',
+  '690a645ba76236410b611b87703e3c7221d54bba',
+  '6683f00470a5873279a2eb39bbd0be03c1df8b89',
+  '56cb5a424d7dacb3857dd7148b40f901ad1b9929',
+  '29ce5aba12e68c0d8191b4c7aedf4c4effb4e01c',
+  'a7791b13eab6cd22800d74535bae201af4d76afb',
+  '817cc525eeb1bf967f73274fa07b819cb163786a',
+  '32771c1f17414d08331a915d177ab48cb82ea6ec',
+  'e2b7d9289fa6c9cc805810f7782a7bfe0fdd3303',
+  '3bfc81e943f5da94b8e835d13f80e8f35fe5b4e6',
+  'a48534b451c68d496b2fab4c69a8344bb52b9b65',
+  'a78c88ff63c1c70def107679647698265e476b44',
+  '2f691260e6cab5854cb5251199e63b980e7d8aee',
+  'aea841c1c854892787d7c20f388d491f7eb971e4',
+  'a653c6a2ba55b75ed7ddbae9f595eb9574061c06',
+  'fc567021c5a0e0cd6280cca5b9d94ac64ee7d4bb',
+  '625b2aebfaec845aa55fee644cf05beb5fad6b9b',
+  '8b8af2630350e669da5ccef239536a80ce15f257',
+  'b8267f854bca7a5aaf4d70cbd0e6124e7cea7460',
+  '6d79241a00734ac3710066b7b4c2b3b0c28f5174',
+  '3e203a9135dee8bf240b4deb068fc8bd317ca4a3',
+  'f9356c2f3610e4ce9d49d9616b32c6daf1f3f78d',
+  '972f7990576ff6bf5c6afab8054504485ced38bf',
+  'ef4f6a18f811855f9f0c89e8dc2b944da6c43119',
+  '73fd6623515d20b8477a8ec7f5f1cc3f3cc45e0b',
+  'dcfa6baba04cfa1fe473216d6e434f9a1615a5ed',
+  '3ab7c885524f408d50d5bb4d7a3e205009369e2b',
+  '6539cd0f0e8958f6d6405b6ef12344eedb26043b',
+  '04fe001b4438f49c50e48a38a91789d077a62786',
+  'fa722268f32563a9a269bba57904a4f75c769da7',
+  '188cc9eeb999ab4546689eab1fa83a8abb8cbfb4',
+  '481daf7fe0e151ef3571459b20fe93649c43bb56',
+  '30e67b2e65c1d645fe4c8fb1904c8e26d4acdeb3',
+  '4d8efe744287d184501c10ad4685689003dfd2de',
+]

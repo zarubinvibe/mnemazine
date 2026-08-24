@@ -1,0 +1,10 @@
+{
+  "date": "2026-07-25",
+  "n": 20,
+  "rg": 12,
+  "query": 17,
+  "rerank": 16,
+  "corpus": 1402,
+  "index": 1402,
+  "verdict": "rerank worsens hit@7 by -1"
+}

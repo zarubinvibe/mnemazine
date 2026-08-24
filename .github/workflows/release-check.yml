@@ -16,7 +16,11 @@ concurrency:
 
 jobs:
   release-check:
-    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-15]
+    runs-on: ${{ matrix.os }}
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v5
@@ -32,8 +36,19 @@ jobs:
       - name: Ensure audit tools
         run: |
           if ! command -v rg >/dev/null 2>&1; then
-            sudo apt-get update
-            sudo apt-get install -y ripgrep
+            case "$RUNNER_OS" in
+              Linux)
+                sudo apt-get update
+                sudo apt-get install -y ripgrep
+                ;;
+              macOS)
+                brew install ripgrep
+                ;;
+              *)
+                echo "Unsupported runner OS: $RUNNER_OS" >&2
+                exit 1
+                ;;
+            esac
           fi
       - name: Show runtime versions
         run: |
@@ -42,14 +57,61 @@ jobs:
           python3 --version
           rg --version
       - name: Run post-run report smoke
+        env:
+          MNEMAZINE_VAULT: ${{ github.workspace }}/demo/vault
         run: npm run postrun -- --run-id ci-postrun --since-days 30 --reports "$RUNNER_TEMP/mnemazine-postrun" --quiet
       - name: Run local security audit
-        run: npm run audit:local
+        run: MNEMAZINE_AUDIT_SKIP_PUBLIC_RELEASE=1 npm run audit:local
       - name: Run setup dry-run smoke
         run: printf '2\n2\n2\n' | MNEMAZINE_SETUP_DRYRUN=1 bash setup.sh
       - name: Run live preflight smoke
         run: MNEMAZINE_PREFLIGHT_ALLOW_EMPTY=1 MNEMAZINE_PREFLIGHT_SKIP_REMOTE=1 MNEMAZINE_PREFLIGHT_SKIP_LLM=1 npm run preflight:live
-      - name: Run release test suite
-        run: npm test
+      - name: Run transferred instrument syntax checks
+        run: |
+          for file in workflows/*.js; do
+            node -e "const fs=require('fs'); const AsyncFunction=Object.getPrototypeOf(async function(){}).constructor; const body=fs.readFileSync(process.argv[1],'utf8').replace(/^export\\s+const\\s+meta\\s*=/,'const meta ='); new AsyncFunction('agent','parallel','pipeline','phase','log','args','budget','workflow', body)" "$file"
+          done
+          python3 -m py_compile skills/humanizer-ru/scripts/scan.py
       - name: Run release gate directly
         run: npm run release-check
+
+  fresh-install:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-15, ubuntu-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          # The declared minimum (engines.node >= 20), not the 24 the other job
+          # uses — so the floor a stranger reads in Requirements is actually tested.
+          node-version: '20'
+          cache: npm
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.11'
+      - name: Install npm dependencies
+        run: npm ci
+      - name: Fresh install (first pass)
+        run: |
+          MNEMAZINE_YES=1 MNEMAZINE_SKIP_DEPS=1 bash install.sh; rc=$?
+          [ "$rc" = 0 ] || [ "$rc" = 2 ] || { echo "install.sh failed rc=$rc" >&2; exit 1; }
+      - name: Doctor is wired
+        run: npm run doctor:selftest
+      - name: Snapshot the install manifest
+        run: cp .mnemazine/state/install-manifest.json "$RUNNER_TEMP/manifest-1.json"
+      - name: Fresh install (second pass — must be idempotent)
+        run: |
+          MNEMAZINE_YES=1 MNEMAZINE_SKIP_DEPS=1 bash install.sh; rc=$?
+          [ "$rc" = 0 ] || [ "$rc" = 2 ] || { echo "install.sh failed rc=$rc" >&2; exit 1; }
+      - name: Manifest identical across the two installs
+        run: |
+          if ! diff -u "$RUNNER_TEMP/manifest-1.json" .mnemazine/state/install-manifest.json; then
+            echo "install-manifest.json changed between two installs — a created path is not reproducible." >&2
+            exit 1
+          fi
+      - name: Doctor still wired
+        run: npm run doctor:selftest

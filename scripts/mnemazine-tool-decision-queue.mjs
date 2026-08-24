@@ -2,6 +2,7 @@
 import { promises as fs } from 'node:fs'
 import { existsSync, readFileSync } from 'node:fs'
 import path from 'node:path'
+import { SPEC_TYPES } from './mnemazine-note-spec.mjs'
 import { resolveVault } from './mnemazine-paths.mjs'
 
 const ROOT = process.env.MNEMAZINE_ROOT || path.resolve(process.cwd())
@@ -61,6 +62,11 @@ function titleOf(text, file) {
   return text.match(/^title:\s*"([^"]+)"/m)?.[1]?.trim() ||
     text.match(/^#\s+(.+)$/m)?.[1]?.trim() ||
     path.basename(file, '.md')
+}
+
+function frontmatterType(text) {
+  const match = String(text || '').match(/^type:\s*["']?([^"'\n#]+)["']?\s*(?:#.*)?$/m)
+  return match ? match[1].trim() : ''
 }
 
 async function walk(dir) {
@@ -158,7 +164,7 @@ async function collectTools() {
     const stat = await fs.stat(file)
     if (SINCE_MS && stat.mtimeMs < SINCE_MS) continue
     const text = await fs.readFile(file, 'utf8').catch(() => '')
-    if (!/type:\s*"knowledge-note"/.test(text)) continue
+    if (!SPEC_TYPES.has(frontmatterType(text))) continue
     if (!/github\.com\//i.test(text)) continue
     if (!/verified:\s*true/.test(text)) continue
     const repos = reposFrom(text)

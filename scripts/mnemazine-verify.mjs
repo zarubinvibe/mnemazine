@@ -141,7 +141,7 @@ ${fenceUntrusted('CLAIM', String(claim).slice(0, 4000))}
 
 SOURCES:
 ${live.length ? live.join('\n') : '(none reachable)'}`
-    const res = await llmJson(prompt, VERIFY_SCHEMA, { timeoutMs: options.llmTimeoutMs, provider: options.provider, tools: ['WebSearch', 'WebFetch'] })
+    const res = await llmJson(prompt, VERIFY_SCHEMA, { timeoutMs: options.llmTimeoutMs, provider: options.provider, tools: ['WebSearch', 'WebFetch'], label: options.label || 'verify:claim' })
     let status = ['verified', 'assumed', 'unknown'].includes(res?.status) ? res.status : 'unknown'
     if (status === 'verified' && !live.length) status = 'unknown'
     const checked = Array.isArray(res?.checked) ? res.checked.filter(isPublicHttpUrl) : []

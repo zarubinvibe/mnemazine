@@ -27,7 +27,7 @@ function lastRunVault() {
   }
 }
 const VAULT = resolveVault({
-  cli: arg('vault', process.env.MNEMAZINE_VAULT || lastRunVault()),
+  cli: arg('vault', process.env.MNEMAZINE_VAULT || ''),
 })
 const REPORTS = path.resolve(arg('reports', process.env.MNEMAZINE_REPORTS || path.join(ROOT, 'reports')))
 const RUN_ID = arg('run-id', new Date().toISOString().slice(0, 10))
@@ -99,7 +99,9 @@ function present(text) {
     .replace(/\btemp_image[_-][\w.-]+/gi, 'локальный визуальный источник')
     .replace(/\b[\w.-]+\.(?:WEBP|PNG|JPE?G|HEIC|TIFF|MOV|MP4)\b/gi, 'локальный медиафайл')
     .replace(/\bDESIGN\.md\b/gi, 'дизайн-контракт')
-    .replace(/\b(?!getdesign\.md\b)[\w.-]+\.md\b/gi, 'локальная заметка')
+    .replace(/\bgetdesign\.md\b/gi, 'getdesign')
+    .replace(/\b[\wА-Яа-яЁё ._-]+\.md\b/gi, 'локальная заметка')
+    .replace(/\b[\w.-]+\.md\b/gi, 'локальная заметка')
     .replace(/\s+/g, ' ')
     .trim()
 }

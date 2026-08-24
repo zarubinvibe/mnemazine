@@ -1,0 +1,410 @@
+- generic [active] [ref=f8e1]:
+  - generic [ref=f8e3]:
+    - banner [ref=f8e4]:
+      - banner "Шапка сайта" [ref=f8e5]:
+        - link "Логотип Бренда" [ref=f8e7] [cursor=pointer]:
+          - /url: /
+        - generic [ref=f8e10]: Найти в Дзене
+        - generic [ref=f8e16]:
+          - button "Настройки" [ref=f8e18] [cursor=pointer]
+          - button "Войти" [ref=f8e26] [cursor=pointer]
+    - generic [ref=f8e30]:
+      - complementary "Боковое меню навигации" [ref=f8e32]:
+        - list [ref=f8e33]:
+          - link "Главная" [ref=f8e34] [cursor=pointer]:
+            - /url: https://dzen.ru/
+            - listitem [ref=f8e35]
+          - link "Подписки" [ref=f8e39] [cursor=pointer]:
+            - /url: https://dzen.ru/subscriptions-manager
+            - listitem [ref=f8e40]
+          - link "Найти" [ref=f8e44] [cursor=pointer]:
+            - /url: https://dzen.ru/explore
+            - listitem [ref=f8e45]
+          - link "Новости" [ref=f8e49] [cursor=pointer]:
+            - /url: https://dzen.ru/news
+            - listitem [ref=f8e50]
+          - link "Статьи" [ref=f8e54] [cursor=pointer]:
+            - /url: https://dzen.ru/articles
+            - listitem [ref=f8e55]
+          - link "Видео" [ref=f8e59] [cursor=pointer]:
+            - /url: https://dzen.ru/video
+            - listitem [ref=f8e60]
+          - link "Ролики" [ref=f8e64] [cursor=pointer]:
+            - /url: https://dzen.ru/shorts
+            - listitem [ref=f8e65]
+          - link "Видеоигры" [ref=f8e71] [cursor=pointer]:
+            - /url: https://dzen.ru/topic/games
+            - listitem [ref=f8e72]
+          - link "Детям" [ref=f8e76] [cursor=pointer]:
+            - /url: https://dzen.ru/topic/multiki
+            - listitem [ref=f8e77]
+        - button [ref=f8e82]
+      - main [ref=f8e87]:
+        - generic [ref=f8e92]:
+          - generic [ref=f8e93]:
+            - generic [ref=f8e99]:
+              - generic: Зарегистрированная страница
+              - button [ref=f8e101] [cursor=pointer]
+            - generic "Описание канала" [ref=f8e105]:
+              - generic [ref=f8e106]:
+                - generic "Артемий Лебедев" [ref=f8e109] [cursor=pointer]
+                - generic [ref=f8e110]:
+                  - heading "Название канала" [level=1] [ref=f8e112]:
+                    - generic [ref=f8e113]:
+                      - text: Артемий Лебе
+                      - generic [ref=f8e114]:
+                        - text: дев
+                        - generic "Верифицированный канал" [ref=f8e116]
+                  - generic [ref=f8e121]:
+                    - generic [ref=f8e122]: 275,7 тыс
+                    - generic [ref=f8e123]: подписчиков
+                  - generic [ref=f8e127] [cursor=pointer]:
+                    - text: Самые Честные Новости Страница включена Роскомнадзором в перечень
+                    - generic [ref=f8e128]: любим…
+                - generic [ref=f8e131]:
+                  - button "Подписаться" [ref=f8e133] [cursor=pointer]
+                  - button "Меню" [ref=f8e136] [cursor=pointer]
+          - generic [ref=f8e139]:
+            - generic [ref=f8e141]:
+              - generic [ref=f8e148]:
+                - link "Лента материалов" [ref=f8e149] [cursor=pointer]:
+                  - /url: https://dzen.ru/temalebedev
+                - link "Видео" [ref=f8e151] [cursor=pointer]:
+                  - /url: https://dzen.ru/temalebedev?tab=longs
+                - link "Статьи" [ref=f8e153] [cursor=pointer]:
+                  - /url: https://dzen.ru/temalebedev?tab=articles
+                - link "Ролики" [ref=f8e155] [cursor=pointer]:
+                  - /url: https://dzen.ru/temalebedev?tab=shorts
+              - generic [ref=f8e159]:
+                - article [ref=f8e162]:
+                  - generic [ref=f8e163]:
+                    - generic [ref=f8e164]: 1 час назад
+                    - generic [ref=f8e169]:
+                      - generic [ref=f8e170]:
+                        - heading "Яблоко от яблони" [level=3] [ref=f8e173] [cursor=pointer]
+                        - 'link "Читать статью: Яблоко от яблони" [ref=f8e174] [cursor=pointer]':
+                          - /url: https://dzen.ru/a/aowDGLClTxhSBZVA?feed_exp=ordinary_feed&from=channel&integration=site_desktop&place=layout&secdata=CISvhKSDNCABUA9qAQGQAQA%3D&rid=2500908459.741.1787592817304.97212&referrer_clid=1400&
+                      - region "Карточка статьи" [ref=f8e175]:
+                        - paragraph [ref=f8e178] [cursor=pointer]: Любопытно, что яблоко - особенный фрукт во всех языках. Он один из самых древних. Поэтому апельсин - это с нидерландского appelsien - "китайское яблоко". Поэтому картошка по-французски это pomme de terre - "земляное яблоко". Поэтому ананас по-английски это pineapple - "еловое яблоко". Поэтому помидор по-итальянски это pomo d'oro - "золотое яблоко"...
+                        - 'link "Читать статью: Яблоко от яблони" [ref=f8e179] [cursor=pointer]':
+                          - /url: https://dzen.ru/a/aowDGLClTxhSBZVA?feed_exp=ordinary_feed&from=channel&integration=site_desktop&place=layout&secdata=CISvhKSDNCABUA9qAQGQAQA%3D&rid=2500908459.741.1787592817304.97212&referrer_clid=1400&
+                    - generic [ref=f8e181]:
+                      - button "Нравится" [ref=f8e182] [cursor=pointer]:
+                        - generic [ref=f8e188]: "13"
+                      - link "Комментировать" [ref=f8e189] [cursor=pointer]:
+                        - /url: https://dzen.ru/a/aowDGLClTxhSBZVA?feed_exp=ordinary_feed&from=channel&rid=2500908459.741.1787592817304.97212&integration=site_desktop&place=layout&secdata=CISvhKSDNCABUA9qAQGQAQA%3D&referrer_clid=1400&#comments_data=p_root
+                        - generic [ref=f8e193]: "3"
+                      - link "Просмотры" [ref=f8e194] [cursor=pointer]:
+                        - /url: https://dzen.ru/a/aowDGLClTxhSBZVA?feed_exp=ordinary_feed&from=channel&integration=site_desktop&place=layout&secdata=CISvhKSDNCABUA9qAQGQAQA%3D&rid=2500908459.741.1787592817304.97212&referrer_clid=1400&
+                        - generic [ref=f8e198]: "93"
+                      - link [ref=f8e199] [cursor=pointer]:
+                        - /url: https://dzen.ru/a/aowDGLClTxhSBZVA?feed_exp=ordinary_feed&from=channel&integration=site_desktop&place=layout&secdata=CISvhKSDNCABUA9qAQGQAQA%3D&rid=2500908459.741.1787592817304.97212&referrer_clid=1400&
+                - article [ref=f8e202]:
+                  - generic [ref=f8e203]:
+                    - generic [ref=f8e204]: 5 часов назад
+                    - generic [ref=f8e209]:
+                      - generic [ref=f8e210]:
+                        - heading "Начало недели" [level=3] [ref=f8e213] [cursor=pointer]
+                        - 'link "Читать статью: Начало недели" [ref=f8e214] [cursor=pointer]':
+                          - /url: https://dzen.ru/a/aowCBGwOWBNIf9Qk?feed_exp=ordinary_feed&from=channel&integration=site_desktop&place=layout&secdata=CJuwlZ2DNCABUA9qAQGQAQA%3D&rid=2500908459.741.1787592817304.97212&referrer_clid=1400&
+                      - region "Карточка статьи" [ref=f8e215]:
+                        - paragraph [ref=f8e218] [cursor=pointer]: "Кстати, у америкосов неделя начинается в воскресенье. Это полный пиздец! Это рвет сознание в клочья, сбивает с толку, полностью лишает возможности ориентироваться в календаре и просто это нелогично. Понятно, что можно было придумать любую организацию дней, хоть 14-дневными кусками. но у нас есть 7-дневная неделя с очень удобными и соответствующими названиями: понедельник - начало, вторник, четверг, пятница - однозначно красиво сформулированные числительные..."
+                        - 'link "Читать статью: Начало недели" [ref=f8e219] [cursor=pointer]':
+                          - /url: https://dzen.ru/a/aowCBGwOWBNIf9Qk?feed_exp=ordinary_feed&from=channel&integration=site_desktop&place=layout&secdata=CJuwlZ2DNCABUA9qAQGQAQA%3D&rid=2500908459.741.1787592817304.97212&referrer_clid=1400&
+                    - generic [ref=f8e221]:
+                      - button "Нравится" [ref=f8e222] [cursor=pointer]:
+                        - generic [ref=f8e228]: "42"
+                      - link "Комментировать" [ref=f8e229] [cursor=pointer]:
+                        - /url: https://dzen.ru/a/aowCBGwOWBNIf9Qk?feed_exp=ordinary_feed&from=channel&rid=2500908459.741.1787592817304.97212&integration=site_desktop&place=layout&secdata=CJuwlZ2DNCABUA9qAQGQAQA%3D&referrer_clid=1400&#comments_data=p_root
+                        - generic [ref=f8e233]: "3"
+                      - link "Просмотры" [ref=f8e234] [cursor=pointer]:
+                        - /url: https://dzen.ru/a/aowCBGwOWBNIf9Qk?feed_exp=ordinary_feed&from=channel&integration=site_desktop&place=layout&secdata=CJuwlZ2DNCABUA9qAQGQAQA%3D&rid=2500908459.741.1787592817304.97212&referrer_clid=1400&
+                        - generic [ref=f8e238]: "258"
+                      - link [ref=f8e239] [cursor=pointer]:
+                        - /url: https://dzen.ru/a/aowCBGwOWBNIf9Qk?feed_exp=ordinary_feed&from=channel&integration=site_desktop&place=layout&secdata=CJuwlZ2DNCABUA9qAQGQAQA%3D&rid=2500908459.741.1787592817304.97212&referrer_clid=1400&
+                - article [ref=f8e242]:
+                  - generic [ref=f8e243]:
+                    - generic [ref=f8e244]: 9 часов назад
+                    - generic [ref=f8e249]:
+                      - generic [ref=f8e250]:
+                        - heading "Священная утренняя тишина" [level=3] [ref=f8e253] [cursor=pointer]
+                        - 'link "Читать статью: Священная утренняя тишина" [ref=f8e254] [cursor=pointer]':
+                          - /url: https://dzen.ru/a/aovppcW2xgD9Ap8a?feed_exp=ordinary_feed&from=channel&integration=site_desktop&place=layout&secdata=CLSfp5aDNCABUA9qAQGQAQA%3D&rid=2500908459.741.1787592817304.97212&referrer_clid=1400&
+                      - region "Карточка статьи" [ref=f8e255]:
+                        - paragraph [ref=f8e258] [cursor=pointer]: "Если есть один секрет долговечных отношений, то он такой: первый час после просыпания нужно молчать. Многие люди приходят к пониманию важности этого секрета по-своему. Кто-то просит не говорить с ним до первой чашки кофе, кто-то до прочтения первой газеты, кто-то до пробежки с собакой. Но все это вариации одного и того же явления: после просыпания организму лучше наедине с самим собой, без отвлечения. Это позволяет..."
+                        - 'link "Читать статью: Священная утренняя тишина" [ref=f8e259] [cursor=pointer]':
+                          - /url: https://dzen.ru/a/aovppcW2xgD9Ap8a?feed_exp=ordinary_feed&from=channel&integration=site_desktop&place=layout&secdata=CLSfp5aDNCABUA9qAQGQAQA%3D&rid=2500908459.741.1787592817304.97212&referrer_clid=1400&
+                    - generic [ref=f8e261]:
+                      - button "Нравится" [ref=f8e262] [cursor=pointer]:
+                        - generic [ref=f8e268]: "120"
+                      - link "Комментировать" [ref=f8e269] [cursor=pointer]:
+                        - /url: https://dzen.ru/a/aovppcW2xgD9Ap8a?feed_exp=ordinary_feed&from=channel&rid=2500908459.741.1787592817304.97212&integration=site_desktop&place=layout&secdata=CLSfp5aDNCABUA9qAQGQAQA%3D&referrer_clid=1400&#comments_data=p_root
+                        - generic [ref=f8e273]: "11"
+                      - link "Просмотры" [ref=f8e274] [cursor=pointer]:
+                        - /url: https://dzen.ru/a/aovppcW2xgD9Ap8a?feed_exp=ordinary_feed&from=channel&integration=site_desktop&place=layout&secdata=CLSfp5aDNCABUA9qAQGQAQA%3D&rid=2500908459.741.1787592817304.97212&referrer_clid=1400&
+                        - generic [ref=f8e278]: "465"
+                      - link [ref=f8e279] [cursor=pointer]:
+                        - /url: https://dzen.ru/a/aovppcW2xgD9Ap8a?feed_exp=ordinary_feed&from=channel&integration=site_desktop&place=layout&secdata=CLSfp5aDNCABUA9qAQGQAQA%3D&rid=2500908459.741.1787592817304.97212&referrer_clid=1400&
+                - article [ref=f8e282]:
+                  - generic [ref=f8e283]:
+                    - generic [ref=f8e284]: 21 час назад
+                    - region "Карточка статьи" [ref=f8e290]:
+                      - paragraph [ref=f8e293] [cursor=pointer]: Лучшая рыба - это колбаса. Наши люди!
+                      - 'link "Читать статью: undefined" [ref=f8e294] [cursor=pointer]':
+                        - /url: https://dzen.ru/b/aotXpV866jPqqMHr?from=channel&place=layout&integration=site_desktop&rid=2500908459.741.1787592817304.97212&referrer_clid=1400&
+                    - generic [ref=f8e296]:
+                      - button "Нравится" [ref=f8e297] [cursor=pointer]:
+                        - generic [ref=f8e303]: "64"
+                      - link "Комментировать" [ref=f8e304] [cursor=pointer]:
+                        - /url: https://dzen.ru/b/aotXpV866jPqqMHr?from=channel&rid=2500908459.741.1787592817304.97212&place=layout&integration=site_desktop&referrer_clid=1400&#comments_data=p_root
+                        - generic [ref=f8e308]: "2"
+                      - link "Просмотры" [ref=f8e309] [cursor=pointer]:
+                        - /url: https://dzen.ru/b/aotXpV866jPqqMHr?from=channel&place=layout&integration=site_desktop&rid=2500908459.741.1787592817304.97212&referrer_clid=1400&
+                        - generic [ref=f8e313]: "99"
+                      - link [ref=f8e314] [cursor=pointer]:
+                        - /url: https://dzen.ru/b/aotXpV866jPqqMHr?from=channel&place=layout&integration=site_desktop&rid=2500908459.741.1787592817304.97212&referrer_clid=1400&
+                  - generic [ref=f8e315]:
+                    - generic [ref=f8e316] [cursor=pointer]
+                    - 'link "Читать статью: undefined" [ref=f8e319] [cursor=pointer]':
+                      - /url: https://dzen.ru/b/aotXpV866jPqqMHr?from=channel&place=layout&integration=site_desktop&rid=2500908459.741.1787592817304.97212&referrer_clid=1400&
+                - article [ref=f8e322]:
+                  - generic [ref=f8e323]:
+                    - generic [ref=f8e324]: 1 день назад
+                    - region "Карточка статьи" [ref=f8e330]:
+                      - paragraph [ref=f8e333] [cursor=pointer]: Старая португальская крепость Мазаган, она же сегодня город Эль-Джадида в Марокко.
+                      - 'link "Читать статью: undefined" [ref=f8e334] [cursor=pointer]':
+                        - /url: https://dzen.ru/b/aosPlihD4C3gYSdc?from=channel&place=layout&integration=site_desktop&rid=2500908459.741.1787592817304.97212&referrer_clid=1400&
+                    - generic [ref=f8e336]:
+                      - button "Нравится" [ref=f8e337] [cursor=pointer]:
+                        - generic [ref=f8e343]: "60"
+                      - link "Комментировать" [ref=f8e344] [cursor=pointer]:
+                        - /url: https://dzen.ru/b/aosPlihD4C3gYSdc?from=channel&rid=2500908459.741.1787592817304.97212&place=layout&integration=site_desktop&referrer_clid=1400&#comments_data=p_root
+                        - generic [ref=f8e348]: "3"
+                      - link "Просмотры" [ref=f8e349] [cursor=pointer]:
+                        - /url: https://dzen.ru/b/aosPlihD4C3gYSdc?from=channel&place=layout&integration=site_desktop&rid=2500908459.741.1787592817304.97212&referrer_clid=1400&
+                        - generic [ref=f8e353]: "92"
+                      - link [ref=f8e354] [cursor=pointer]:
+                        - /url: https://dzen.ru/b/aosPlihD4C3gYSdc?from=channel&place=layout&integration=site_desktop&rid=2500908459.741.1787592817304.97212&referrer_clid=1400&
+                  - generic [ref=f8e355]:
+                    - generic [ref=f8e356] [cursor=pointer]
+                    - 'link "Читать статью: undefined" [ref=f8e359] [cursor=pointer]':
+                      - /url: https://dzen.ru/b/aosPlihD4C3gYSdc?from=channel&place=layout&integration=site_desktop&rid=2500908459.741.1787592817304.97212&referrer_clid=1400&
+                - article [ref=f8e362]:
+                  - generic [ref=f8e363]:
+                    - generic [ref=f8e364]: 2 дня назад
+                    - generic [ref=f8e369]:
+                      - generic [ref=f8e370]:
+                        - heading "Самый хороший подкаст" [level=3] [ref=f8e373] [cursor=pointer]
+                        - 'link "Читать статью: Самый хороший подкаст" [ref=f8e374] [cursor=pointer]':
+                          - /url: https://dzen.ru/a/aogqStfT2QW865Lh?feed_exp=ordinary_feed&from=channel&integration=site_desktop&place=layout&secdata=CJK30tGCNCABUA9qAQGQAQA%3D&rid=2500908459.741.1787592817304.97212&referrer_clid=1400&
+                      - region "Карточка статьи" [ref=f8e375]:
+                        - paragraph [ref=f8e378] [cursor=pointer]: "—> Елена Ландэ - бренд-шеф ВК Видео: https://vkvideo.ru/video-211437014_456248431 Файл: https://cloud.mail.ru/public/CeNE/9XPJt2pSe Большой файл: https://cloud.mail.ru/public/SobU/XFGEJDHQb Подкаст: https://vk..."
+                        - 'link "Читать статью: Самый хороший подкаст" [ref=f8e379] [cursor=pointer]':
+                          - /url: https://dzen.ru/a/aogqStfT2QW865Lh?feed_exp=ordinary_feed&from=channel&integration=site_desktop&place=layout&secdata=CJK30tGCNCABUA9qAQGQAQA%3D&rid=2500908459.741.1787592817304.97212&referrer_clid=1400&
+                    - generic [ref=f8e381]:
+                      - button "Нравится" [ref=f8e382] [cursor=pointer]:
+                        - generic [ref=f8e388]: "12"
+                      - link "Комментировать" [ref=f8e389] [cursor=pointer]:
+                        - /url: https://dzen.ru/a/aogqStfT2QW865Lh?feed_exp=ordinary_feed&from=channel&rid=2500908459.741.1787592817304.97212&integration=site_desktop&place=layout&secdata=CJK30tGCNCABUA9qAQGQAQA%3D&referrer_clid=1400&#comments_data=p_root
+                        - generic [ref=f8e393]: "2"
+                      - link "Просмотры" [ref=f8e394] [cursor=pointer]:
+                        - /url: https://dzen.ru/a/aogqStfT2QW865Lh?feed_exp=ordinary_feed&from=channel&integration=site_desktop&place=layout&secdata=CJK30tGCNCABUA9qAQGQAQA%3D&rid=2500908459.741.1787592817304.97212&referrer_clid=1400&
+                        - generic [ref=f8e398]: "138"
+                      - link [ref=f8e399] [cursor=pointer]:
+                        - /url: https://dzen.ru/a/aogqStfT2QW865Lh?feed_exp=ordinary_feed&from=channel&integration=site_desktop&place=layout&secdata=CJK30tGCNCABUA9qAQGQAQA%3D&rid=2500908459.741.1787592817304.97212&referrer_clid=1400&
+                  - generic [ref=f8e400]:
+                    - generic [ref=f8e401] [cursor=pointer]
+                    - 'link "Читать статью: Самый хороший подкаст" [ref=f8e404] [cursor=pointer]':
+                      - /url: https://dzen.ru/a/aogqStfT2QW865Lh?feed_exp=ordinary_feed&from=channel&integration=site_desktop&place=layout&secdata=CJK30tGCNCABUA9qAQGQAQA%3D&rid=2500908459.741.1787592817304.97212&referrer_clid=1400&
+                - article [ref=f8e407]:
+                  - generic [ref=f8e408]:
+                    - generic [ref=f8e409]: 2 дня назад
+                    - generic [ref=f8e414]:
+                      - generic [ref=f8e415]:
+                        - heading "Мужские запахи" [level=3] [ref=f8e418] [cursor=pointer]
+                        - 'link "Читать статью: Мужские запахи" [ref=f8e419] [cursor=pointer]':
+                          - /url: https://dzen.ru/a/aolE49jAjhWC9Yel?feed_exp=ordinary_feed&from=channel&integration=site_desktop&place=layout&secdata=CNXX%2BsOCNCABUA9qAQGQAQA%3D&rid=2500908459.741.1787592817304.97212&referrer_clid=1400&
+                      - region "Карточка статьи" [ref=f8e420]:
+                        - paragraph [ref=f8e423] [cursor=pointer]: Мужские запахи Пиздец, больше всего на свете ненавижу запахи мужских дезодорантов, гелей для душа, шампуней и прочих лосьонов. За редкими исключениями все запахи ухода за мужским телом пахнут бытовой химией. Все эти «арктические бризы» и «свежесть ментола» - как будто нюхаешь стекломой или дезинфицирующие салфетки...
+                        - 'link "Читать статью: Мужские запахи" [ref=f8e424] [cursor=pointer]':
+                          - /url: https://dzen.ru/a/aolE49jAjhWC9Yel?feed_exp=ordinary_feed&from=channel&integration=site_desktop&place=layout&secdata=CNXX%2BsOCNCABUA9qAQGQAQA%3D&rid=2500908459.741.1787592817304.97212&referrer_clid=1400&
+                    - generic [ref=f8e426]:
+                      - button "Нравится" [ref=f8e427] [cursor=pointer]:
+                        - generic [ref=f8e433]: "74"
+                      - link "Комментировать" [ref=f8e434] [cursor=pointer]:
+                        - /url: https://dzen.ru/a/aolE49jAjhWC9Yel?feed_exp=ordinary_feed&from=channel&rid=2500908459.741.1787592817304.97212&integration=site_desktop&place=layout&secdata=CNXX%2BsOCNCABUA9qAQGQAQA%3D&referrer_clid=1400&#comments_data=p_root
+                        - generic [ref=f8e438]: "12"
+                      - link "Просмотры" [ref=f8e439] [cursor=pointer]:
+                        - /url: https://dzen.ru/a/aolE49jAjhWC9Yel?feed_exp=ordinary_feed&from=channel&integration=site_desktop&place=layout&secdata=CNXX%2BsOCNCABUA9qAQGQAQA%3D&rid=2500908459.741.1787592817304.97212&referrer_clid=1400&
+                        - generic [ref=f8e443]: "764"
+                      - link [ref=f8e444] [cursor=pointer]:
+                        - /url: https://dzen.ru/a/aolE49jAjhWC9Yel?feed_exp=ordinary_feed&from=channel&integration=site_desktop&place=layout&secdata=CNXX%2BsOCNCABUA9qAQGQAQA%3D&rid=2500908459.741.1787592817304.97212&referrer_clid=1400&
+                - article [ref=f8e447]:
+                  - generic [ref=f8e448]:
+                    - generic [ref=f8e449]: 3 дня назад
+                    - generic [ref=f8e454]:
+                      - generic [ref=f8e455]:
+                        - heading "Вино в конце вечера" [level=3] [ref=f8e458] [cursor=pointer]
+                        - 'link "Читать статью: Вино в конце вечера" [ref=f8e459] [cursor=pointer]':
+                          - /url: https://dzen.ru/a/aodbKfYV-SnuCziX?feed_exp=ordinary_feed&from=channel&integration=site_desktop&place=layout&secdata=CNbwuKiCNCABUA9qAQGQAQA%3D&rid=2500908459.741.1787592817304.97212&referrer_clid=1400&
+                      - region "Карточка статьи" [ref=f8e460]:
+                        - paragraph [ref=f8e463] [cursor=pointer]: Пиздец, больше всего на свете меня бесит, когда в конце вечера уже все такие выпили хорошо, больше новых бутылок не открывают, и кто-то вдруг на пожелание еще винца вдруг берет и переливает тебе ИЗ СВОЕГО БОКАЛА. Типа, вино же дорогое, хули добру пропадать. Вообще, я не особо брезгливый, с удовольствием ем рыбу руками из общего блюда с десятью арабами. И ем рис руками из одного поддона с десятью бангладешцами. И с удовольствием курю косяк с десятью питерцами...
+                        - 'link "Читать статью: Вино в конце вечера" [ref=f8e464] [cursor=pointer]':
+                          - /url: https://dzen.ru/a/aodbKfYV-SnuCziX?feed_exp=ordinary_feed&from=channel&integration=site_desktop&place=layout&secdata=CNbwuKiCNCABUA9qAQGQAQA%3D&rid=2500908459.741.1787592817304.97212&referrer_clid=1400&
+                    - generic [ref=f8e466]:
+                      - button "Нравится" [ref=f8e467] [cursor=pointer]:
+                        - generic [ref=f8e473]: "620"
+                      - link "Комментировать" [ref=f8e474] [cursor=pointer]:
+                        - /url: https://dzen.ru/a/aodbKfYV-SnuCziX?feed_exp=ordinary_feed&from=channel&rid=2500908459.741.1787592817304.97212&integration=site_desktop&place=layout&secdata=CNbwuKiCNCABUA9qAQGQAQA%3D&referrer_clid=1400&#comments_data=p_root
+                        - generic [ref=f8e478]: "383"
+                      - link "Просмотры" [ref=f8e479] [cursor=pointer]:
+                        - /url: https://dzen.ru/a/aodbKfYV-SnuCziX?feed_exp=ordinary_feed&from=channel&integration=site_desktop&place=layout&secdata=CNbwuKiCNCABUA9qAQGQAQA%3D&rid=2500908459.741.1787592817304.97212&referrer_clid=1400&
+                        - generic [ref=f8e483]: 41,2 тыс
+                      - link [ref=f8e484] [cursor=pointer]:
+                        - /url: https://dzen.ru/a/aodbKfYV-SnuCziX?feed_exp=ordinary_feed&from=channel&integration=site_desktop&place=layout&secdata=CNbwuKiCNCABUA9qAQGQAQA%3D&rid=2500908459.741.1787592817304.97212&referrer_clid=1400&
+                - article [ref=f8e487]:
+                  - generic [ref=f8e488]:
+                    - generic [ref=f8e489]: 3 дня назад
+                    - generic [ref=f8e494]:
+                      - generic [ref=f8e495]:
+                        - heading "Эффективная отрава" [level=3] [ref=f8e498] [cursor=pointer]
+                        - 'link "Читать статью: Эффективная отрава" [ref=f8e499] [cursor=pointer]':
+                          - /url: https://dzen.ru/a/aodZTwX8uRstobAH?feed_exp=ordinary_feed&from=channel&integration=site_desktop&place=layout&secdata=CN3W3pqCNCABUA9qAQGQAQA%3D&rid=2500908459.741.1787592817304.97212&referrer_clid=1400&
+                      - region "Карточка статьи" [ref=f8e500]:
+                        - paragraph [ref=f8e503] [cursor=pointer]: "Каждый раз, когда я читаю переживания о том, какие страшные побочные эффекты у того или иного лекарства, я задаюсь вопросом: каким же нужно обладать извращенным сознанием и невероятной скромностью, чтобы сделать эффективный яд и начать продавать его под видом полезного лекарства? С одной стороны, человечество постоянно занято поиском эффективных ядов. Казалось бы - вколоть врагу Спутник, и пусть помрет в корчах! С другой стороны целую вакцину АстроЗенеки перестают колоть, потому что на 16 миллионов уколов случились пару десятков случаев с тромбами..."
+                        - 'link "Читать статью: Эффективная отрава" [ref=f8e504] [cursor=pointer]':
+                          - /url: https://dzen.ru/a/aodZTwX8uRstobAH?feed_exp=ordinary_feed&from=channel&integration=site_desktop&place=layout&secdata=CN3W3pqCNCABUA9qAQGQAQA%3D&rid=2500908459.741.1787592817304.97212&referrer_clid=1400&
+                    - generic [ref=f8e506]:
+                      - button "Нравится" [ref=f8e507] [cursor=pointer]:
+                        - generic [ref=f8e513]: "106"
+                      - link "Комментировать" [ref=f8e514] [cursor=pointer]:
+                        - /url: https://dzen.ru/a/aodZTwX8uRstobAH?feed_exp=ordinary_feed&from=channel&rid=2500908459.741.1787592817304.97212&integration=site_desktop&place=layout&secdata=CN3W3pqCNCABUA9qAQGQAQA%3D&referrer_clid=1400&#comments_data=p_root
+                        - generic [ref=f8e518]: "40"
+                      - link "Просмотры" [ref=f8e519] [cursor=pointer]:
+                        - /url: https://dzen.ru/a/aodZTwX8uRstobAH?feed_exp=ordinary_feed&from=channel&integration=site_desktop&place=layout&secdata=CN3W3pqCNCABUA9qAQGQAQA%3D&rid=2500908459.741.1787592817304.97212&referrer_clid=1400&
+                        - generic [ref=f8e523]: "4293"
+                      - link [ref=f8e524] [cursor=pointer]:
+                        - /url: https://dzen.ru/a/aodZTwX8uRstobAH?feed_exp=ordinary_feed&from=channel&integration=site_desktop&place=layout&secdata=CN3W3pqCNCABUA9qAQGQAQA%3D&rid=2500908459.741.1787592817304.97212&referrer_clid=1400&
+                - article [ref=f8e527]:
+                  - generic [ref=f8e528]:
+                    - generic [ref=f8e529]: 3 дня назад
+                    - generic [ref=f8e534]:
+                      - generic [ref=f8e535]:
+                        - heading "№ 750 Корабль-призрак с кошками / Инстасамка ушла с российского рынка / Место на кладбище через Госуслуги" [level=3] [ref=f8e538] [cursor=pointer]
+                        - 'link "Читать статью: № 750 Корабль-призрак с кошками / Инстасамка ушла с российского рынка / Место на кладбище через Госуслуги" [ref=f8e539] [cursor=pointer]':
+                          - /url: https://dzen.ru/a/aof8cWx7RCU4OFoX?feed_exp=ordinary_feed&from=channel&integration=site_desktop&place=layout&secdata=CO%2BszJmCNCABUA9qAQGQAQA%3D&rid=2500908459.741.1787592817304.97212&referrer_clid=1400&
+                      - region "Карточка статьи" [ref=f8e540]:
+                        - paragraph [ref=f8e543] [cursor=pointer]: "ВК Видео: https://vkvideo.ru/video-211437014_456248432 Файл: https://cloud.mail.ru/public/RgRu/cKRg8a7sU Большой файл: https://cloud.mail.ru/public/mrAQ/zQn8wdpii Подкаст: https://vk.ru/podcast-211"
+                        - 'link "Читать статью: № 750 Корабль-призрак с кошками / Инстасамка ушла с российского рынка / Место на кладбище через Госуслуги" [ref=f8e544] [cursor=pointer]':
+                          - /url: https://dzen.ru/a/aof8cWx7RCU4OFoX?feed_exp=ordinary_feed&from=channel&integration=site_desktop&place=layout&secdata=CO%2BszJmCNCABUA9qAQGQAQA%3D&rid=2500908459.741.1787592817304.97212&referrer_clid=1400&
+                    - generic [ref=f8e546]:
+                      - button "Нравится" [ref=f8e547] [cursor=pointer]:
+                        - generic [ref=f8e553]: "27"
+                      - link "Комментировать" [ref=f8e554] [cursor=pointer]:
+                        - /url: https://dzen.ru/a/aof8cWx7RCU4OFoX?feed_exp=ordinary_feed&from=channel&rid=2500908459.741.1787592817304.97212&integration=site_desktop&place=layout&secdata=CO%2BszJmCNCABUA9qAQGQAQA%3D&referrer_clid=1400&#comments_data=p_root
+                        - generic [ref=f8e558]: "1"
+                      - link "Просмотры" [ref=f8e559] [cursor=pointer]:
+                        - /url: https://dzen.ru/a/aof8cWx7RCU4OFoX?feed_exp=ordinary_feed&from=channel&integration=site_desktop&place=layout&secdata=CO%2BszJmCNCABUA9qAQGQAQA%3D&rid=2500908459.741.1787592817304.97212&referrer_clid=1400&
+                        - generic [ref=f8e563]: "374"
+                      - link [ref=f8e564] [cursor=pointer]:
+                        - /url: https://dzen.ru/a/aof8cWx7RCU4OFoX?feed_exp=ordinary_feed&from=channel&integration=site_desktop&place=layout&secdata=CO%2BszJmCNCABUA9qAQGQAQA%3D&rid=2500908459.741.1787592817304.97212&referrer_clid=1400&
+                  - generic [ref=f8e565]:
+                    - generic [ref=f8e566] [cursor=pointer]
+                    - 'link "Читать статью: № 750 Корабль-призрак с кошками / Инстасамка ушла с российского рынка / Место на кладбище через Госуслуги" [ref=f8e569] [cursor=pointer]':
+                      - /url: https://dzen.ru/a/aof8cWx7RCU4OFoX?feed_exp=ordinary_feed&from=channel&integration=site_desktop&place=layout&secdata=CO%2BszJmCNCABUA9qAQGQAQA%3D&rid=2500908459.741.1787592817304.97212&referrer_clid=1400&
+                - article [ref=f8e572]:
+                  - generic [ref=f8e573]:
+                    - generic [ref=f8e574]: 4 дня назад
+                    - generic [ref=f8e579]:
+                      - generic [ref=f8e580]:
+                        - heading "Несколько простых правил гигиены с точки зрения здравого смысла" [level=3] [ref=f8e583] [cursor=pointer]
+                        - 'link "Читать статью: Несколько простых правил гигиены с точки зрения здравого смысла" [ref=f8e584] [cursor=pointer]':
+                          - /url: https://dzen.ru/a/aoYUH93Fk1Owt4lc?feed_exp=ordinary_feed&from=channel&integration=site_desktop&place=layout&secdata=CJCCnf%2BBNCABUA9qAQGQAQA%3D&rid=2500908459.741.1787592817304.97212&referrer_clid=1400&
+                      - region "Карточка статьи" [ref=f8e585]:
+                        - paragraph [ref=f8e588] [cursor=pointer]: "Сегодня все ребята подорвались соблюдать самые разные правила, чтобы быть хорошими. Не все из этих правил имеют смысл. Поэтому приводим краткий список того, что смысл имеет. Причем, не только сегодня, а примерно всегда до конца жизни. Итак: - Нет никакого смысла мыть руки минуту или даже 30 секунд. Достаточно мыть руки 10 секунд. - Температура воды не важна для мытья рук. Важно наличие мыла. - Обычное мыло прекрасно справляется со своей задачей. Нет никакого смысла покупать \"антибактериальное мыло\", потому что обычное мыло помогает смывать почти все микробы и вирусы. - Горячая вода лучше смывает жир, больше она ни для чего не нужна..."
+                        - 'link "Читать статью: Несколько простых правил гигиены с точки зрения здравого смысла" [ref=f8e589] [cursor=pointer]':
+                          - /url: https://dzen.ru/a/aoYUH93Fk1Owt4lc?feed_exp=ordinary_feed&from=channel&integration=site_desktop&place=layout&secdata=CJCCnf%2BBNCABUA9qAQGQAQA%3D&rid=2500908459.741.1787592817304.97212&referrer_clid=1400&
+                    - generic [ref=f8e591]:
+                      - button "Нравится" [ref=f8e592] [cursor=pointer]:
+                        - generic [ref=f8e598]: "279"
+                      - link "Комментировать" [ref=f8e599] [cursor=pointer]:
+                        - /url: https://dzen.ru/a/aoYUH93Fk1Owt4lc?feed_exp=ordinary_feed&from=channel&rid=2500908459.741.1787592817304.97212&integration=site_desktop&place=layout&secdata=CJCCnf%2BBNCABUA9qAQGQAQA%3D&referrer_clid=1400&#comments_data=p_root
+                        - generic [ref=f8e603]: "23"
+                      - link "Просмотры" [ref=f8e604] [cursor=pointer]:
+                        - /url: https://dzen.ru/a/aoYUH93Fk1Owt4lc?feed_exp=ordinary_feed&from=channel&integration=site_desktop&place=layout&secdata=CJCCnf%2BBNCABUA9qAQGQAQA%3D&rid=2500908459.741.1787592817304.97212&referrer_clid=1400&
+                        - generic [ref=f8e608]: "1924"
+                      - link [ref=f8e609] [cursor=pointer]:
+                        - /url: https://dzen.ru/a/aoYUH93Fk1Owt4lc?feed_exp=ordinary_feed&from=channel&integration=site_desktop&place=layout&secdata=CJCCnf%2BBNCABUA9qAQGQAQA%3D&rid=2500908459.741.1787592817304.97212&referrer_clid=1400&
+                - article [ref=f8e612]:
+                  - generic [ref=f8e613]:
+                    - generic [ref=f8e614]: 4 дня назад
+                    - generic [ref=f8e619]:
+                      - generic [ref=f8e620]:
+                        - heading "Считать на пальцах" [level=3] [ref=f8e623] [cursor=pointer]
+                        - 'link "Читать статью: Считать на пальцах" [ref=f8e624] [cursor=pointer]':
+                          - /url: https://dzen.ru/a/aoYS91CZGl5KE-2n?feed_exp=ordinary_feed&from=channel&integration=site_desktop&place=layout&secdata=CLmmsviBNCABUA9qAQGQAQA%3D&rid=2500908459.741.1787592817304.97212&referrer_clid=1400&
+                      - region "Карточка статьи" [ref=f8e625]:
+                        - paragraph [ref=f8e628] [cursor=pointer]: На латинском digitus - это палец, а computare - считать. Так что digitis computare - это счет на пальцах. Прошло столько лет, а дигитальный компьютинг рулит!
+                        - 'link "Читать статью: Считать на пальцах" [ref=f8e629] [cursor=pointer]':
+                          - /url: https://dzen.ru/a/aoYS91CZGl5KE-2n?feed_exp=ordinary_feed&from=channel&integration=site_desktop&place=layout&secdata=CLmmsviBNCABUA9qAQGQAQA%3D&rid=2500908459.741.1787592817304.97212&referrer_clid=1400&
+                    - generic [ref=f8e631]:
+                      - button "Нравится" [ref=f8e632] [cursor=pointer]:
+                        - generic [ref=f8e638]: "58"
+                      - link "Комментировать" [ref=f8e639] [cursor=pointer]:
+                        - /url: https://dzen.ru/a/aoYS91CZGl5KE-2n?feed_exp=ordinary_feed&from=channel&rid=2500908459.741.1787592817304.97212&integration=site_desktop&place=layout&secdata=CLmmsviBNCABUA9qAQGQAQA%3D&referrer_clid=1400&#comments_data=p_root
+                      - link "Просмотры" [ref=f8e643] [cursor=pointer]:
+                        - /url: https://dzen.ru/a/aoYS91CZGl5KE-2n?feed_exp=ordinary_feed&from=channel&integration=site_desktop&place=layout&secdata=CLmmsviBNCABUA9qAQGQAQA%3D&rid=2500908459.741.1787592817304.97212&referrer_clid=1400&
+                        - generic [ref=f8e647]: "396"
+                      - link [ref=f8e648] [cursor=pointer]:
+                        - /url: https://dzen.ru/a/aoYS91CZGl5KE-2n?feed_exp=ordinary_feed&from=channel&integration=site_desktop&place=layout&secdata=CLmmsviBNCABUA9qAQGQAQA%3D&rid=2500908459.741.1787592817304.97212&referrer_clid=1400&
+                - article [ref=f8e651]:
+                  - generic [ref=f8e652]:
+                    - generic [ref=f8e653]: 4 дня назад
+                    - generic [ref=f8e658]:
+                      - generic [ref=f8e659]:
+                        - heading "Умей подождать" [level=3] [ref=f8e662] [cursor=pointer]
+                        - 'link "Читать статью: Умей подождать" [ref=f8e663] [cursor=pointer]':
+                          - /url: https://dzen.ru/a/aoYCMQ5HUGl9k774?feed_exp=ordinary_feed&from=channel&integration=site_desktop&place=layout&secdata=COaQxvGBNCABUA9qAQGQAQA%3D&rid=2500908459.741.1787592817304.97212&referrer_clid=1400&
+                      - region "Карточка статьи" [ref=f8e664]:
+                        - paragraph [ref=f8e667] [cursor=pointer]: Часто люди в моменте не готовы принять другую точку зрения. А через три дня уже бац - и приняли. Одно из самых важных, эффективных, сложных, но при этом эффективных умений - это умение подождать. Высказал свое мнение и жди. Это невероятно сложно. Почти никто этого не умеет. Но это работает. Об этом мало кто знает, потому что мало кто готов эти три дня подождать...
+                        - 'link "Читать статью: Умей подождать" [ref=f8e668] [cursor=pointer]':
+                          - /url: https://dzen.ru/a/aoYCMQ5HUGl9k774?feed_exp=ordinary_feed&from=channel&integration=site_desktop&place=layout&secdata=COaQxvGBNCABUA9qAQGQAQA%3D&rid=2500908459.741.1787592817304.97212&referrer_clid=1400&
+                    - generic [ref=f8e670]:
+                      - button "Нравится" [ref=f8e671] [cursor=pointer]:
+                        - generic [ref=f8e677]: "84"
+                      - link "Комментировать" [ref=f8e678] [cursor=pointer]:
+                        - /url: https://dzen.ru/a/aoYCMQ5HUGl9k774?feed_exp=ordinary_feed&from=channel&rid=2500908459.741.1787592817304.97212&integration=site_desktop&place=layout&secdata=COaQxvGBNCABUA9qAQGQAQA%3D&referrer_clid=1400&#comments_data=p_root
+                        - generic [ref=f8e682]: "7"
+                      - link "Просмотры" [ref=f8e683] [cursor=pointer]:
+                        - /url: https://dzen.ru/a/aoYCMQ5HUGl9k774?feed_exp=ordinary_feed&from=channel&integration=site_desktop&place=layout&secdata=COaQxvGBNCABUA9qAQGQAQA%3D&rid=2500908459.741.1787592817304.97212&referrer_clid=1400&
+                        - generic [ref=f8e687]: "719"
+                      - link [ref=f8e688] [cursor=pointer]:
+                        - /url: https://dzen.ru/a/aoYCMQ5HUGl9k774?feed_exp=ordinary_feed&from=channel&integration=site_desktop&place=layout&secdata=COaQxvGBNCABUA9qAQGQAQA%3D&rid=2500908459.741.1787592817304.97212&referrer_clid=1400&
+            - generic [ref=f8e737]:
+              - generic [ref=f8e742] [cursor=pointer]:
+                - generic [ref=f8e743]: Покупайте Стеллы
+                - generic [ref=f8e744]: И дарите их за контент
+                - button "Купить" [ref=f8e745]
+              - generic [ref=f8e747]:
+                - generic [ref=f8e748]: Подборки
+                - generic [ref=f8e753]:
+                  - link "Самые Честные Новости 714 материалов" [ref=f8e754] [cursor=pointer]:
+                    - /url: /suite/209bfc44-e27c-4488-9c1c-e084b2f92a17
+                    - generic [ref=f8e756]:
+                      - generic [ref=f8e757]: Самые Честные Новости
+                      - generic [ref=f8e758]: 714 материалов
+                  - link "Самый хороший подкаст 60 материалов" [ref=f8e761] [cursor=pointer]:
+                    - /url: /suite/f6a8d8e8-19e6-4e70-a43f-3cece051a2dc
+                    - generic [ref=f8e763]:
+                      - generic [ref=f8e764]: Самый хороший подкаст
+                      - generic [ref=f8e765]: 60 материалов
+                  - link "Интервью, подкасты, шоу 96 материалов" [ref=f8e768] [cursor=pointer]:
+                    - /url: /suite/b555d7ab-5ca4-460b-be58-36ac3a0e2dbc
+                    - generic [ref=f8e770]:
+                      - generic [ref=f8e771]: Интервью, подкасты, шоу
+                      - generic [ref=f8e772]: 96 материалов
+  - generic [ref=f8e776]:
+    - generic [ref=f8e779]:
+      - generic [ref=f8e780]: Информация о контенте.
+      - generic [ref=f8e781] [cursor=pointer]: Подробнее
+    - button "Понятно" [ref=f8e782] [cursor=pointer]

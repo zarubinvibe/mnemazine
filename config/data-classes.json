@@ -1,0 +1,20 @@
+{
+  "order": ["public", "infra", "text", "personal", "pd"],
+  "classes": {
+    "public":   { "machines": ["mac", "vps"] },
+    "infra":    { "machines": ["mac", "vps"] },
+    "text":     { "machines": ["mac", "vps"] },
+    "personal": { "machines": ["mac"] },
+    "pd":       { "machines": ["mac"] }
+  },
+  "by_section": {
+    "01 Право и Юриспруденция": "pd",
+    "01 Право и Юриспруденция Startup": "pd",
+    "01 Обо мне": "personal",
+    "02 Здоровье": "personal",
+    "09 Личная продуктивность": "personal"
+  },
+  "by_project": { "themis": "pd" },
+  "by_source_pattern": { "^agent-research--themis--": "pd" },
+  "default": "personal"
+}
