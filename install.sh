@@ -97,7 +97,7 @@ smeta() {
   note "$(L 'markitdown — разбор PDF/DOCX/PPTX/XLSX/HTML; openai-whisper — транскрипт речи; onnxruntime/torch/fastembed — локальные эмбеддинги поиска.' 'markitdown — PDF/DOCX/PPTX/XLSX/HTML parsing; openai-whisper — speech transcript; onnxruntime/torch/fastembed — local search embeddings.')"
   note "$(L 'Тяжёлые: torch, onnxruntime, openai-whisper.' 'Heavy: torch, onnxruntime, openai-whisper.')"
   note "$(L 'Всё ставится локально, наружу ничего не уходит.' 'Everything installs locally; nothing leaves your machine.')"
-  note "$(L "Пишем в: $INBOX, $VAULT, $ROOT/.venv, $USER_BIN, ~/.claude/skills, ~/.codex/skills." "Writes to: $INBOX, $VAULT, $ROOT/.venv, $USER_BIN, ~/.claude/skills, ~/.codex/skills.")"
+  note "$(L "Пишем в: $INBOX, $VAULT, $ROOT/.venv, $USER_BIN, $HOME/.claude/skills, $HOME/.codex/skills." "Writes to: $INBOX, $VAULT, $ROOT/.venv, $USER_BIN, $HOME/.claude/skills, $HOME/.codex/skills.")"
 }
 
 consent() {

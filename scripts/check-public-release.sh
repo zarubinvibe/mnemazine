@@ -164,7 +164,7 @@ fi
 # Only two files may carry personal markers, and for opposite reasons: the scanners
 # below have to spell the markers out to hunt for them, and the licence names the
 # rights holder because that is what a licence is for. Everything else — agent
-# prompts, skills, tests, reports — went public with `/Users/<name>` and a private
+# prompts, skills, tests, reports — went public with an absolute home path and a private
 # vault name baked in precisely because it sat on this list.
 private_marker_excluded() {
   case "$1" in

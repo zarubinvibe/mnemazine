@@ -243,7 +243,7 @@ if (trueCount === 0) {
   log('Инбокс пуст.')
   await observeRun('end-empty')
   await releaseRunLock('empty')
-  return { status: 'empty_inbox', run_id: RUN_ID, message: 'Инбокс ~/Desktop/Mnemazine Inbox пуст. Добавь материалы или /kb find <запрос>.', observability_log: OBS_LOG }
+  return { status: 'empty_inbox', run_id: RUN_ID, message: 'Инбокс $HOME/Desktop/Mnemazine Inbox пуст. Добавь материалы или /kb find <запрос>.', observability_log: OBS_LOG }
 }
 if (inboxFiles.length === 0) {
   // всё из кэша — ничего не обрабатываем, архивируем и закрываем (0 токенов LLM)
@@ -742,7 +742,7 @@ const finalChecks = await agent(
 log('## КОД-ШАГИ ФИНАЛА — индексы: ' + ((finalChecks && finalChecks.indexes) || '?') + ', линт: ' + ((finalChecks && finalChecks.lint) || '?'))
 
 // ---------- РЕЗОЛВЕР MNEMOZINA/MNEMAZINE-ИНСТРУМЕНТОВ (Claude/Codex parity) ----------
-// Порядок: проект Mnemazine/scripts → $MNEMOZINA_REPO/scripts → ~/.codex/bin → ~/.claude/bin.
+// Порядок: проект Mnemazine/scripts → $MNEMOZINA_REPO/scripts → $HOME/.codex/bin → $HOME/.claude/bin.
 const MZ_RESOLVE =
   'mz_run(){ n="$1"; shift; ' +
   'for c in "scripts/$n.mjs" "${MNEMOZINA_REPO:+$MNEMOZINA_REPO/scripts/$n.mjs}" "$HOME/.codex/bin/$n" "$HOME/.claude/bin/$n"; do ' +

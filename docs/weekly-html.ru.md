@@ -11,7 +11,7 @@ node scripts/mnemazine-weekly-brief-html.mjs
 Отчёт появляется в:
 
 ```text
-~/Desktop/Mnemazine/reports
+$HOME/Desktop/Mnemazine/reports
 ```
 
 Язык отчёта по умолчанию — русский, потому что первый публичный релиз проектировался под русский поток чтения. Шаблон можно локализовать.

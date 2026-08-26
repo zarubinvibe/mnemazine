@@ -3,7 +3,9 @@
 🇷🇺 **Русский** · [🇬🇧 English](README.md)
 
 <p align="center">
-  <img src="docs/assets/hero/mnemazine-hero.png" width="820" alt="Mnemazine — Мнемозина, богиня памяти, у своей мраморной колонны, перегоняет сырые фрагменты в слоистую систему знаний">
+  <img src="docs/assets/pantheon/hero.png" width="820" alt="Mnemazine — Мнемозина, богиня памяти, у своей мраморной колонны, перегоняет сырые фрагменты в слоистую систему знаний">
+  <br>
+  <img src="docs/assets/pantheon/emblem.png" width="220" alt="Эмблема Mnemazine — Мнемозина и колонна Pantheon">
 </p>
 
 **Mnemazine**: открытая персональная система памяти, названная в честь **Мнемозины**, греческой богини памяти и матери муз.
@@ -99,7 +101,7 @@ Mnemazine экономит токены, вынося работу из повт
 Склонируйте проект в единственную нужную папку:
 
 ```bash
-git clone https://github.com/zarubinphil/Mnemazine.git "$HOME/Desktop/Mnemazine"
+git clone https://github.com/zarubinvibe/Mnemazine.git "$HOME/Desktop/Mnemazine"
 cd "$HOME/Desktop/Mnemazine"
 bash setup.sh        # пошагово, с вопросами (куда класть inbox, опц. Telegram-бот)
 # или: bash install.sh   # без вопросов, только каркас
@@ -130,12 +132,12 @@ Mnemazine update
 После установки откройте эту папку как Obsidian-vault:
 
 ```text
-~/Desktop/Mnemazine/vault
+$HOME/Desktop/Mnemazine/vault
 ```
 
-По умолчанию проект лежит в `~/Desktop/Mnemazine`:
+По умолчанию проект лежит в `$HOME/Desktop/Mnemazine`:
 
-- `~/Desktop/Mnemazine Inbox`: сырые входящие, если в `setup.sh` выбран Desktop inbox;
+- `$HOME/Desktop/Mnemazine Inbox`: сырые входящие, если в `setup.sh` выбран Desktop inbox;
 - `inbox/`: repo-local входящие, если выбран inbox внутри репозитория;
 - `vault/`: готовое знание;
 - `reports/`: еженедельные HTML-брифинги;
@@ -158,13 +160,13 @@ Mnemazine update
 Положите файлы в:
 
 ```text
-~/Desktop/Mnemazine Inbox
+$HOME/Desktop/Mnemazine Inbox
 ```
 
 Откройте в агенте папку проекта:
 
 ```text
-~/Desktop/Mnemazine
+$HOME/Desktop/Mnemazine
 ```
 
 Затем напишите в чате одно слово:
@@ -357,8 +359,8 @@ npm run postrun
 
 Установщик может скопировать их в типовые места агентов, когда эти инструменты есть:
 
-- `~/.codex/skills`;
-- `~/.claude/skills`;
+- `$HOME/.codex/skills`;
+- `$HOME/.claude/skills`;
 - проектный `.agents/skills`.
 
 Skills безопасны для публикации: без персональных путей, приватных репозиториев, имён аккаунтов и секретов.
@@ -434,7 +436,7 @@ npm run mirror:agent-os:apply
 Состояние хранится в:
 
 ```text
-~/Desktop/Mnemazine/.mnemazine/state/weekly-state.json
+$HOME/Desktop/Mnemazine/.mnemazine/state/weekly-state.json
 ```
 
 ## Философия репозитория
@@ -587,7 +589,7 @@ inbox. Не переноси их руками, почини причину и �
 готовое к работе знание, и читаю каждое предложение.
 
 - Если зашло, поставь звезду на GitHub, мне это правда важно:
-  <https://github.com/zarubinphil/Mnemazine>
+  <https://github.com/zarubinvibe/Mnemazine>
 - Есть идея, как сделать лучше? Открой issue или PR. Как контрибьютить, смотри
   [CONTRIBUTING.md](CONTRIBUTING.md); политика безопасности расписана в [SECURITY.md](SECURITY.md).
 
@@ -659,10 +661,28 @@ npm run audit:local
 
 | Проект | Что делает |
 |---|---|
-| [Афина](https://github.com/zarubinphil/athena) | Переносимая агентная ОС: поднимает рабочую систему на чистом Mac одной командой. |
-| [Фемида](https://github.com/zarubinphil/themis) | Работа над судебными делами: тринадцать агентов-юристов, совет из пяти, распознавание на своей машине. |
-| [Зевс](https://github.com/zarubinphil/zeuz) | Фабрика агентных систем: из идеи собирает многоагентную систему со своей конституцией и воротами. |
-| [Гелиос](https://github.com/zarubinphil/helioz) | Конвейер, который держит работу круглосуточно: долгая задача переживает смерть сессии. |
+| [Афина](https://github.com/zarubinvibe/athena) | Переносимая агентная ОС: поднимает рабочую систему на чистом Mac одной командой. |
+| [Фемида](https://github.com/zarubinvibe/themis) | Работа над судебными делами: тринадцать агентов-юристов, совет из пяти, распознавание на своей машине. |
+| [Зевс](https://github.com/zarubinvibe/zeuz) | Фабрика агентных систем: из идеи собирает многоагентную систему со своей конституцией и воротами. |
+| [Гелиос](https://github.com/zarubinvibe/helioz) | Конвейер, который держит работу круглосуточно: долгая задача переживает смерть сессии. |
+
+<!-- pantheon-family:start -->
+## Семья Pantheon
+
+Этот репозиторий входит в [семью проектов Pantheon](https://github.com/zarubinvibe?tab=repositories). Для каждого публичного проекта даны прямые ссылки на репозиторий и ZIP с исходниками.
+
+| Тип | Название | Что внутри | Скачать |
+|---|---|---|---|
+| проект | Athena | Переносимая агентная ОС: разворачивает рабочую среду Claude и Codex на новом Mac. | [Репозиторий](https://github.com/zarubinvibe/athena) · [ZIP](https://github.com/zarubinvibe/athena/archive/refs/heads/main.zip) |
+| проект | Claude Code Setup OS | Bootstrap-скилл для экономной среды Claude Code и локальной LLM-вики. | [Репозиторий](https://github.com/zarubinvibe/claude-code-setup-os) · [ZIP](https://github.com/zarubinvibe/claude-code-setup-os/archive/refs/heads/main.zip) |
+| проект | Helioz | Конвейер работы агентов 24/7 с проверяемыми отметками готовности и ночными решениями по цели владельца. | [Репозиторий](https://github.com/zarubinvibe/helioz) · [ZIP](https://github.com/zarubinvibe/helioz/archive/refs/heads/main.zip) |
+| проект | Humanizer | Агентный скилл, который убирает типичные следы AI из английского текста. | [Репозиторий](https://github.com/zarubinvibe/humanizer) · [ZIP](https://github.com/zarubinvibe/humanizer/archive/refs/heads/main.zip) |
+| проект | Humanizer RU | Русский редакторский скилл: находит и убирает 58 типичных следов AI-текста. | [Репозиторий](https://github.com/zarubinvibe/humanizer-ru) · [ZIP](https://github.com/zarubinvibe/humanizer-ru/archive/refs/heads/main.zip) |
+| проект | Mnemazine | Локальная система памяти: превращает сырьё в проверенные знания для повторного использования. | [Репозиторий](https://github.com/zarubinvibe/mnemazine) · [ZIP](https://github.com/zarubinvibe/mnemazine/archive/refs/heads/main.zip) |
+| проект | Smltlk | Приложение для строки меню macOS: чинит раскладку, распознаёт речь офлайн и превращает голос в промпт. | [Репозиторий](https://github.com/zarubinvibe/smltlk) · [ZIP](https://github.com/zarubinvibe/smltlk/archive/refs/heads/main.zip) |
+| проект | Themis | Многоагентный помощник по российским судебным делам с локальным OCR и советом из пяти юристов. | [Репозиторий](https://github.com/zarubinvibe/themis) · [ZIP](https://github.com/zarubinvibe/themis/archive/refs/heads/main.zip) |
+| проект | Zeuz | Фабрика многоагентных workflow: собирает систему с правилами, гейтами, наблюдаемостью и replay. | [Репозиторий](https://github.com/zarubinvibe/zeuz) · [ZIP](https://github.com/zarubinvibe/zeuz/archive/refs/heads/main.zip) |
+<!-- pantheon-family:end -->
 
 ## Лицензия
 

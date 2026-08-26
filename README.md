@@ -3,7 +3,9 @@
 🇬🇧 **English** · [🇷🇺 Русский](README.ru.md)
 
 <p align="center">
-  <img src="docs/assets/hero/mnemazine-hero.png" width="820" alt="Mnemazine — Mnemosyne, goddess of memory, beside her marble column, distilling raw fragments into a layered knowledge system">
+  <img src="docs/assets/pantheon/hero.png" width="820" alt="Mnemazine — Mnemosyne, goddess of memory, beside her marble column, distilling raw fragments into a layered knowledge system">
+  <br>
+  <img src="docs/assets/pantheon/emblem.png" width="220" alt="Mnemazine emblem — Mnemosyne and the Pantheon column">
 </p>
 
 **Mnemazine** is an open-source personal memory system, named after **Mnemosyne**, the Greek goddess of memory and mother of the Muses.
@@ -100,7 +102,7 @@ In real workflows, this often turns huge source piles into compact reusable note
 Clone the project into the only folder you need:
 
 ```bash
-git clone https://github.com/zarubinphil/Mnemazine.git "$HOME/Desktop/Mnemazine"
+git clone https://github.com/zarubinvibe/Mnemazine.git "$HOME/Desktop/Mnemazine"
 cd "$HOME/Desktop/Mnemazine"
 bash setup.sh        # guided, step-by-step (asks where the inbox goes, optional Telegram bot)
 # or: bash install.sh   # non-interactive skeleton only
@@ -132,12 +134,12 @@ Mnemazine update
 After installation, open this folder as an Obsidian vault:
 
 ```text
-~/Desktop/Mnemazine/vault
+$HOME/Desktop/Mnemazine/vault
 ```
 
-The project lives under `~/Desktop/Mnemazine` by default:
+The project lives under `$HOME/Desktop/Mnemazine` by default:
 
-- `~/Desktop/Mnemazine Inbox` for raw inputs when you choose the Desktop inbox in `setup.sh`;
+- `$HOME/Desktop/Mnemazine Inbox` for raw inputs when you choose the Desktop inbox in `setup.sh`;
 - `inbox/` for repo-local raw inputs if you choose the repo inbox;
 - `vault/` for finished knowledge;
 - `reports/` for HTML weekly briefings;
@@ -160,13 +162,13 @@ The installer checks what exists and installs what it can safely install locally
 Put files into:
 
 ```text
-~/Desktop/Mnemazine Inbox
+$HOME/Desktop/Mnemazine Inbox
 ```
 
 Open the project folder in your agent:
 
 ```text
-~/Desktop/Mnemazine
+$HOME/Desktop/Mnemazine
 ```
 
 Then type one word in chat:
@@ -369,8 +371,8 @@ The repo includes portable Agent Skills in `.agents/skills` style:
 
 The installer can copy them into common agent locations when those tools exist:
 
-- `~/.codex/skills`;
-- `~/.claude/skills`;
+- `$HOME/.codex/skills`;
+- `$HOME/.claude/skills`;
 - project `.agents/skills`.
 
 The skills are public-safe: no personal paths, no private repositories, no account names, no secrets.
@@ -446,7 +448,7 @@ Each card can be marked locally:
 State is stored in:
 
 ```text
-~/Desktop/Mnemazine/.mnemazine/state/weekly-state.json
+$HOME/Desktop/Mnemazine/.mnemazine/state/weekly-state.json
 ```
 
 ## Repository Philosophy
@@ -598,7 +600,7 @@ This is Philipp, the author. I built Mnemazine to turn raw input into verified,
 ready-to-use knowledge, and I read every suggestion.
 
 - If it helped, star it on GitHub; it genuinely matters:
-  <https://github.com/zarubinphil/Mnemazine>
+  <https://github.com/zarubinvibe/Mnemazine>
 - Got an idea to make it better? Open an issue or a PR. Contribution guidance is in
   [CONTRIBUTING.md](CONTRIBUTING.md); the security policy is in [SECURITY.md](SECURITY.md).
 
@@ -672,10 +674,28 @@ than admired.
 
 | Project | What it does |
 |---|---|
-| [Athena](https://github.com/zarubinphil/athena) | A portable agent OS: brings a whole working setup up on a fresh Mac with one command. |
-| [Themis](https://github.com/zarubinphil/themis) | Multi-agent work on Russian court cases: thirteen lawyer-agents, a five-jurist council, local-first OCR. |
-| [Zeuz](https://github.com/zarubinphil/zeuz) | A factory for agent workflows: takes an idea and gives back a multi-agent system with its own constitution and gates. |
-| [Helioz](https://github.com/zarubinphil/helioz) | A conveyor that keeps work moving around the clock, so a long job survives sessions dying. |
+| [Athena](https://github.com/zarubinvibe/athena) | A portable agent OS: brings a whole working setup up on a fresh Mac with one command. |
+| [Themis](https://github.com/zarubinvibe/themis) | Multi-agent work on Russian court cases: thirteen lawyer-agents, a five-jurist council, local-first OCR. |
+| [Zeuz](https://github.com/zarubinvibe/zeuz) | A factory for agent workflows: takes an idea and gives back a multi-agent system with its own constitution and gates. |
+| [Helioz](https://github.com/zarubinvibe/helioz) | A conveyor that keeps work moving around the clock, so a long job survives sessions dying. |
+
+<!-- pantheon-family:start -->
+## Pantheon family
+
+Part of the [Pantheon project family](https://github.com/zarubinvibe?tab=repositories). Every public project links directly to its repository and source ZIP.
+
+| Type | Name | What it does | Source |
+|---|---|---|---|
+| project | Athena | Portable agent OS that restores a complete Claude and Codex setup on a new Mac. | [Repository](https://github.com/zarubinvibe/athena) · [ZIP](https://github.com/zarubinvibe/athena/archive/refs/heads/main.zip) |
+| project | Claude Code Setup OS | Bootstrap skill for a token-efficient Claude Code workspace and a local LLM wiki. | [Repository](https://github.com/zarubinvibe/claude-code-setup-os) · [ZIP](https://github.com/zarubinvibe/claude-code-setup-os/archive/refs/heads/main.zip) |
+| project | Helioz | 24/7 agent work conveyor with verified completion markers and goal-based overnight decisions. | [Repository](https://github.com/zarubinvibe/helioz) · [ZIP](https://github.com/zarubinvibe/helioz/archive/refs/heads/main.zip) |
+| project | Humanizer | Agent skill that removes common AI writing patterns from English text. | [Repository](https://github.com/zarubinvibe/humanizer) · [ZIP](https://github.com/zarubinvibe/humanizer/archive/refs/heads/main.zip) |
+| project | Humanizer RU | Russian writing skill that detects and removes 58 common AI text patterns. | [Repository](https://github.com/zarubinvibe/humanizer-ru) · [ZIP](https://github.com/zarubinvibe/humanizer-ru/archive/refs/heads/main.zip) |
+| project | Mnemazine | Local-first memory system that turns raw inputs into verified reusable knowledge. | [Repository](https://github.com/zarubinvibe/mnemazine) · [ZIP](https://github.com/zarubinvibe/mnemazine/archive/refs/heads/main.zip) |
+| project | Smltlk | macOS menu bar app for keyboard-layout repair, offline dictation, and speech-to-prompt. | [Repository](https://github.com/zarubinvibe/smltlk) · [ZIP](https://github.com/zarubinvibe/smltlk/archive/refs/heads/main.zip) |
+| project | Themis | Multi-agent assistant for Russian litigation with local OCR and review by a five-jurist council. | [Repository](https://github.com/zarubinvibe/themis) · [ZIP](https://github.com/zarubinvibe/themis/archive/refs/heads/main.zip) |
+| project | Zeuz | Factory that turns an idea into a governed multi-agent workflow with gates, observability, and replay. | [Repository](https://github.com/zarubinvibe/zeuz) · [ZIP](https://github.com/zarubinvibe/zeuz/archive/refs/heads/main.zip) |
+<!-- pantheon-family:end -->
 
 ## License
 

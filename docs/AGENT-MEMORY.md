@@ -11,7 +11,7 @@
 | Слой | Что | Где живёт | Кто пишет |
 |---|---|---|---|
 | L0 сессия | рабочая память хода | контекст окна | сам агент |
-| L1 агент | факты/уроки конкретного агента | auto-memory (`~/.claude/projects/<proj>/memory/`) | агент |
+| L1 агент | факты/уроки конкретного агента | auto-memory (`$HOME/.claude/projects/<proj>/memory/`) | агент |
 | L2 проект | решения, инварианты, хэндоффы | repo проекта (`docs/`, `CONSTRAINTS.md`, handoff) | сессии проекта |
 | L3 общая (внешний рой) | ошибки роя, чтобы не повторять | `learning/`, `CONSTRAINTS.md` внешнего роя | только координатор |
 | L4 личный vault | глубокое знание владельца, тысячи нот | `$MNEMAZINE_VAULT` (Obsidian vault) | только конвейер Мнемозины |
@@ -47,12 +47,12 @@ graph_stats). Граф отстаёт от vault → это чинит обяз�
 
 ## L4: запись — только через воронку инбокса
 
-Агент кладёт файл-заявку `agent-research--<project>--<slug>.md` в `~/Desktop/Mnemazine Inbox/` —
+Агент кладёт файл-заявку `agent-research--<project>--<slug>.md` в `$HOME/Desktop/Mnemazine Inbox/` —
 это единственная законная дверь, потому что файл, положенный в раздел vault напрямую, минует census
 и гейт полноты, не получает `run_id`/`verified` и ломает индексы.
 
 **Поправка 2026-07-25 (замер).** Бог внешнего роя не может писать в инбокс сам: seatbelt денит запись всюду,
-кроме его worktree (`touch "~/Desktop/Mnemazine Inbox/x"` → `Operation not permitted`). Поэтому во
+кроме его worktree (`touch "$HOME/Desktop/Mnemazine Inbox/x"` → `Operation not permitted`). Поэтому во
 внешнем рое заявка пишется в `research/` worktree бога, а в инбокс её переносит координатор
 (`src/research-inbox.ts`) — с валидацией имени, лимитом 256 KiB и штампом провенанса `god/run/время`,
 который бог подделать не может. Для агентов вне внешнего роя (обычная сессия Claude Code без seatbelt)

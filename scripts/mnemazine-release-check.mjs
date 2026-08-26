@@ -926,7 +926,7 @@ async function repoMetadataCheck() {
   if (ru === null) throw new Error('README.ru.md is missing (Russian README required)')
 
   for (const [label, body] of [['README.md', en], ['README.ru.md', ru]]) {
-    if (!body.includes('https://github.com/zarubinphil/Mnemazine.git')) {
+    if (!body.includes('https://github.com/zarubinvibe/Mnemazine.git')) {
       throw new Error(`${label} clone URL is stale or missing`)
     }
   }

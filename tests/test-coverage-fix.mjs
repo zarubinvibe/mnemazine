@@ -45,7 +45,10 @@ console.log('TEST 2 — покрытие: НОВАЯ ловит склеенны
   const blobs = fs.readdirSync(dir).map(function (f) { return fs.readFileSync(path.join(dir, f), 'utf8') })
   const newCov = function (bn) { return blobs.some(function (c) { return c.includes(bn) }) }            // basename где угодно во frontmatter
   const oldCov = function (bn) { return blobs.some(function (c) { return c.includes('source: ' + bn) }) } // точная строка source:
-  for (const bn of ['a.webp', 'b.webp', 'c.webp', 'x.webp']) ok(newCov(bn), 'НОВАЯ покрывает ' + bn)
+  ok(newCov('a.webp'), 'НОВАЯ покрывает a.webp')
+  ok(newCov('b.webp'), 'НОВАЯ покрывает b.webp')
+  ok(newCov('c.webp'), 'НОВАЯ покрывает c.webp')
+  ok(newCov('x.webp'), 'НОВАЯ покрывает x.webp')
   ok(oldCov('a.webp') && oldCov('x.webp'), 'СТАРАЯ покрывает первичные a,x')
   ok(!oldCov('b.webp') && !oldCov('c.webp'), 'СТАРАЯ ТЕРЯЕТ склеенные b,c → ложные дыры (баг воспроизведён)')
   fs.rmSync(dir, { recursive: true, force: true })
@@ -56,6 +59,7 @@ console.log('TEST 3 — durable-архив: нет авто-удаления и�
   const HOME = os.homedir()
   const files = [
     HOME + '/.claude/workflows/mnemazina-pipeline.js',
+    HOME + '/Проекты/mnemazine/workflows/mnemazina-pipeline.js',
     HOME + '/.codex/workflows/mnemazina-pipeline.js',
     HOME + '/.claude/agents/mnemazina-pipeline/mnemazina-guard.md',
     HOME + '/.codex/agents/mnemazina-pipeline/mnemazina-guard.md'
@@ -76,8 +80,14 @@ console.log('TEST 3 — durable-архив: нет авто-удаления и�
   })
   ok(checked >= 3, 'проверено файлов: ' + checked + ' (≥3 канон)')
   ok(violations.length === 0, 'нет delete/rm на архивном пути' + (violations.length ? ' — НАРУШЕНИЯ:\n    ' + violations.join('\n    ') : ''))
-  const wf = fs.readFileSync(files[0], 'utf8')
-  ok(/const ARCHIVE = INBOX \+ '\/_archive'/.test(wf), 'ARCHIVE = INBOX + /_archive (durable-локация зафиксирована)')
+  const wfFile = files.find(function (fp) {
+    try {
+      const txt = fs.readFileSync(fp, 'utf8')
+      return !(txt.length < 200 && /export \* from/.test(txt))
+    } catch (e) { return false }
+  })
+  const wf = wfFile ? fs.readFileSync(wfFile, 'utf8') : ''
+  ok(/const ARCHIVE = INBOX \+ '\/_archive'/.test(wf), 'ARCHIVE = INBOX + /_archive (durable-локация зафиксирована), файл: ' + (wfFile || 'не найден'))
 }
 
 console.log('\n' + pass + ' passed, ' + fail + ' failed')

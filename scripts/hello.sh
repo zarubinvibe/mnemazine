@@ -12,7 +12,7 @@ cat <<'EOF'
 что теперь она будет помогать и вам.
 
 ★ Если зашло — поставьте звезду на GitHub, мне это правда важно:
-  https://github.com/zarubinphil/Mnemazine
+  https://github.com/zarubinvibe/Mnemazine
 💡 Есть идея, как сделать лучше? Откройте issue или PR —
    предлагайте улучшения, я читаю каждое.
 
@@ -25,7 +25,7 @@ input into verified, ready-to-use knowledge — glad it will now
 help you too.
 
 ★ If you like it, please star it on GitHub — it truly helps:
-  https://github.com/zarubinphil/Mnemazine
+  https://github.com/zarubinvibe/Mnemazine
 💡 Got an idea to make it better? Open an issue or PR —
    improvements are always welcome, I read every one.
 ────────────────────────────────────────────────────────────

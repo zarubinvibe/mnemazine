@@ -24,7 +24,7 @@ function arg(name, fallback = '') {
 
 const SELFTEST = argv.includes('--selftest')
 const VAULT = SELFTEST ? '' : resolveVault({ cli: arg('vault') })
-// Default state dir matches README:224 (~/Desktop/Mnemazine/.mnemazine/state),
+// Default state dir matches README:224 ($HOME/Desktop/Mnemazine/.mnemazine/state),
 // the canonical pickup for the weekly-brief export. Override with MNEMAZINE_STATE
 // / --state-dir, or point --state straight at the downloaded file.
 const DEFAULT_STATE_DIR = process.env.MNEMAZINE_STATE

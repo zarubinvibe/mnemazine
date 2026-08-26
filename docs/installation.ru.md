@@ -5,7 +5,7 @@
 Установка в одну папку:
 
 ```bash
-git clone https://github.com/zarubinphil/Mnemazine.git "$HOME/Desktop/Mnemazine"
+git clone https://github.com/zarubinvibe/Mnemazine.git "$HOME/Desktop/Mnemazine"
 cd "$HOME/Desktop/Mnemazine"
 bash install.sh
 ```

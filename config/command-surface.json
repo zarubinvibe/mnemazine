@@ -1,5 +1,5 @@
 {
-  "install:local": { "purpose": "Первичная установка: каталоги, .venv, skills в ~/.claude/~/.codex, симлинки в ~/.local/bin, конфиг .mnemazine, протокол-нота в vault", "writes": { "vault": true, "repo": true, "home": true, "net": true } },
+  "install:local": { "purpose": "Первичная установка: каталоги, .venv, skills в $HOME/.claude/$HOME/.codex, симлинки в ~/.local/bin, конфиг .mnemazine, протокол-нота в vault", "writes": { "vault": true, "repo": true, "home": true, "net": true } },
   "start": { "purpose": "Строгий live-протокол: прогон инбокса (deep+require-deep) и финальный complete-гейт", "writes": { "vault": true, "repo": true, "home": true, "net": true } },
   "desktop": { "purpose": "Алиас start — тот же desktop-протокол", "writes": { "vault": true, "repo": true, "home": true, "net": true } },
   "update": { "purpose": "Обновление кода: git pull --ff-only + install.sh + audit:local", "writes": { "vault": true, "repo": true, "home": true, "net": true } },

@@ -1,6 +1,6 @@
 ---
 name: mnemazina
-description: Мнемозина — агентный конвейер знаний. Превращает всё, что попало в ~/Desktop/Mnemazine Inbox/ (скриншоты, PDF, ссылки, видео, аудио, заметки), в проверенные классифицированные Obsidian-ноты с блоком «как это поможет мне», обновляет оглавления разделов и мастер-индекс, возвращает справку к действию. Use whenever the user runs /kb, /mnemazina, /kb find, /kb fix, /kb backlog, /kb migrate, or says anything about processing collected material — «обработай входящие», «разбери инбокс», «разложи по базе знаний», «process my inbox», «ingest this». Also use when the user pastes a link, text, or screenshot asking to save/remember it («сохрани это в базу», «добавь в vault», «запомни на будущее»), and when the user asks what their knowledge base holds on a topic («/kb find <query>», «найди в базе знаний», «что у меня есть про…»). Trigger even if the user never names Мнемозина or /kb — any request to file material INTO the personal vault ($MNEMAZINE_VAULT) or retrieve knowledge FROM it belongs here.
+description: Мнемозина — агентный конвейер знаний. Превращает всё, что попало в $HOME/Desktop/Mnemazine Inbox/ (скриншоты, PDF, ссылки, видео, аудио, заметки), в проверенные классифицированные Obsidian-ноты с блоком «как это поможет мне», обновляет оглавления разделов и мастер-индекс, возвращает справку к действию. Use whenever the user runs /kb, /mnemazina, /kb find, /kb fix, /kb backlog, /kb migrate, or says anything about processing collected material — «обработай входящие», «разбери инбокс», «разложи по базе знаний», «process my inbox», «ingest this». Also use when the user pastes a link, text, or screenshot asking to save/remember it («сохрани это в базу», «добавь в vault», «запомни на будущее»), and when the user asks what their knowledge base holds on a topic («/kb find <query>», «найди в базе знаний», «что у меня есть про…»). Trigger even if the user never names Мнемозина or /kb — any request to file material INTO the personal vault ($MNEMAZINE_VAULT) or retrieve knowledge FROM it belongs here.
 ---
 
 # Мнемозина — агентный конвейер знаний
@@ -33,7 +33,7 @@ Agent(
 )
 ```
 
-**Четыре агента роя** (`~/.claude/agents/mnemazina-pipeline/`):
+**Четыре агента роя** (`$HOME/.claude/agents/mnemazina-pipeline/`):
 
 | Агент | Модель | Роль |
 |---|---|---|
@@ -84,7 +84,7 @@ Guard/Triage/Distribute/Store/Index/Reconciler остаются на дефол�
 сохраняет в инбокс и обрабатывает, потому что нота без файла-источника не пройдёт сверку покрытия.
 
 **Боковая дверь агента:** файл-заявка `agent-research--<project>--<slug>.md` в
-`~/Desktop/Mnemazine Inbox/` — законный вход наравне с inline владельца, потому что файл, положенный
+`$HOME/Desktop/Mnemazine Inbox/` — законный вход наравне с inline владельца, потому что файл, положенный
 в раздел vault напрямую, минует census и гейты (канон — `docs/AGENT-MEMORY.md` проекта mnemazine).
 Конвейер обрабатывает заявку как обычное сырьё; нота получает `type: agent-research`,
 `claim_status: provisional` — в проверенный корпус агентское знание переходит только операцией
@@ -92,13 +92,13 @@ graduate после ревью, потому что агентская вери�
 
 **Резервный режим:** mnemazina-coordinator недоступен — это не ошибка, выполняй стадии ниже
 вручную сам; недоступный отдельный агент `mnemazina-*` — тоже: бери его инструкцию из
-`~/.claude/agents/mnemazina-pipeline/` и исполняй сам.
+`$HOME/.claude/agents/mnemazina-pipeline/` и исполняй сам.
 
 ## Режимы
 
 | Команда | Что делает |
 |---|---|
-| `/kb` или `/mnemazina` | Обработать новое сырьё из `~/Desktop/Mnemazine Inbox/` (см. Пути) |
+| `/kb` или `/mnemazina` | Обработать новое сырьё из `$HOME/Desktop/Mnemazine Inbox/` (см. Пути) |
 | `/kb backlog` | Легаси-бэклог удалён 2026-05-31; режим — для будущих массовых дампов, если появятся |
 | `/kb migrate` | Перенести `AI Knowledge Base/` → `08 AI и Инструменты/`, починить связи |
 | `/kb fix <файл> [<раздел>]` | Ре-классификация заметки без Finder → агент `mnemazina-fix` |
@@ -110,8 +110,8 @@ graduate после ревью, потому что агентская вери�
   resume. RUN_ID/created_at берутся из `args.now` (ISO), иначе fallback `unstamped000000`.
   Не возвращай Date в скрипты — движок отвергнет прогон на resume.
 - Named-вызов `Workflow({name:"mnemazina-pipeline"})` **кэширует скрипт на старте сессии**, поэтому
-  правка `~/.claude/workflows/mnemazina-pipeline.js` мид-сессии не подхватится — гони через
-  `Workflow({scriptPath:"~/.claude/workflows/mnemazina-pipeline.js"})` или новую сессию.
+  правка `$HOME/.claude/workflows/mnemazina-pipeline.js` мид-сессии не подхватится — гони через
+  `Workflow({scriptPath:"$HOME/.claude/workflows/mnemazina-pipeline.js"})` или новую сессию.
 - **Уникальный RUN_ID:** mode-detect читает `args.message` отдельно от `args.now`, так что объект
   слать безопасно. Всегда: `Workflow({name:"mnemazina-pipeline", args:{now:"<ISO>", message:"<команда|пусто>"}})`.
   ISO брать из Bash `date -u +%FT%TZ` (Date в скрипте запрещён). Без `now` все прогоны получают
@@ -125,12 +125,12 @@ graduate после ревью, потому что агентская вери�
   считает мусор подпапок типа `.claude/scheduled_tasks.lock`. Empty-check по `trueCount` с диска.
   Top-level счётчики итоговой сводки тоже могут врать — сверяй диск (`ls` инбокса, ctime архива),
   не поля сводки.
-- **Codex fallback:** если Claude Code недоступен, запускай `~/.codex/bin/mnemazine-kb [команда]`.
+- **Codex fallback:** если Claude Code недоступен, запускай `$HOME/.codex/bin/mnemazine-kb [команда]`.
   Это адаптер того же `mnemazina-pipeline.js`: `agent(...)` исполняется через `codex exec`, агенты
-  берутся из `~/.codex/agents/mnemazina-pipeline/`, OCR из `~/.codex/skills/mnemazina/vision-ocr`.
+  берутся из `$HOME/.codex/agents/mnemazina-pipeline/`, OCR из `$HOME/.codex/skills/mnemazina/vision-ocr`.
   Проверка паритета зеркал — одной командой (отдельного скрипта нет):
-  `diff -rq ~/.claude/agents/mnemazina-pipeline ~/.codex/agents/mnemazina-pipeline && diff -q ~/.claude/workflows/mnemazina-pipeline.js ~/.codex/workflows/mnemazina-pipeline.js`.
-  Дифф не пустой — это не ошибка, а сигнал пересинхронизировать codex-зеркало из канона `~/.claude`.
+  `diff -rq $HOME/.claude/agents/mnemazina-pipeline $HOME/.codex/agents/mnemazina-pipeline && diff -q $HOME/.claude/workflows/mnemazina-pipeline.js $HOME/.codex/workflows/mnemazina-pipeline.js`.
+  Дифф не пустой — это не ошибка, а сигнал пересинхронизировать codex-зеркало из канона `$HOME/.claude`.
 - **Токены в финале обязательны:** итоговый результат всегда содержит `token_usage`, потому что
   без него token-аудит сессии слеп. Claude runtime берёт оценку из `abtop`/`_run-observability.jsonl`;
   Codex fallback суммирует `tokens used` каждого `codex exec` agent-вызова.
@@ -138,14 +138,14 @@ graduate после ревью, потому что агентская вери�
 ## Пути
 
 - **База знаний** (стабильна): `$MNEMAZINE_VAULT/` · Стейджинг: `$MNEMAZINE_VAULT/00 Входящие/`
-- **Инбокс** (ЗАКРЕПЛЁН на Рабочем столе): `~/Desktop/Mnemazine Inbox/`. Сюда юзер кидает сырьё —
+- **Инбокс** (ЗАКРЕПЛЁН на Рабочем столе): `$HOME/Desktop/Mnemazine Inbox/`. Сюда юзер кидает сырьё —
   иди сюда сразу, не спрашивай и не ищи, потому что поиск инбокса по диску жжёт токены на
   решённый вопрос. (Старый симлинк-алиас на эту же папку может существовать для совместимости.)
 - **Проект** «Полезные промты» (бэклог + tools/docs + архив) — может переезжать, поэтому ищи по
   маркер-файлу, а не по запомненному пути:
   ```bash
   INBOX="$HOME/Desktop/Mnemazine Inbox"    # закреплён; создай, если нет
-  PROJ=$(dirname "$(find ~/Desktop ~ -maxdepth 5 -name 'AI_KNOWLEDGE_BASE_SYSTEM.md' 2>/dev/null | head -1)")
+  PROJ=$(dirname "$(find $HOME/Desktop ~ -maxdepth 5 -name 'AI_KNOWLEDGE_BASE_SYSTEM.md' 2>/dev/null | head -1)")
   ARCHIVE="$INBOX/_archive"   # durable: mv обработанных исходников в подпапки ГГГГ-ММ/ (вне git-vault, БЕЗ авто-удаления)
   ```
   Маркер не нашёлся → `PROJ` пуст — это не ошибка: обычный `/kb` работает без проекта, `PROJ`
@@ -195,7 +195,7 @@ graduate после ревью, потому что агентская вери�
 Тяжёлое чтение (картинки, PDF, веб) делегируй субагентам — в основном контексте оно вытесняет
 план прогона.
 
-Субагенты (`~/.claude/agents/mnemazina-pipeline/`), модели по сложности:
+Субагенты (`$HOME/.claude/agents/mnemazina-pipeline/`), модели по сложности:
 
 | Стадия | Агент | Модель | Выход |
 |---|---|---|---|
@@ -290,7 +290,7 @@ graduate после ревью, потому что агентская вери�
   (`printf 'protocol=https\nhost=github.com\n\n' | git credential fill` — по host, метка аккаунта
   несущественна; токен не печатать и не коммитить — утечка в лог/git необратима).
 - **Не-GitHub URL → `kb-fetch <url>`** (симлинк в `~/.local/bin`, канон —
-  `~/Проекты/mnemazine/scripts/kb-fetch.py`): один вызов → один JSON с `markdown`, бинарники
+  `$HOME/Проекты/mnemazine/scripts/kb-fetch.py`): один вызов → один JSON с `markdown`, бинарники
   (pdf/docx/…) конвертит markitdown, HTML — trafilatura, кодировки легаси-рунета чинит сам.
   Exit-коды честные: `2` = needs_js (эскалируй на Playwright MCP или WebFetch), `3` = заблокировано
   (пометь «источник недоступен», содержимое не выдумывай), `4` = сеть. `ok:false` → факт остаётся
@@ -342,7 +342,7 @@ Playwright MCP/WebFetch (needs_js) — для чтения URL; Firecrawl — т
 ### Стадия 5.6 — самообучающиеся референсы доменов
 
 Знание несёт **actionable-способность по домену** (новый скилл, MCP, CLI, инструмент, правило,
-техника) → конвейер дозаписывает её в `~/.claude/references/<домен>.md`, потому что так карты
+техника) → конвейер дозаписывает её в `$HOME/.claude/references/<домен>.md`, потому что так карты
 инструментов умнеют вместе с vault, а не отстают от него.
 
 **Маппинг знание → домен → файл:**
@@ -352,7 +352,7 @@ Playwright MCP/WebFetch (needs_js) — для чтения URL; Firecrawl — т
 | security / уязвимость / auth / секреты / OWASP / pentest | безопасность | `references/security.md` |
 | дизайн / UI / UX / Figma / анимация / типографика / бренд | дизайн | `references/design.md` |
 | агентные системы / рой / оркестрация / GSD / loop / harness / суб-агенты | агенты | `references/agents.md` |
-| веб-поиск / скрейп | бесплатный стек kb-fetch/kb-search | `~/Проекты/mnemazine/scripts/kb-fetch.py` (Firecrawl — легаси, только по команде владельца: `references/firecrawl.md`) |
+| веб-поиск / скрейп | бесплатный стек kb-fetch/kb-search | `$HOME/Проекты/mnemazine/scripts/kb-fetch.py` (Firecrawl — легаси, только по команде владельца: `references/firecrawl.md`) |
 | деплой / сервер / VPS / CI | деплой | `references/deploy.md` |
 | новый устойчивый capability-домен | — | создать `references/<домен>.md` по образцу `security.md` |
 
@@ -370,7 +370,7 @@ Playwright MCP/WebFetch (needs_js) — для чтения URL; Firecrawl — т
 Стадии 5.7 (регистрация в routing-реестре) и решает, ставить ли находку молча или ждать владельца:
 
 - **Материал документирует Claude Code / агентный скилл** (переиспользуемая процедура/промт-паттерн
-  для AI-агента) → устанавливать автоматически: добавить в `~/.claude/skills/`, зарегистрировать в
+  для AI-агента) → устанавливать автоматически: добавить в `$HOME/.claude/skills/`, зарегистрировать в
   `~/.agents/SHARED-SKILLS-WORKFLOWS.md` и `~/.agents/GITHUB-STARS-LEDGER.md` (если применимо),
   без дополнительного подтверждения владельца — скилл это текст, риск низкий, откат = удаление папки.
 - **Материал документирует MCP-сервер или open-source систему/инструмент, требующий установки**
@@ -428,12 +428,12 @@ watch + ручной `/kb` без lockfile прогона (Подготовка,
 в `_МАСТЕР-ИНДЕКС`. Два способа:
 - **launchd/cron** на Mac: watcher следит за инбоксом, при новых файлах дёргает `claude -p "/kb"`.
 - **Scheduled task / hook**: периодический прогон `/kb`, если инбокс непуст.
-Скрипт-watcher и пример конфига: `~/.claude/skills/mnemazina/watch/` (README там же). Секреты
+Скрипт-watcher и пример конфига: `$HOME/.claude/skills/mnemazina/watch/` (README там же). Секреты
 в скрипт/конфиг не зашивать — plist и cron-строки читаемы всем локальным процессам.
 
 ## Зеркалирование (всегда, но строго ПОСЛЕ решения пользователя)
 
-Зеркалить нужно всегда (скилл — общая способность → Codex `~/.codex/skills/mnemazina/` + VPS
+Зеркалить нужно всегда (скилл — общая способность → Codex `$HOME/.codex/skills/mnemazina/` + VPS
 `root@ATHENAOS_HOST:/srv/agent-os`, без секретов). Порядок жёсткий, потому что зеркало до решения
 пользователя разносит по машинам то, от чего он ещё может отказаться:
 

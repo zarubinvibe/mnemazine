@@ -5,7 +5,7 @@
 Open this folder as an Obsidian vault:
 
 ```text
-~/Desktop/Mnemazine/vault
+$HOME/Desktop/Mnemazine/vault
 ```
 
 Recommended folders:

@@ -11,7 +11,7 @@ python3 -m pip install graphifyy
 Update graph:
 
 ```bash
-graphify update ~/Desktop/Mnemazine/vault
+graphify update $HOME/Desktop/Mnemazine/vault
 ```
 
 Guarded refresh for Mnemazine nightly/repair runs:

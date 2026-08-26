@@ -5,7 +5,7 @@
 Откройте эту папку как Obsidian-vault:
 
 ```text
-~/Desktop/Mnemazine/vault
+$HOME/Desktop/Mnemazine/vault
 ```
 
 Рекомендуемые папки:

@@ -9,7 +9,7 @@ const has = (text, name) => sourceBasenames(text).has(name)
 // скалярная форма — канон для одного именованного файла
 assert.ok(has('---\nsource: 2604.03136--StoryScope.pdf\nverified: подтверждён\n---\n\nтело', '2604.03136--StoryScope.pdf'))
 // кавычки и путь: сверяется basename, не строка целиком
-assert.ok(has('---\nsource: "~/Desktop/Mnemazine Inbox/report.docx"\n---\n', 'report.docx'))
+assert.ok(has('---\nsource: "$HOME/Desktop/Mnemazine Inbox/report.docx"\n---\n', 'report.docx'))
 // список — несколько исходников у одной ноты
 assert.ok(has('---\nsources:\n  - a.pdf\n  - b.pdf\n---\n', 'b.pdf'))
 // inline-массив

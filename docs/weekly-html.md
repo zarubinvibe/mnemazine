@@ -11,7 +11,7 @@ node scripts/mnemazine-weekly-brief-html.mjs
 The report appears in:
 
 ```text
-~/Desktop/Mnemazine/reports
+$HOME/Desktop/Mnemazine/reports
 ```
 
 The default report language is Russian because the first public release was designed around Russian reading flow. The template can be localized.

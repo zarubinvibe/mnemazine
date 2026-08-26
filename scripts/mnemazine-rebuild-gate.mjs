@@ -35,7 +35,7 @@ const CONFIG = {
   claudeDir: path.join(os.homedir(), '.claude', 'projects', `-${REPO.split(path.sep).filter(Boolean).join('-')}`),
   codexSessions: path.join(os.homedir(), '.codex', 'sessions'),
   kimiIndex: path.join(os.homedir(), '.kimi-code', 'session_index.jsonl'),
-  // Rate-карта claude за Mtok [in, out, cache-write, cache-read] — как ~/.claude/scripts/token-spend.sh.
+  // Rate-карта claude за Mtok [in, out, cache-write, cache-read] — как $HOME/.claude/scripts/token-spend.sh.
   claudeRates: { opus: [15, 75, 18.75, 1.5], sonnet: [3, 15, 3.75, 0.3], haiku: [1, 5, 1.25, 0.1] },
   // ponytail: плоская ставка для не-claude CLI; поштучное ценообразование codex/kimi — открытый вопрос 6
   // (владелец задал только ceiling_usd). Ночной расход codex/kimi мал, точность ставки здесь не решает.

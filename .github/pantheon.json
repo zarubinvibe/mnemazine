@@ -1,0 +1,30 @@
+{
+  "schema_version": 2,
+  "family_id": "zarubinvibe-pantheon",
+  "catalog_version": "2026-08-26",
+  "project": {
+    "slug": "mnemazine",
+    "deity": "Mnemosyne",
+    "symbol": "memory scroll and knowledge graph"
+  },
+  "visuals": {
+    "style_anchor_sha256": "ce524f9d22cb0092cb17aa280832e1b2ab2a77a0e01602065ec502232a3bb2d2",
+    "column_reference_sha256": "9d32edd56ac55c4dd6d0425a28a2ac35035e9ab09073fc8ce0c1414b2edfb1bd",
+    "hero": {
+      "source_path": "docs/assets/pantheon/hero-source.png",
+      "source_sha256": "89e4bb9a2b903b4adb2670cceb8c5d570881e9cc1fe47a8007cff556dd9db9ca",
+      "published_path": "docs/assets/pantheon/hero.png",
+      "published_sha256": "89e4bb9a2b903b4adb2670cceb8c5d570881e9cc1fe47a8007cff556dd9db9ca"
+    },
+    "emblem": {
+      "source_path": "docs/assets/pantheon/emblem-source.png",
+      "source_sha256": "462da70355fb6803273353786a9725e0c9a53477d20950590008cc095a59bdbb",
+      "published_path": "docs/assets/pantheon/emblem.png",
+      "published_sha256": "462da70355fb6803273353786a9725e0c9a53477d20950590008cc095a59bdbb"
+    }
+  },
+  "receipts": {
+    "generation_path": ".github/pantheon/generation-receipt.json",
+    "visual_judge_path": ".github/pantheon/visual-judge-receipt.json"
+  }
+}
