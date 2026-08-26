@@ -25,4 +25,4 @@ For every page it extracts:
 
 The output is a markdown note with verification status. The note is not considered perfect final knowledge until it is reviewed and split if needed.
 
-Authentication is intentionally excluded from the default parser. Public open-source users should not leak browser sessions, cookies, or private dashboards into a knowledge pipeline.
+Authentication is intentionally excluded from the default parser. Do not feed browser sessions, cookies, or private dashboards into the knowledge pipeline.

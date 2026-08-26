@@ -8,7 +8,7 @@
   <img src="docs/assets/pantheon/emblem.png" width="220" alt="Mnemazine emblem — Mnemosyne and the Pantheon column">
 </p>
 
-**Mnemazine** is an open-source personal memory system, named after **Mnemosyne**, the Greek goddess of memory and mother of the Muses.
+**Mnemazine** is a source-available personal memory system, named after **Mnemosyne**, the Greek goddess of memory and mother of the Muses.
 
 The idea behind it is simple. Most people pile up notes, screenshots, and saved links and never look at them again. A pile is not memory. Real memory is what happens when you take something raw, understand it, check it, connect it to what you already know, and write down only the part worth keeping. Mnemazine does that part for you at the moment of saving.
 
@@ -662,10 +662,9 @@ already have, and keep only the part worth keeping. Raw text does not reach your
 could not confirm says so out loud instead of pretending. A year from now you open a note and see
 immediately why it exists.
 
-I am not an only child, if you look closely. Athena keeps the workshop running, Themis argues cases,
-Zeuz builds the machines, Helioz refuses to let long work die overnight. Same marble, same column,
-same refusal to accept a step on a promise. The one who arranges them all prefers to stay off the
-public shelf for now, and I am in no hurry to speak for him.
+I am one of five, if you look closely. Athena keeps the workshop running, Themis argues cases,
+Zeuz builds the machines, and Helioz refuses to let long work die overnight. Same marble, same
+column, same refusal to accept a step on a promise.
 
 Take me if you also collect and never return. Break me and say where — I would rather be corrected
 than admired.
@@ -675,28 +674,25 @@ than admired.
 | Project | What it does |
 |---|---|
 | [Athena](https://github.com/zarubinvibe/athena) | A portable agent OS: brings a whole working setup up on a fresh Mac with one command. |
+| [Helioz](https://github.com/zarubinvibe/helioz) | A conveyor that keeps work moving around the clock, so a long job survives sessions dying. |
+| [Mnemazine](https://github.com/zarubinvibe/mnemazine) | Turns raw captures into verified, reusable notes and a linked local knowledge base. |
 | [Themis](https://github.com/zarubinvibe/themis) | Multi-agent work on Russian court cases: thirteen lawyer-agents, a five-jurist council, local-first OCR. |
 | [Zeuz](https://github.com/zarubinvibe/zeuz) | A factory for agent workflows: takes an idea and gives back a multi-agent system with its own constitution and gates. |
-| [Helioz](https://github.com/zarubinvibe/helioz) | A conveyor that keeps work moving around the clock, so a long job survives sessions dying. |
 
 <!-- pantheon-family:start -->
-## Pantheon family
+## Olympuz family
 
-Part of the [Pantheon project family](https://github.com/zarubinvibe?tab=repositories). Every public project links directly to its repository and source ZIP.
+This is one of the public [Olympuz projects](https://github.com/zarubinvibe/athena#olympuz-family). Each row opens the repository or downloads its source as a ZIP.
 
 | Type | Name | What it does | Source |
 |---|---|---|---|
 | project | Athena | Portable agent OS that restores a complete Claude and Codex setup on a new Mac. | [Repository](https://github.com/zarubinvibe/athena) · [ZIP](https://github.com/zarubinvibe/athena/archive/refs/heads/main.zip) |
-| project | Claude Code Setup OS | Bootstrap skill for a token-efficient Claude Code workspace and a local LLM wiki. | [Repository](https://github.com/zarubinvibe/claude-code-setup-os) · [ZIP](https://github.com/zarubinvibe/claude-code-setup-os/archive/refs/heads/main.zip) |
 | project | Helioz | 24/7 agent work conveyor with verified completion markers and goal-based overnight decisions. | [Repository](https://github.com/zarubinvibe/helioz) · [ZIP](https://github.com/zarubinvibe/helioz/archive/refs/heads/main.zip) |
-| project | Humanizer | Agent skill that removes common AI writing patterns from English text. | [Repository](https://github.com/zarubinvibe/humanizer) · [ZIP](https://github.com/zarubinvibe/humanizer/archive/refs/heads/main.zip) |
-| project | Humanizer RU | Russian writing skill that detects and removes 58 common AI text patterns. | [Repository](https://github.com/zarubinvibe/humanizer-ru) · [ZIP](https://github.com/zarubinvibe/humanizer-ru/archive/refs/heads/main.zip) |
 | project | Mnemazine | Local-first memory system that turns raw inputs into verified reusable knowledge. | [Repository](https://github.com/zarubinvibe/mnemazine) · [ZIP](https://github.com/zarubinvibe/mnemazine/archive/refs/heads/main.zip) |
-| project | Smltlk | macOS menu bar app for keyboard-layout repair, offline dictation, and speech-to-prompt. | [Repository](https://github.com/zarubinvibe/smltlk) · [ZIP](https://github.com/zarubinvibe/smltlk/archive/refs/heads/main.zip) |
 | project | Themis | Multi-agent assistant for Russian litigation with local OCR and review by a five-jurist council. | [Repository](https://github.com/zarubinvibe/themis) · [ZIP](https://github.com/zarubinvibe/themis/archive/refs/heads/main.zip) |
 | project | Zeuz | Factory that turns an idea into a governed multi-agent workflow with gates, observability, and replay. | [Repository](https://github.com/zarubinvibe/zeuz) · [ZIP](https://github.com/zarubinvibe/zeuz/archive/refs/heads/main.zip) |
 <!-- pantheon-family:end -->
 
 ## License
 
-Mnemazine Community License 1.0 (индивидуальное использование свободно, организационное — по соглашению с автором; см. LICENSE).
+Mnemazine Community License 1.0 (free for individual use; organizational use requires a separate agreement; see LICENSE).
