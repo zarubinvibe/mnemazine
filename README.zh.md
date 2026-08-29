@@ -119,10 +119,9 @@ Mnemazine 是一座本地的知识精炼厂。原始材料进入收件箱，出�
 git clone https://github.com/zarubinvibe/mnemazine.git "$HOME/Desktop/Mnemazine"
 cd "$HOME/Desktop/Mnemazine"
 bash setup.sh
-bash install.sh
 ```
 
-没有 Git？下载 [ZIP](https://github.com/zarubinvibe/mnemazine/archive/refs/heads/main.zip) 或者 [tar.gz](https://github.com/zarubinvibe/mnemazine/archive/refs/heads/main.tar.gz)，解压后在里面执行同样的两个脚本。`setup.sh` 会问收件箱放在哪里；`MNEMAZINE_SETUP_DRYRUN=1 bash setup.sh` 只看计划，不动任何文件。
+`setup.sh` 是带引导的路径：它检查前置条件，问你收件箱放在哪里，还能部署 Telegram 机器人。`MNEMAZINE_SETUP_DRYRUN=1 bash setup.sh` 只看计划，不动任何文件；`bash install.sh` 是非交互的骨架安装，适合你已经清楚要什么的时候。没有 Git？下载 [ZIP](https://github.com/zarubinvibe/mnemazine/archive/refs/heads/main.zip) 或 [tar.gz](https://github.com/zarubinvibe/mnemazine/archive/refs/heads/main.tar.gz)，在里面跑同样的脚本。
 
 **你会得到：** 目录准备好了，本地引擎如实报告哪些可用、哪些降级，`vault/` 可以直接作为 Obsidian 知识库打开。
 

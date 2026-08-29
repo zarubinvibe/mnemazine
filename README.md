@@ -119,10 +119,9 @@ You need Node.js 20 or newer, Python 3.11 or newer, and Git. macOS is recommende
 git clone https://github.com/zarubinvibe/mnemazine.git "$HOME/Desktop/Mnemazine"
 cd "$HOME/Desktop/Mnemazine"
 bash setup.sh
-bash install.sh
 ```
 
-No Git? Download [the ZIP](https://github.com/zarubinvibe/mnemazine/archive/refs/heads/main.zip) or [the tarball](https://github.com/zarubinvibe/mnemazine/archive/refs/heads/main.tar.gz), unpack it, and run the same two scripts inside. `setup.sh` asks where the inbox goes; `MNEMAZINE_SETUP_DRYRUN=1 bash setup.sh` previews it without touching anything.
+`setup.sh` is the guided path: it checks the prerequisites, asks where the inbox goes, and can deploy the Telegram bot. `MNEMAZINE_SETUP_DRYRUN=1 bash setup.sh` previews it without touching anything, and `bash install.sh` is the non-interactive skeleton if you already know what you want. No Git? Download [the ZIP](https://github.com/zarubinvibe/mnemazine/archive/refs/heads/main.zip) or [the tarball](https://github.com/zarubinvibe/mnemazine/archive/refs/heads/main.tar.gz) and run the same script inside.
 
 **You get:** the folders are ready, the local engines report what is installed and what is degraded, and `vault/` opens as an Obsidian vault.
 

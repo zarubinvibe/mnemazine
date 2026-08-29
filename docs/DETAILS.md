@@ -2,12 +2,12 @@
 
 # Mnemazine
 
-🇬🇧 **English** · [🇷🇺 Русский](README.ru.md)
+🇬🇧 **English** · [🇷🇺 Русский](../README.ru.md)
 
 <p align="center">
-  <img src="docs/assets/pantheon/hero.png" width="820" alt="Mnemazine — Mnemosyne, goddess of memory, beside her marble column, distilling raw fragments into a layered knowledge system">
+  <img src="../docs/assets/pantheon/hero.png" width="820" alt="Mnemazine — Mnemosyne, goddess of memory, beside her marble column, distilling raw fragments into a layered knowledge system">
   <br>
-  <img src="docs/assets/pantheon/emblem.png" width="220" alt="Mnemazine emblem — Mnemosyne and the Pantheon column">
+  <img src="../docs/assets/pantheon/emblem.png" width="220" alt="Mnemazine emblem — Mnemosyne and the Pantheon column">
 </p>
 
 **Mnemazine** is a source-available personal memory system, named after **Mnemosyne**, the Greek goddess of memory and mother of the Muses.
@@ -21,7 +21,7 @@ In practice, Mnemazine takes screenshots, PDFs, web pages, YouTube videos, notes
 > Memory, not a dump.
 
 <p align="center">
-  <img src="docs/assets/hero/mnemazine-synthesis.png" width="760" alt="Synthesis on write: many raw fragments are squeezed through to a single durable note">
+  <img src="../docs/assets/hero/mnemazine-synthesis.png" width="760" alt="Synthesis on write: many raw fragments are squeezed through to a single durable note">
 </p>
 
 ## What It Is
@@ -85,7 +85,7 @@ Bypass the prompt in automation with `MNEMAZINE_YES=1 bash install.sh`.
 Mnemazine saves tokens by moving work out of repeated LLM context and into durable local structure: parse locally, cache aggressively, store refined atoms, retrieve narrowly.
 
 <p align="center">
-  <img src="docs/assets/hero/mnemazine-token.png" width="760" alt="Token economics: parse locally, hash cache, store atoms, retrieve narrowly">
+  <img src="../docs/assets/hero/mnemazine-token.png" width="760" alt="Token economics: parse locally, hash cache, store atoms, retrieve narrowly">
 </p>
 
 Typical savings come from:
@@ -206,7 +206,7 @@ The run performs:
 11. action brief at `.mnemazine/state/last-action-brief.md`;
 12. visual post-run knowledge report in `reports/`.
 
-Under `--deep` only, a final humanize stage rewrites notes into readable Russian and is held by a preservation gate: no number, URL, path, wikilink, code block, frontmatter, or `## Достоверность` line may be lost in the rewrite, or the run fails (`scripts/mnemazine-humanize-gate.mjs`; details in [docs/deep-mode.md](docs/deep-mode.md)). A non-deep run has no digest and no humanize gate — by decision, not accident.
+Under `--deep` only, a final humanize stage rewrites notes into readable Russian and is held by a preservation gate: no number, URL, path, wikilink, code block, frontmatter, or `## Достоверность` line may be lost in the rewrite, or the run fails (`scripts/mnemazine-humanize-gate.mjs`; details in [docs/deep-mode.md](../docs/deep-mode.md)). A non-deep run has no digest and no humanize gate — by decision, not accident.
 
 `Mnemazine` / `npm start` is the safe default for real inbox work. The lower-level `npm run run` command is for development and demos.
 
@@ -320,7 +320,7 @@ python3 scripts/kb-yt-harvest.py "https://www.youtube.com/@SomeChannel" --all --
 
 It pulls subtitles first (near-zero cost) and falls back to local whisper when a video has no usable captions. Each video becomes one inbox note named `yt_<date>_<id>_<title>.md`. A subscribed channel is then polled by `scripts/kb-yt-watch.py` over RSS, harvesting only new uploads, optionally on a daily launchd schedule.
 
-It fetches public videos only and uses no cookies or account sessions by default. See [YouTube Ingestion](docs/youtube-ingestion.md).
+It fetches public videos only and uses no cookies or account sessions by default. See [YouTube Ingestion](../docs/youtube-ingestion.md).
 
 ## Knowledge Quality Contract
 
@@ -462,7 +462,7 @@ raw input -> extraction -> understanding -> research -> verification -> atomizat
 ```
 
 <p align="center">
-  <img src="docs/assets/hero/mnemazine-pipeline.png" width="820" alt="The Mnemazine pipeline: raw input, extract, verify, synthesize, vault, graph, reuse">
+  <img src="../docs/assets/hero/mnemazine-pipeline.png" width="820" alt="The Mnemazine pipeline: raw input, extract, verify, synthesize, vault, graph, reuse">
 </p>
 
 That matters because a real memory must be reproducible. A note should be able to become:
@@ -513,7 +513,7 @@ and processes it locally; the finished knowledge lives only in your vault.
 Lock the bot to yourself. On the first message it logs your `chat_id`; set
 `ALLOWED_CHAT_IDS=<your_chat_id>` and restart. An empty allowlist rejects everyone
 (fail-closed), so an unconfigured bot ignoring you is expected, not broken. Full
-setup: [docs/telegram-intake.md](docs/telegram-intake.md).
+setup: [docs/telegram-intake.md](../docs/telegram-intake.md).
 
 ## VPS: What It Does and Living Without It
 
@@ -604,21 +604,21 @@ ready-to-use knowledge, and I read every suggestion.
 - If it helped, star it on GitHub; it genuinely matters:
   <https://github.com/zarubinvibe/Mnemazine>
 - Got an idea to make it better? Open an issue or a PR. Contribution guidance is in
-  [CONTRIBUTING.md](CONTRIBUTING.md); the security policy is in [SECURITY.md](SECURITY.md).
+  [CONTRIBUTING.md](../CONTRIBUTING.md); the security policy is in [SECURITY.md](../SECURITY.md).
 
 ## Documentation
 
-- [Installation](docs/installation.md)
-- [Architecture](docs/architecture.md)
-- [Token Economics](docs/token-economics.md)
-- [Website Ingestion](docs/site-ingestion.md)
-- [YouTube Ingestion](docs/youtube-ingestion.md)
-- [Telegram Intake (bot + Mini App)](docs/telegram-intake.md)
-- [Obsidian Vault](docs/obsidian.md)
-- [Apple Vision OCR](docs/apple-vision.md)
-- [Graphify](docs/graphify.md)
-- [Weekly HTML Brief](docs/weekly-html.md)
-- [Deep Mode (atomization + verification)](docs/deep-mode.md)
+- [Installation](../docs/installation.md)
+- [Architecture](../docs/architecture.md)
+- [Token Economics](../docs/token-economics.md)
+- [Website Ingestion](../docs/site-ingestion.md)
+- [YouTube Ingestion](../docs/youtube-ingestion.md)
+- [Telegram Intake (bot + Mini App)](../docs/telegram-intake.md)
+- [Obsidian Vault](../docs/obsidian.md)
+- [Apple Vision OCR](../docs/apple-vision.md)
+- [Graphify](../docs/graphify.md)
+- [Weekly HTML Brief](../docs/weekly-html.md)
+- [Deep Mode (atomization + verification)](../docs/deep-mode.md)
 
 ## Safety
 

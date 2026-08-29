@@ -119,10 +119,9 @@ Mnemazine это локальная фабрика знания. Сырьё кл
 git clone https://github.com/zarubinvibe/mnemazine.git "$HOME/Desktop/Mnemazine"
 cd "$HOME/Desktop/Mnemazine"
 bash setup.sh
-bash install.sh
 ```
 
-Нет Git? Скачайте [ZIP](https://github.com/zarubinvibe/mnemazine/archive/refs/heads/main.zip) или [tar.gz](https://github.com/zarubinvibe/mnemazine/archive/refs/heads/main.tar.gz), распакуйте и запустите внутри те же два скрипта. `setup.sh` спрашивает, где будут входящие, а `MNEMAZINE_SETUP_DRYRUN=1 bash setup.sh` показывает план, ничего не трогая.
+`setup.sh` это ведомый путь: он проверяет предпосылки, спрашивает, где будут входящие, и умеет развернуть Telegram-бота. `MNEMAZINE_SETUP_DRYRUN=1 bash setup.sh` показывает план, ничего не трогая, а `bash install.sh` это неинтерактивный скелет, если вы уже знаете, что хотите. Нет Git? Скачайте [ZIP](https://github.com/zarubinvibe/mnemazine/archive/refs/heads/main.zip) или [tar.gz](https://github.com/zarubinvibe/mnemazine/archive/refs/heads/main.tar.gz) и запустите тот же скрипт внутри.
 
 **Что получится:** папки готовы, локальные движки честно сообщают, что установлено и что работает урезанно, а `vault/` открывается как база Obsidian.
 

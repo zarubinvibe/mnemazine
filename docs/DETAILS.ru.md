@@ -2,12 +2,12 @@
 
 # Mnemazine
 
-🇷🇺 **Русский** · [🇬🇧 English](README.md)
+🇷🇺 **Русский** · [🇬🇧 English](../README.md)
 
 <p align="center">
-  <img src="docs/assets/pantheon/hero.png" width="820" alt="Mnemazine — Мнемозина, богиня памяти, у своей мраморной колонны, перегоняет сырые фрагменты в слоистую систему знаний">
+  <img src="../docs/assets/pantheon/hero.png" width="820" alt="Mnemazine — Мнемозина, богиня памяти, у своей мраморной колонны, перегоняет сырые фрагменты в слоистую систему знаний">
   <br>
-  <img src="docs/assets/pantheon/emblem.png" width="220" alt="Эмблема Mnemazine — Мнемозина и колонна Pantheon">
+  <img src="../docs/assets/pantheon/emblem.png" width="220" alt="Эмблема Mnemazine — Мнемозина и колонна Pantheon">
 </p>
 
 **Mnemazine**: локальная персональная система памяти, названная в честь **Мнемозины**, греческой богини памяти и матери муз.
@@ -21,7 +21,7 @@
 > Память, не свалка.
 
 <p align="center">
-  <img src="docs/assets/hero/mnemazine-synthesis.png" width="760" alt="Синтез на записи: множество сырых фрагментов отжимается в одну долговечную заметку">
+  <img src="../docs/assets/hero/mnemazine-synthesis.png" width="760" alt="Синтез на записи: множество сырых фрагментов отжимается в одну долговечную заметку">
 </p>
 
 ## Что это
@@ -84,7 +84,7 @@ MNEMAZINE_SETUP_DRYRUN=1 bash setup.sh
 Mnemazine экономит токены, вынося работу из повторяющегося LLM-контекста в долговечную локальную структуру: парсить локально, агрессивно кэшировать, хранить очищенные атомы, извлекать узко.
 
 <p align="center">
-  <img src="docs/assets/hero/mnemazine-token.png" width="760" alt="Экономика токенов: парсинг локально, hash-кэш, хранение атомов, узкое извлечение">
+  <img src="../docs/assets/hero/mnemazine-token.png" width="760" alt="Экономика токенов: парсинг локально, hash-кэш, хранение атомов, узкое извлечение">
 </p>
 
 Типичная экономия складывается из:
@@ -308,7 +308,7 @@ python3 scripts/kb-yt-harvest.py "https://www.youtube.com/@SomeChannel" --all --
 
 Сначала он берёт субтитры (почти нулевая стоимость) и откатывается на локальный whisper, когда у видео нет пригодных субтитров. Каждое видео становится одной заметкой в inbox с именем `yt_<date>_<id>_<title>.md`. Подписанный канал затем опрашивается `scripts/kb-yt-watch.py` по RSS, забирая только новые загрузки, опционально по ежедневному расписанию launchd.
 
-Он забирает только публичные видео и по умолчанию не использует cookie или сессии аккаунта. См. [Парсинг YouTube](docs/youtube-ingestion.ru.md).
+Он забирает только публичные видео и по умолчанию не использует cookie или сессии аккаунта. См. [Парсинг YouTube](../docs/youtube-ingestion.ru.md).
 
 ## Контракт качества знаний
 
@@ -450,7 +450,7 @@ Mnemazine: это не «второй мозг» как лозунг про хр
 ```
 
 <p align="center">
-  <img src="docs/assets/hero/mnemazine-pipeline.png" width="820" alt="Конвейер Mnemazine: сырьё, извлечение, проверка, синтез, vault, граф, переиспользование">
+  <img src="../docs/assets/hero/mnemazine-pipeline.png" width="820" alt="Конвейер Mnemazine: сырьё, извлечение, проверка, синтез, vault, граф, переиспользование">
 </p>
 
 Это важно, потому что настоящая память должна быть воспроизводимой. Заметка должна уметь стать:
@@ -501,7 +501,7 @@ Mnemazine: это не «второй мозг» как лозунг про хр
 Закрой бота на себя. На первом сообщении он логирует твой `chat_id`; поставь
 `ALLOWED_CHAT_IDS=<твой_chat_id>` и перезапусти. Пустой список отвергает всех
 (fail-closed), поэтому ненастроенный бот, который тебя игнорирует, это ожидаемо,
-а не поломка. Полная настройка: [docs/telegram-intake.ru.md](docs/telegram-intake.ru.md).
+а не поломка. Полная настройка: [docs/telegram-intake.ru.md](../docs/telegram-intake.ru.md).
 
 ## VPS: что он делает и как жить без него
 
@@ -593,21 +593,21 @@ inbox. Не переноси их руками, почини причину и �
 - Если зашло, поставь звезду на GitHub, мне это правда важно:
   <https://github.com/zarubinvibe/Mnemazine>
 - Есть идея, как сделать лучше? Открой issue или PR. Как контрибьютить, смотри
-  [CONTRIBUTING.md](CONTRIBUTING.md); политика безопасности расписана в [SECURITY.md](SECURITY.md).
+  [CONTRIBUTING.md](../CONTRIBUTING.md); политика безопасности расписана в [SECURITY.md](../SECURITY.md).
 
 ## Документация
 
-- [Установка](docs/installation.ru.md)
-- [Архитектура](docs/architecture.ru.md)
-- [Экономика токенов](docs/token-economics.ru.md)
-- [Парсинг сайтов](docs/site-ingestion.ru.md)
-- [Парсинг YouTube](docs/youtube-ingestion.ru.md)
-- [Приём через Telegram (бот + Mini App)](docs/telegram-intake.ru.md)
-- [Obsidian-vault](docs/obsidian.ru.md)
-- [Apple Vision OCR](docs/apple-vision.ru.md)
-- [Graphify](docs/graphify.ru.md)
-- [Еженедельный HTML-брифинг](docs/weekly-html.ru.md)
-- [Deep-режим (атомизация + проверка)](docs/deep-mode.ru.md)
+- [Установка](../docs/installation.ru.md)
+- [Архитектура](../docs/architecture.ru.md)
+- [Экономика токенов](../docs/token-economics.ru.md)
+- [Парсинг сайтов](../docs/site-ingestion.ru.md)
+- [Парсинг YouTube](../docs/youtube-ingestion.ru.md)
+- [Приём через Telegram (бот + Mini App)](../docs/telegram-intake.ru.md)
+- [Obsidian-vault](../docs/obsidian.ru.md)
+- [Apple Vision OCR](../docs/apple-vision.ru.md)
+- [Graphify](../docs/graphify.ru.md)
+- [Еженедельный HTML-брифинг](../docs/weekly-html.ru.md)
+- [Deep-режим (атомизация + проверка)](../docs/deep-mode.ru.md)
 
 ## Безопасность
 
