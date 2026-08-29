@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // Phase D — Russian human-readable digest, written AFTER Graphify.
-// For each note: a humanizer-style Russian "Справка" section (Что это / О чём /
+// For each note: a humanizer-style Russian "Справка" section (Что это / О чем /
 // Почему важно мне / Связи), with real connections pulled from the Graphify
 // graph. Plus one session summary note mapping all processed atoms — so the
 // knowledge is trivially reusable later.
@@ -67,7 +67,7 @@ function digestPrompt(noteText, connections) {
 Дай четыре поля:
 - "zagolovok": точный человеческий заголовок (что это за знание).
 - "chto_eto": 1-2 предложения — что это такое.
-- "o_chyom": 1-2 предложения — о чём это, суть.
+- "o_chyom": 1-2 предложения — о чем это, суть.
 - "pochemu_vazhno": 1-2 предложения — почему это полезно в контексте ${OWNER_CONTEXT}.
 
 Связанные знания из графа (для контекста, не пересказывай их):
@@ -175,7 +175,7 @@ function spravkaBlock(d, connections, titleByNote) {
 **${d.zagolovok}**
 
 - **Что это:** ${d.chto_eto}
-- **О чём:** ${d.o_chyom}
+- **О чем:** ${d.o_chyom}
 - **Почему важно мне:** ${d.pochemu_vazhno}
 
 **Связи:**
@@ -213,10 +213,10 @@ async function main() {
     const stripped = FORCE ? text.replace(new RegExp(`\\n*${SPRAVKA}[\\s\\S]*$`), '\n') : text
     const block = spravkaBlock(d, connections, titleByNote)
     const newText = `${stripped.trimEnd()}\n\n${block}`
-    // План П13 шаг 5: --force вырезает всё от первого ## Справка до EOF — готовый путь
+    // План П13 шаг 5: --force вырезает все от первого ## Справка до EOF — готовый путь
     // потери фактов. Перед записью гейт сохранности сверяет инварианты (числа/ссылки/
-    // пути/код/frontmatter/заголовки; clean:false — читаемость не при чём, дайджест лишь
-    // дописывает Справку). Потеря → файл не переписывается, расхождение в отчёт, прогон
+    // пути/код/frontmatter/заголовки; clean:false — читаемость не при чем, дайджест лишь
+    // дописывает Справку). Потеря → файл не переписывается, расхождение в отчет, прогон
     // падает через run.mjs (digest.status !== 0).
     let guard
     try { guard = preservationCheck(text, newText, { clean: false }) }
@@ -240,7 +240,7 @@ async function main() {
       `\n# Сводка знаний — ${SESSION}\n`,
       `## Что это\n\nСводка связывает новые knowledge-note после digest-прогона и показывает, какие заметки теперь имеют человеческую справку.\n`,
       `## Зачем это нужно\n\nЭто финальный reuse-слой: после intake знание видно не только как отдельные файлы, но и как карта применимых связей.\n`,
-      `## Как использовать\n\n- Открыть связанные заметки из списка ниже.\n- Взять сильные next actions в работу.\n- Проверить слабые или неподтверждённые связи перед публикацией.\n`,
+      `## Как использовать\n\n- Открыть связанные заметки из списка ниже.\n- Взять сильные next actions в работу.\n- Проверить слабые или неподтвержденные связи перед публикацией.\n`,
       `## Источник\n\n- source_ref: digest:${SESSION}\n- processed_notes: ${summary.length}\n`,
       `## Проверка\n\nСводка построена локально из заметок vault и связей digest-этапа. Не является внешней факт-проверкой.\n`,
       `## Связанные заметки\n\n- [[Mnemazine Protocol|Протокол Mnemazine]]\n`,

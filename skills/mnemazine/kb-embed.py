@@ -33,7 +33,7 @@ MAX_CHARS = 2000                          # хвост ноты не нужен 
 
 # Пороги зон/заголовков подобраны замером на корпусе vault 2026-07-25
 # (кластер Camofox ×4 в «08 AI и Инструменты»); при смене MODEL перекалибровать замером.
-ZONE_MERGE = 0.90       # combined ≥ — кандидат на слияние (вердикт всё равно за судьёй)
+ZONE_MERGE = 0.90       # combined ≥ — кандидат на слияние (вердикт все равно за судьей)
 ZONE_FLAG = 0.72        # combined ≥ — показать на ревью; ниже — законная новая нота
 TITLE_WEIGHT = 0.3      # вклад совпадения заголовков в combined
 TITLE_SIM_MIN = 0.5     # ниже — заголовки несвязаны, вклад 0 (не топить cosine шумом)
@@ -149,7 +149,7 @@ def cmd_query(idxfile, text, topk=3, thr=0.0):
     matches = [{"note": p, "score": round(cos, 4), "title_sim": round(tsim, 4),
                 "combined": round(comb, 4), "zone": _zone(comb)}
                for comb, cos, tsim, p in scored[:topk] if cos >= thr]
-    top = max(cos for _, cos, _, _ in scored)  # top остаётся чистым cosine — старые вызовы его парсят
+    top = max(cos for _, cos, _, _ in scored)  # top остается чистым cosine — старые вызовы его парсят
     print(json.dumps({"matches": matches, "top": round(top, 4)}, ensure_ascii=False))
 
 

@@ -48,7 +48,7 @@ const report = await runGate()
 const failures = report.failures.length
 const checked = report.checked
 let ceiling = null
-try { ceiling = JSON.parse(await fs.readFile(CEILING_PATH, 'utf8')) } catch { /* первый съём */ }
+try { ceiling = JSON.parse(await fs.readFile(CEILING_PATH, 'utf8')) } catch { /* первый съем */ }
 
 if (CHECK) {
   if (!ceiling) {

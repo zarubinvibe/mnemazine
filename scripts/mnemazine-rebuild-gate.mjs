@@ -7,7 +7,7 @@
 //   --require на tampered/отсутствующий → exit 2. Пустая выборка планов → exit 2, не «сдано 0/0».
 //   Исключение внутри проверки плана → crash:<план>, остальные планы продолжают считаться
 //   (в отличие от mnemazine-release-check.mjs:921-925, где первый throw убивает остальные).
-//   --budget: нет budget.json → exit 2 (потолок не подтверждён); превышение → exit 3.
+//   --budget: нет budget.json → exit 2 (потолок не подтвержден); превышение → exit 3.
 //   --selftest: репетиция отката (правка→revert→сверка tree-sha) + спрятанный прибор плана → красный.
 //
 // engines.node >= 20 (package.json): без fs.globSync и без require() из ESM.
@@ -29,7 +29,7 @@ const CONFIG = {
   // Лимит слотов: три исполнителя, по одному на CLI (мастер §9, дополнение 3). Конфиг, не промт.
   slotsPerCli: { claude: 1, codex: 1, kimi: 1 },
   configLocal: path.join(REPO, '.mnemazine', 'config.local.sh'),
-  // Открытые вопросы §6 мастер-плана: план не готов, пока его вопрос не отвечён.
+  // Открытые вопросы §6 мастер-плана: план не готов, пока его вопрос не отвечен.
   openQuestions: [], // все решены: 3,4 (22.08); 5 — кастомная dual-license, драфт LICENSE.draft.md на утверждении владельца; 10 — публично только чистый релизный коммит, история в приватном (23.08)
   questionBlocks: {},
   claudeDir: path.join(os.homedir(), '.claude', 'projects', `-${REPO.split(path.sep).filter(Boolean).join('-')}`),
@@ -95,7 +95,7 @@ function parsePlanBody(body) {
   const lines = body.split('\n')
   const executor = (body.match(/\*\*Исполнитель:\*\*\s*([A-Za-z]+)/) || [])[1] || null
   // «Требует маркеров» может занимать несколько строк (`·`-разделитель) и тянуть за собой прозу, которая
-  // тоже называет ПNN («`--require` на П21 даёт 2», «(`П01` — не формальность…)»). Собираем поле до
+  // тоже называет ПNN («`--require` на П21 дает 2», «(`П01` — не формальность…)»). Собираем поле до
   // следующего `- **`-поля, режем на первой точке-конце-предложения — дальше только пояснения.
   let requires = []
   const reqIdx = lines.findIndex(l => /\*\*Требует маркеров:\*\*/.test(l))
@@ -127,7 +127,7 @@ function parsePlanBody(body) {
 // --- Маркеры -------------------------------------------------------------------------------------
 const markerFile = id => path.join(CONFIG.stateDir, `${id}.done.json`)
 
-/** Пересчёт sha изменённых файлов: sha256(имена \n + содержимое каждого) по фиксированным base..head. */
+/** Пересчет sha измененных файлов: sha256(имена \n + содержимое каждого) по фиксированным base..head. */
 function changedFilesSha(base, head) {
   const names = (gitSafe(['diff', '--name-only', `${base}..${head}`]) || '').split('\n').filter(Boolean)
   let buf = names.join('\n')
@@ -149,7 +149,7 @@ function readMarker(id) {
   if (!gitSafe(['rev-parse', '--verify', data.head + '^{commit}']) || !gitSafe(['rev-parse', '--verify', data.base + '^{commit}'])) {
     return { status: 'tampered', reason: 'base/head не резолвятся в коммиты', data }
   }
-  // Пересчёт sha по записанным base/head — детерминирован независимо от текущего HEAD.
+  // Пересчет sha по записанным base/head — детерминирован независимо от текущего HEAD.
   {
     if (changedFilesSha(data.base, data.head) !== data.sha_of_changed_files) return { status: 'tampered', reason: 'sha_of_changed_files не совпал', data }
   }
@@ -180,13 +180,13 @@ function writeMarker(id, { checkCmd, executor, verifier, base }) {
   if (id === 'П21') {
     const baseline = path.join(CONFIG.stateDir, 'public-history-baseline.json')
     marker.ignored_files_decisions = {
-      'scripts/mnemazine-refresh-core-indexes.mjs': 'обезличен и включён',
-      'scripts/graphify_clean.py': 'обезличен и включён',
-      'scripts/mnemazine-apply-capability-links.mjs': 'включён',
-      'scripts/mnemazine-audit-live-vault.mjs': 'включён',
-      'scripts/mnemazine-normalize-skill-notes.mjs': 'включён',
-      'scripts/kb-enrich-schema.json': 'включён',
-      'tests/test-coverage-fix.mjs': 'включён',
+      'scripts/mnemazine-refresh-core-indexes.mjs': 'обезличен и включен',
+      'scripts/graphify_clean.py': 'обезличен и включен',
+      'scripts/mnemazine-apply-capability-links.mjs': 'включен',
+      'scripts/mnemazine-audit-live-vault.mjs': 'включен',
+      'scripts/mnemazine-normalize-skill-notes.mjs': 'включен',
+      'scripts/kb-enrich-schema.json': 'включен',
+      'tests/test-coverage-fix.mjs': 'включен',
       'scripts/mnemazine-build-capability-map.mjs': 'оставлен вырезанным',
       'scripts/mnemazine-dedupe-atomized-blocks.mjs': 'оставлен вырезанным',
       'scripts/kb-build-queue.py': 'оставлен вырезанным',
@@ -251,7 +251,7 @@ function writeRunning(state) {
   writeFileSync(path.join(CONFIG.stateDir, 'running.json'), JSON.stringify(state, null, 2) + '\n')
 }
 
-// --- Расход (--budget): факт с диска по трём источникам, каждый в try/catch (best-effort) ----------
+// --- Расход (--budget): факт с диска по трем источникам, каждый в try/catch (best-effort) ----------
 function claudeRate(model) {
   const l = (model || '').toLowerCase()
   for (const k of Object.keys(CONFIG.claudeRates)) if (l.includes(k)) return CONFIG.claudeRates[k]
@@ -346,7 +346,7 @@ async function cmdBudget(json) {
   const f = path.join(CONFIG.stateDir, 'budget.json')
   let b
   try { b = JSON.parse(readFileSync(f, 'utf8')) } catch {
-    console.error('бюджет: budget.json отсутствует или нечитаем — потолок не подтверждён')
+    console.error('бюджет: budget.json отсутствует или нечитаем — потолок не подтвержден')
     return 2
   }
   const since = b.started_at && !Number.isNaN(Date.parse(b.started_at)) ? Date.parse(b.started_at) : new Date().setHours(0, 0, 0, 0)
@@ -384,7 +384,7 @@ async function cmdStatus(json) {
 
 async function cmdReady(json) {
   const plans = await loadPlans()
-  if (!plans.size) { console.error('--ready: ноль извлечённых планов'); return 1 }
+  if (!plans.size) { console.error('--ready: ноль извлеченных планов'); return 1 }
   const running = readRunning().running
   const runningPaths = new Set()
   const runningCli = new Set()
@@ -400,7 +400,7 @@ async function cmdReady(json) {
     const p = plans.get(id)
     if (readMarker(id).status === 'done' || running.includes(id)) continue
     const reasons = []
-    for (const dep of p.requires) if (readMarker(dep).status !== 'done') reasons.push(`ждёт маркер ${dep}`)
+    for (const dep of p.requires) if (readMarker(dep).status !== 'done') reasons.push(`ждет маркер ${dep}`)
     for (const q of (CONFIG.questionBlocks[id] || [])) if (CONFIG.openQuestions.includes(q)) reasons.push(`открыт вопрос ${q}`)
     const inter = p.paths.map(x => x.path).filter(x => runningPaths.has(x))
     if (inter.length) reasons.push(`пересечение путей с бегущим планом: ${[...new Set(inter)].join(', ')}`)
@@ -512,7 +512,7 @@ async function cmdSelftest() {
 
   // 3. Реальные планы извлекаются; ноль → красный (мастер §8).
   const plans = await loadPlans()
-  ok(plans.size >= 1, 'ноль извлечённых планов — selftest красный')
+  ok(plans.size >= 1, 'ноль извлеченных планов — selftest красный')
 
   // 4. Спрятанный прибор плана: git-отслеживаемые не-[новый] repo-пути обязаны существовать на диске.
   //    mv scripts/mnemazine-coverage-check.mjs /tmp/ уводит отслеживаемый файл → эта проверка краснеет.

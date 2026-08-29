@@ -23,9 +23,9 @@ NOTE-SPEC, сироты, кириллица, обязательные блоки
 Использование: node scripts/mnemazine-kb-lint.mjs [флаги]
   --vault <путь>  корпус (иначе MNEMAZINE_VAULT или repo-local vault)
   --limit N       сколько худших показать в каждом списке (по умолчанию 20)
-  --json          полный отчёт в JSON в stdout (report_path: null без --write)
-  --write         записать отчёт и .last-lint в <vault>/99 Система/_lint/
-                  (по умолчанию НИЧЕГО не пишет: отчёт уходит в stdout)
+  --json          полный отчет в JSON в stdout (report_path: null без --write)
+  --write         записать отчет и .last-lint в <vault>/99 Система/_lint/
+                  (по умолчанию НИЧЕГО не пишет: отчет уходит в stdout)
   --help          эта справка
 
 Коды возврата: 0 — чисто; 1 — есть critical-находки или ошибка запуска.`)
@@ -69,7 +69,7 @@ async function walkVault(vault) {
       const rel = nfc(path.relative(vault, abs).replace(/\\/g, '/'))
       if (item.isDirectory()) {
         if (['.git', '.obsidian', '.mnemazine'].includes(item.name) || item.name.startsWith('graphify-out')) continue
-        // Отчёты этого же линта — не ноты: не линтуются и не входят в счёт диска.
+        // Отчеты этого же линта — не ноты: не линтуются и не входят в счет диска.
         if (rel === '99 Система/_lint') continue
         dirs.add(rel)
         await walk(abs)
@@ -128,7 +128,7 @@ async function checkIndexes(vault, notes) {
   const master = await fs.readFile(path.join(vault, '_МАСТЕР-ИНДЕКС.md'), 'utf8').catch(() => '')
   const hit = master.match(/Всего markdown[^:]*:\s*\*\*(\d+)\*\*/i)
   const counter = hit ? Number(hit[1]) : null
-  if (counter === null) issues.push('в _МАСТЕР-ИНДЕКС.md не найден счётчик «Всего markdown: **N**»')
+  if (counter === null) issues.push('в _МАСТЕР-ИНДЕКС.md не найден счетчик «Всего markdown: **N**»')
   else if (counter !== diskCount) issues.push(`_МАСТЕР-ИНДЕКС.md заявляет ${counter} .md, на диске ${diskCount}`)
   const newestMs = notes.reduce((max, note) => Math.max(max, note.mtimeMs), 0)
   for (const relIndex of ['99 Система/_embeddings.json', 'graphify-out/graph.json']) {
@@ -279,7 +279,7 @@ function renderReport(report, limit) {
   lines.push(`- Всего .md: ${report.checked.markdown_files} · содержательных нот: ${report.checked.content_notes}`)
   lines.push(`- Итог: ${report.ok ? 'чисто (exit 0)' : 'есть critical (exit 1)'}`)
   lines.push('', '## Сводка', '')
-  lines.push('| Проверка | Северити | Счёт |')
+  lines.push('| Проверка | Северити | Счет |')
   lines.push('|---|---|---:|')
   lines.push(`| Битые wikilinks | critical | ${c.broken_wikilinks.count} |`)
   lines.push(`| Расхождение индексов | critical | ${c.index_divergence.count} |`)
@@ -297,7 +297,7 @@ function renderReport(report, limit) {
   }
 
   lines.push('', '## Расхождение индексов', '')
-  lines.push(`- Счётчик _МАСТЕР-ИНДЕКС.md: ${c.index_divergence.counter ?? 'не найден'} · на диске: ${c.index_divergence.disk_count}`)
+  lines.push(`- Счетчик _МАСТЕР-ИНДЕКС.md: ${c.index_divergence.counter ?? 'не найден'} · на диске: ${c.index_divergence.disk_count}`)
   lines.push(`- Свежайшая нота: ${c.index_divergence.newest_note}`)
   for (const issue of c.index_divergence.issues) lines.push(`- ПРОБЛЕМА: ${issue}`)
   if (!c.index_divergence.issues.length) lines.push('- Индексы сходятся.')
@@ -328,8 +328,8 @@ const vault = resolveVault({ cli: arg('vault') })
 const limit = Number(arg('limit', '20'))
 const report = await runLint({ vault, limit })
 
-// Запись в корпус — только по явному --write. Без него отчёт уходит в stdout,
-// каталог _lint/ не создаётся: просмотр не правит корпус (план П08).
+// Запись в корпус — только по явному --write. Без него отчет уходит в stdout,
+// каталог _lint/ не создается: просмотр не правит корпус (план П08).
 const WRITE = flag('write')
 let reportPath = null
 if (WRITE) {
@@ -349,5 +349,5 @@ if (flag('json')) {
   process.stdout.write(renderReport(report, limit))
 }
 // Не process.exit(1): при пайпе хвост stdout (крупный --json) обрезается на выходе.
-// exitCode даёт циклу событий дозаписать поток (вскрыто прибором П15 --converge).
+// exitCode дает циклу событий дозаписать поток (вскрыто прибором П15 --converge).
 if (!report.ok) process.exitCode = 1

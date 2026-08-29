@@ -5,8 +5,8 @@
 // module instead of re-encoding `command -v markitdown` in their own words.
 //
 // The point this module exists to serve (П10): distinguish «движка нет» from
-// «движок ничего не нашёл». engineStatus() answers ONLY presence; a present
-// engine that returns empty text is the caller's «не нашёл», not this module's
+// «движок ничего не нашел». engineStatus() answers ONLY presence; a present
+// engine that returns empty text is the caller's «не нашел», not this module's
 // «missing». That split is what lets the runner stop instead of silently
 // reaching for the cloud.
 import { accessSync, constants } from 'node:fs'

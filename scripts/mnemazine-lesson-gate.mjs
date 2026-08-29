@@ -4,15 +4,15 @@
 // Читает леджер уроков ТОЛЬКО на чтение (живой <vault>/99 Система/_session-learning-ledger.jsonl
 // либо MNEMAZINE_LEDGER для проб на копии). У записей с ts не раньше отсечки
 // (config/doc-claims.json → lesson_schema_since) обязаны быть cause/fix/rule/supersedes.
-// Отсечка измерена: в живом леджере 29 записей и ни одна этих полей не несёт; проверка без
+// Отсечка измерена: в живом леджере 29 записей и ни одна этих полей не несет; проверка без
 // отсечки покраснела бы на историческом корпусе и была бы отключена в первый же день.
 // При rule_kind:"executable" файл из enforced_by существует и проходит node --check / bash -n.
 //
 // Коды: 0 — нарушений нет (в т.ч. ноль записей после отсечки: за ночь урока может не случиться;
 //        а также нейтральный репо-дефолт vault/ без леджера — у фикстуры учиться нечему, проверять нечего);
-// 1 — запись после отсечки без обязательного поля либо enforced_by на мёртвый/непроходящий файл;
+// 1 — запись после отсечки без обязательного поля либо enforced_by на мертвый/непроходящий файл;
 // 2 — леджера нет или он пуст ПРИ ЯВНО заданном корпусе (MNEMAZINE_VAULT/MNEMAZINE_LEDGER или config ≠ дефолт):
-//        назвали живой vault, а прибора в нём нет — это поломка, не «всё хорошо».
+//        назвали живой vault, а прибора в нем нет — это поломка, не «все хорошо».
 
 import { existsSync, readFileSync } from 'node:fs'
 import { mkdtempSync, writeFileSync, rmSync } from 'node:fs'
@@ -111,7 +111,7 @@ function selftest() {
     // Красный кролик: запись ПОСЛЕ отсечки без поля fix обязана покраснеть.
     writeFileSync(led, JSON.stringify({ ts: '2999-01-01', cause: 'x', rule: 'y', supersedes: '' }) + '\n', 'utf8')
     const r = evaluate(led, '2026-08-22', true)
-    if (r.code !== 1) { console.error(`selftest FAILED: красный кролик прошёл (code=${r.code})`); return 1 }
+    if (r.code !== 1) { console.error(`selftest FAILED: красный кролик прошел (code=${r.code})`); return 1 }
     console.log('selftest ok: урок после отсечки без обязательного поля краснит')
     return 0
   } finally {

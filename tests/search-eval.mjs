@@ -94,7 +94,7 @@ async function main() {
         const reportPath = await runSearch(c.topic, vault, outDir, true)
         const md = await fs.readFile(reportPath, 'utf8')
         const judge = await llmJson(
-          `Ты строгий судья качества справки по теме "${c.topic}". Оцени 1-5: groundedness (всё опирается на корпус, ничего не выдумано), relevance (по теме), coverage (покрыты ключевые моменты корпуса). Верни числа + notes.
+          `Ты строгий судья качества справки по теме "${c.topic}". Оцени 1-5: groundedness (все опирается на корпус, ничего не выдумано), relevance (по теме), coverage (покрыты ключевые моменты корпуса). Верни числа + notes.
 
 КОРПУС:
 ${fenceUntrusted('CORPUS', corpus)}

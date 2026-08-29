@@ -1,8 +1,8 @@
 #!/usr/bin/env node
-// Карантин заражённого слоя корпуса (план П06 шаг 9). Слой — две оси-детектора:
-// «## Атомизировано» (сырьё-амнистия) и basename synthesis-*.md. Пересечение пусто.
-// Прибор фиксирует границу слоя манифестом и краснеет, если конвейер снова произвёл
-// заражённую ноту. Ни одна нота при этом не правится — манифест лежит в репозитории.
+// Карантин зараженного слоя корпуса (план П06 шаг 9). Слой — две оси-детектора:
+// «## Атомизировано» (сырье-амнистия) и basename synthesis-*.md. Пересечение пусто.
+// Прибор фиксирует границу слоя манифестом и краснеет, если конвейер снова произвел
+// зараженную ноту. Ни одна нота при этом не правится — манифест лежит в репозитории.
 import { promises as fs } from 'node:fs'
 import { createHash } from 'node:crypto'
 import path from 'node:path'
@@ -22,7 +22,7 @@ function arg(name, fallback = '') {
 }
 
 if (argv.includes('--help')) {
-  console.log(`mnemazine-quarantine-gate.mjs — граница заражённого слоя корпуса.
+  console.log(`mnemazine-quarantine-gate.mjs — граница зараженного слоя корпуса.
 
 Использование: node scripts/mnemazine-quarantine-gate.mjs <режим> [--vault <путь>]
   --build             снять слой (## Атомизировано ∪ synthesis-*.md) в манифест
@@ -96,7 +96,7 @@ async function check(vault) {
   const manifestPaths = new Set(manifest.files.map(f => f.path))
   const appeared = live.filter(f => !manifestPaths.has(f.path))
   if (appeared.length) {
-    console.error(`конвейер снова произвёл заражённую ноту (${appeared.length} вне манифеста): ${appeared.slice(0, 3).map(f => f.path).join(', ')}`)
+    console.error(`конвейер снова произвел зараженную ноту (${appeared.length} вне манифеста): ${appeared.slice(0, 3).map(f => f.path).join(', ')}`)
     process.exit(1)
   }
   if (live.length > manifest.ceiling) {
@@ -114,7 +114,7 @@ async function check(vault) {
 }
 
 // Потребители выдачи корпуса обязаны отсекать карантин по манифесту. Сегодня
-// они на него не ссылаются — обязательство передаётся в П14/П18, exit 1.
+// они на него не ссылаются — обязательство передается в П14/П18, exit 1.
 async function checkConsumers() {
   const consumers = ['scripts/mnemazine-kb-search.mjs', 'config/mcp-vault.json', 'tests/retrieval-eval.mjs']
   const missing = []

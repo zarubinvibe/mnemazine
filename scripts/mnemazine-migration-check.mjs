@@ -10,7 +10,7 @@
 //   --verify <json>                  каждое встреченное значение либо покрыто правилом, либо помечено «требует человека»
 //
 // verify — fail-closed: поле/значение, встреченное в корпусе и не покрытое контрактом, — exit 1.
-// Покрытие трёх видов: значение уже в enum спеки (already-conformant), детерминированное правило
+// Покрытие трех видов: значение уже в enum спеки (already-conformant), детерминированное правило
 // (mapType/mapVerified из mnemazine-normalize-old-frontmatter.mjs — импорт, копий нет) или явная
 // пометка human_required. verification_status схлопывается в verified: по решению оркестратора:
 // одно значение смысла — одно поле правды; verification_status после миграции удаляется.
@@ -82,7 +82,7 @@ const STANDING_LEGACY_VALUES = {
     { value: 'knowledge-digest', notes: 1, covered_by: RULE, maps_to: 'synthesis', reason: 'repo-local fixture/default selftest; digest/сводка = synthesis' },
   ],
   verified: [
-    { value: 'expanded with public sources', notes: 23, covered_by: RULE, maps_to: 'подтверждён', reason: 'repo-local fixture/default selftest; публичные источники уже добавлены' },
+    { value: 'expanded with public sources', notes: 23, covered_by: RULE, maps_to: 'подтвержден', reason: 'repo-local fixture/default selftest; публичные источники уже добавлены' },
     { value: 'false', notes: 15, covered_by: RULE, maps_to: 'не-проверялось', reason: 'repo-local fixture/default selftest; false не заявляет проверку' },
   ],
 }
@@ -91,7 +91,7 @@ export function mapVerificationStatus(old) {
   const v = norm(old)
   if (!v || ['unknown', 'assumed', 'false', 'no', 'нет', 'null', 'undefined'].includes(v)) return { value: 'не-проверялось', keepLegacy: false }
   if (v.includes('частично')) return { value: 'не-проверялось', keepLegacy: true }
-  if (v === 'verified' || v === 'verified-with-public-sources' || /^подтвержд/.test(v)) return { value: 'подтверждён', keepLegacy: v !== 'verified' }
+  if (v === 'verified' || v === 'verified-with-public-sources' || /^подтвержд/.test(v)) return { value: 'подтвержден', keepLegacy: v !== 'verified' }
   if (v === 'источник-не-найден') return { value: 'источник-не-найден', keepLegacy: false }
   if (v === 'непроверяемо-методом') return { value: 'непроверяемо-методом', keepLegacy: false }
   return { value: 'не-проверялось', keepLegacy: true }
@@ -127,10 +127,10 @@ function classify(field, value) {
 
 const RULE_TEXT = {
   type: 'mapType: суффиксное отображение в SPEC_TYPES, умолчание concept; tool-card — только при непустых repo+stars+license+risk; decision механически не ставится; оригинал сохраняется в type_legacy',
-  verified: 'mapVerified: значение→SPEC_VERIFIED (ё/е равны); аннотация через пробел/скобку → enum + оригинал в verified_legacy; true/да/подтвержд* и expanded with public sources → подтверждён; пусто/false → не-проверялось; свободный текст → не-проверялось + verified_legacy',
-  verification_status: 'mapVerificationStatus: поле схлопывается в verified: и после миграции удаляется. Частичная проверка → не-проверялось + legacy; verified/подтвержд*/verified-with-public-sources → подтверждён; unknown/assumed/false/пусто → не-проверялось; источник-не-найден и непроверяемо-методом сохраняют одноимённые значения. Правило 8 мастера: два поля одной семантики = дубль правды.',
+  verified: 'mapVerified: значение→SPEC_VERIFIED (е/е равны); аннотация через пробел/скобку → enum + оригинал в verified_legacy; true/да/подтвержд* и expanded with public sources → подтвержден; пусто/false → не-проверялось; свободный текст → не-проверялось + verified_legacy',
+  verification_status: 'mapVerificationStatus: поле схлопывается в verified: и после миграции удаляется. Частичная проверка → не-проверялось + legacy; verified/подтвержд*/verified-with-public-sources → подтвержден; unknown/assumed/false/пусто → не-проверялось; источник-не-найден и непроверяемо-методом сохраняют одноименные значения. Правило 8 мастера: два поля одной семантики = дубль правды.',
   type_legacy: 'Археология переогранки — НЕ ТРОГАТЬ: это вход для кампании 3 (legacy-значение говорит о ноте больше, чем выровненный concept) и страховка от неверного отображения.',
-  '## Источники→source': 'Перенос в source:/sources: ТОЛЬКО если провенанс виден в самой ноте (basename интейк-файла, local-media:<hash>, URL → в sources:). Не виден — поле остаётся пустым, нота уходит в список следующей волны. source: НЕ ВЫДУМЫВАТЬ (kimi-master.md, кампания 2).',
+  '## Источники→source': 'Перенос в source:/sources: ТОЛЬКО если провенанс виден в самой ноте (basename интейк-файла, local-media:<hash>, URL → в sources:). Не виден — поле остается пустым, нота уходит в список следующей волны. source: НЕ ВЫДУМЫВАТЬ (kimi-master.md, кампания 2).',
 }
 
 async function emit() {
@@ -165,7 +165,7 @@ async function emit() {
     contract_version: 1,
     spec_ref: 'docs/NOTE-SPEC.md',
     spec_version: 'NOTE-SPEC 2026-07-25 + subject §18 (2026-08-22)',
-    schema_ref: 'scripts/mnemazine-note-spec.mjs (единая правда П05; config/note.schema.json П06 — когда появится, ссылаться на неё, не дублировать)',
+    schema_ref: 'scripts/mnemazine-note-spec.mjs (единая правда П05; config/note.schema.json П06 — когда появится, ссылаться на нее, не дублировать)',
     generated_by: 'scripts/mnemazine-migration-check.mjs --emit',
     generated_at: new Date().toISOString(),
     vault: VAULT,
@@ -211,7 +211,7 @@ async function emit() {
     const mdTarget = path.resolve(ROOT, REPORT)
     await fs.mkdir(path.dirname(mdTarget), { recursive: true })
     await fs.writeFile(mdTarget, md)
-    console.log(`отчёт записан: ${mdTarget}`)
+    console.log(`отчет записан: ${mdTarget}`)
   }
 }
 
@@ -220,14 +220,14 @@ function renderMarkdown(c) {
   for (const f of c.fields) {
     const human = f.human_required.length
       ? f.human_required.map(h => `«${h.value}» (${h.notes})`).join(', ')
-      : (f.decision === 'owner-pending' ? 'всё поле целиком — решение владельца' : '—')
+      : (f.decision === 'owner-pending' ? 'все поле целиком — решение владельца' : '—')
     rows.push(`| \`${f.old_field}\` | ${f.notes} | ${f.distinct_values ?? '—'} | \`${f.new_field}\` | ${f.rule.split('.')[0]} | ${human} |`)
   }
   return `# Миграционный контракт корпуса → NOTE-SPEC
 
 Сгенерировано кодом: \`${c.generated_by}\`, ${c.generated_at}. Не править руками — переснимать \`--emit\`.
 Спека: \`${c.spec_ref}\` (${c.spec_version}). Единая правда состава типов/значений: \`${c.schema_ref}\`.
-Корпус при съёме: ${c.corpus.files} файлов, frontmatter есть у ${c.corpus.with_frontmatter}, нет у ${c.corpus.without_frontmatter}.
+Корпус при съеме: ${c.corpus.files} файлов, frontmatter есть у ${c.corpus.with_frontmatter}, нет у ${c.corpus.without_frontmatter}.
 
 | Старое поле | Нот | Значений | Новое поле | Правило переноса | Требует человека |
 |---|---:|---:|---|---|---|

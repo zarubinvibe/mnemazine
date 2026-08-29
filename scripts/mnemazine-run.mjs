@@ -315,7 +315,7 @@ function joinVideoParts(transcript, frameText) {
 // Local-first extraction. Returns { text, engine_used, engines_missing }: a
 // MISSING engine (binary absent) is reported in engines_missing so the caller can
 // stop under require-local; a PRESENT engine that yields nothing leaves
-// engines_missing empty — that is «движок не нашёл», a different outcome that must
+// engines_missing empty — that is «движок не нашел», a different outcome that must
 // not be confused with «движка нет». Engine presence is the ONE truth in
 // mnemazine-local-engines.mjs (rule 8) — not re-encoded here.
 //
@@ -449,9 +449,9 @@ export function runLocalNodeScript(script, args = []) {
   const file = path.join(ROOT, 'scripts', script)
   if (!existsSync(file)) {
     // Пропавший ОБЯЗАТЕЛЬНЫЙ скрипт — дыра, а не «пропущено»: throw (первый шаг
-    // пошаговой аттестации, полная — П11). Всё, чего нет в REQUIRED_FINISH_SCRIPTS
+    // пошаговой аттестации, полная — П11). Все, чего нет в REQUIRED_FINISH_SCRIPTS
     // (в т.ч. .gitignore-нутый refresh-core-indexes, отсутствующий на чужом клоне
-    // по замыслу), остаётся мягким пропуском — иначе П03 сломал бы чужую установку,
+    // по замыслу), остается мягким пропуском — иначе П03 сломал бы чужую установку,
     // а это тот же провал, что дыра.
     if (REQUIRED_FINISH_SCRIPTS.has(script)) {
       throw new Error(`required pipeline script missing: ${script}`)
@@ -602,10 +602,10 @@ async function recentNotes(limit = 8) {
       .replace(/Mnemazine routing decision/g, 'решение для Mnemazine')
       .replace(/operational risk and maintenance check/g, 'риск эксплуатации и поддержки')
       .replace(/README-backed capability summary/g, 'что реально обещает README')
-      .replace(/Add a unified publish gate: vault quality, report quality, secret scan, diff review\./g, 'Собрать единый publish gate: качество vault, качество отчёта, поиск секретов и ревью изменений.')
+      .replace(/Add a unified publish gate: vault quality, report quality, secret scan, diff review\./g, 'Собрать единый publish gate: качество vault, качество отчета, поиск секретов и ревью изменений.')
       .replace(/Manually review miscellaneous signals and either promote or forget them\./g, 'Вручную разобрать misc-сигналы: повысить до знания или забыть.')
       .replace(/Automate nightly connection finding and weekly synthesis from final atoms\./g, 'Автоматизировать ночной поиск связей и weekly synthesis по финальным атомам.')
-      .replace(/Create browser smoke for generated HTML reports\./g, 'Сделать browser-smoke для сгенерированных HTML-отчётов.')
+      .replace(/Create browser smoke for generated HTML reports\./g, 'Сделать browser-smoke для сгенерированных HTML-отчетов.')
       .replace(/Add ([^ ]+\/[^ ]+) to the capability review queue with one accept\/reject criterion\./g, 'Добавить $1 в очередь разбора возможностей с одним критерием: принять или отклонить.')
       .replace(/Run a small local trial for ([^ ]+) only if the workflow fit is concrete\./g, 'Запустить маленький локальный пробный запуск для $1 только если понятна пригодность к рабочему сценарию.')
       .replace(/Map ([^ ]+) README features to one concrete local workflow before installing\./g, 'Связать возможности README $1 с одним конкретным рабочим сценарием до установки.')
@@ -639,7 +639,7 @@ async function writeActionBrief(finishResult) {
   const inboxEntries = await fs.readdir(INBOX, { withFileTypes: true }).catch(() => [])
   const activeInboxCount = inboxEntries.filter(entry => entry.isFile() && !entry.name.startsWith('.')).length
   const lines = [
-    `# Короткий отчёт Mnemazine — ${new Date().toISOString().slice(0, 10)}`,
+    `# Короткий отчет Mnemazine — ${new Date().toISOString().slice(0, 10)}`,
     '',
     '## Статус',
     '',
@@ -647,8 +647,8 @@ async function writeActionBrief(finishResult) {
     `- Vault: ${VAULT}`,
     `- Гейт качества: ${finishResult.quality?.ok ? 'ok' : 'проверь вывод'}`,
     `- Обновление графа: ${finishResult.graph?.ok ? 'ok' : finishResult.graph?.code === 2 ? 'частично / semantic pending' : finishResult.graph?.skipped ? 'пропущено' : 'failed'}`,
-    `- Недельный отчёт: ${finishResult.weekly?.ok ? 'ok' : finishResult.weekly?.skipped ? 'пропущен' : 'failed'}`,
-    `- Качество отчёта: ${finishResult.report_quality?.ok ? 'ok' : finishResult.report_quality?.skipped ? 'пропущено' : 'failed'}`,
+    `- Недельный отчет: ${finishResult.weekly?.ok ? 'ok' : finishResult.weekly?.skipped ? 'пропущен' : 'failed'}`,
+    `- Качество отчета: ${finishResult.report_quality?.ok ? 'ok' : finishResult.report_quality?.skipped ? 'пропущено' : 'failed'}`,
     '',
     '## Следующие действия',
     '',
@@ -678,7 +678,7 @@ const REQUIRED_FINISH_SCRIPTS = new Set([
 ])
 
 // Один элемент finish.* «в порядке», если: он был легально пропущен (стадия
-// выключена env-ом или скрипт не обязателен), отработал зелёным, ИЛИ это граф с
+// выключена env-ом или скрипт не обязателен), отработал зеленым, ИЛИ это граф с
 // кодом 2 — задокументированный semantic-pending при --mark-semantic-pending.
 function finishGateOk(key, entry) {
   if (!entry || typeof entry !== 'object') return false
@@ -688,7 +688,7 @@ function finishGateOk(key, entry) {
   return false
 }
 
-// result.ok больше не литерал: прогон зелёный только если ноль файлов упало И
+// result.ok больше не литерал: прогон зеленый только если ноль файлов упало И
 // каждый обязательный элемент finish.* в легальном состоянии. Коды гейтов,
 // собранные finishRun, наконец читаются — до архива они решали, после архива
 // теперь не «советуют», а считаются. finish === null (черновая ветка/FINISH=0):
@@ -786,7 +786,7 @@ async function main() {
       observation.engine_used = extraction.engine_used || ''
       let text = extraction.text
       // Two outcomes are now distinct. A MISSING engine is not «движок ничего не
-      // нашёл»: under require-local we STOP here (exit 3, before any state write)
+      // нашел»: under require-local we STOP here (exit 3, before any state write)
       // instead of letting the cloud silently stand in. Otherwise the cloud may
       // take over — but the substitution is recorded on run state, not silent.
       if (extraction.engines_missing.length) {
@@ -902,7 +902,7 @@ async function main() {
     // План П13 fixup: humanize-пас МЕЖДУ генерацией ноты и sweep. Конвейер (digest/
     // LLM) рождает слоп и падал бы о собственный sweep. Пас очеловечивает каждую
     // свежую ноту ДО сторожа: гейт → автоправка → повторный гейт; не чинится за 2
-    // итерации → прогон честно падает 1 с именем ноты. Sweep ниже остаётся байтовым
+    // итерации → прогон честно падает 1 с именем ноты. Sweep ниже остается байтовым
     // бэкстопом на дочищенном тексте.
     const humanizePass = spawnSync(process.execPath, [path.join(ROOT, 'scripts/mnemazine-humanize-gate.mjs'), '--pass', '--vault', VAULT, '--changed-since', runStartedAt], { encoding: 'utf8', env: process.env })
     if (humanizePass.stdout) process.stdout.write(humanizePass.stdout)
@@ -918,7 +918,7 @@ async function main() {
         extra: { failure: 'humanize pass could not clear slop before archive' }
       }, humanizePass.status || 1)
     }
-    // План П13 шаг 6: гейт сохранности/читаемости по нотам, изменённым с runStartedAt.
+    // План П13 шаг 6: гейт сохранности/читаемости по нотам, измененным с runStartedAt.
     // Фатален настоящий слоп (hard bans кроме сквозного em-dash); em-dash и низкий score —
     // advisory, чтобы сторож не краснил живой прогон на дочищенном тексте.
     const preserve = spawnSync(process.execPath, [path.join(ROOT, 'scripts/mnemazine-humanize-gate.mjs'), '--sweep', '--vault', VAULT, '--changed-since', runStartedAt], { encoding: 'utf8', env: process.env })

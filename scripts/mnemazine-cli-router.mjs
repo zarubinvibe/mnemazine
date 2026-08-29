@@ -108,7 +108,7 @@ export function mergeRegistry(base, overlay) {
       next.data_classes = next.data_classes.filter(c => c !== 'pd')
       // pd cut; if nothing survives, REFUSE (§16.4) — a silent drop leaves the
       // router green on a CLI it never chained. Distinct from "неизвестный класс".
-      if (!next.data_classes.length) throw taggedError(1, `${name}: запрещённый класс вырезан, запись пуста`)
+      if (!next.data_classes.length) throw taggedError(1, `${name}: запрещенный класс вырезан, запись пуста`)
     }
     merged[name] = next
   }

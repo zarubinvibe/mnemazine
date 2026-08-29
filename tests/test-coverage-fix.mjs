@@ -30,10 +30,10 @@ console.log('TEST 1 — gap-split (группа дала ноту → provenance
     { group_id: 'g2', files: ['/in/d.webp'] }                               // юнит без ноты
   ]
   const pr = [{ group_id: 'g1', outcome: 'note', note_md: '/v/note1.md' }]  // g1 дал ноту, g2 нет
-  const un = ['/in/b.webp', '/in/c.webp', '/in/d.webp']                     // сверщик счёл «дырами»
+  const un = ['/in/b.webp', '/in/c.webp', '/in/d.webp']                     // сверщик счел «дырами»
   const { provenanceGaps, realGaps } = splitGaps(units, pr, un)
-  ok(JSON.stringify(provenanceGaps) === JSON.stringify(['/in/b.webp', '/in/c.webp']), 'provenance = b,c (дёшево патчатся)')
-  ok(JSON.stringify(realGaps) === JSON.stringify(['/in/d.webp']), 'real = d (идёт в Sonnet-ресёрч)')
+  ok(JSON.stringify(provenanceGaps) === JSON.stringify(['/in/b.webp', '/in/c.webp']), 'provenance = b,c (дешево патчатся)')
+  ok(JSON.stringify(realGaps) === JSON.stringify(['/in/d.webp']), 'real = d (идет в Sonnet-ресерч)')
 }
 
 console.log('TEST 2 — покрытие: НОВАЯ ловит склеенные, СТАРАЯ теряет (=баг)')
@@ -50,7 +50,7 @@ console.log('TEST 2 — покрытие: НОВАЯ ловит склеенны
   ok(newCov('c.webp'), 'НОВАЯ покрывает c.webp')
   ok(newCov('x.webp'), 'НОВАЯ покрывает x.webp')
   ok(oldCov('a.webp') && oldCov('x.webp'), 'СТАРАЯ покрывает первичные a,x')
-  ok(!oldCov('b.webp') && !oldCov('c.webp'), 'СТАРАЯ ТЕРЯЕТ склеенные b,c → ложные дыры (баг воспроизведён)')
+  ok(!oldCov('b.webp') && !oldCov('c.webp'), 'СТАРАЯ ТЕРЯЕТ склеенные b,c → ложные дыры (баг воспроизведен)')
   fs.rmSync(dir, { recursive: true, force: true })
 }
 

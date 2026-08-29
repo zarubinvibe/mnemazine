@@ -125,7 +125,7 @@ const rawMarkers = [
   ['raw-img-tag', /<img\b/gi],
   ['raw-script-marker', /window\.gtag/gi],
   ['raw-ocr-en', /\braw\s+ocr\b/gi],
-  ['raw-ocr-ru', /сырой\s+ocr(?!\s+исключ[её]н)/gi],
+  ['raw-ocr-ru', /сырой\s+ocr(?!\s+исключ[ее]н)/gi],
   ['video-ocr-marker', /Video keyframe OCR|Video transcript from local Whisper/gi],
   ['empty-extract-marker', /No extractable text/gi],
   ['draft-marker', /\b(?:intake-draft|draft-local)\b/gi],
@@ -172,7 +172,7 @@ function noteFailures(text) {
 
 function briefFailures(text) {
   const failures = markerFailures(text)
-  if (!/^#\s+Короткий отч[её]т Mnemazine\b/m.test(text)) failures.push({ rule: 'brief-title-not-russian', details: ['# Короткий отчёт Mnemazine'] })
+  if (!/^#\s+Короткий отч[её]т Mnemazine\b/m.test(text)) failures.push({ rule: 'brief-title-not-russian', details: ['# Короткий отчет Mnemazine'] })
   if (!section(text, 'Статус')) failures.push({ rule: 'brief-status-missing', details: ['## Статус'] })
   if (!section(text, 'Следующие действия')) failures.push({ rule: 'brief-actions-missing', details: ['## Следующие действия'] })
   if (/^##\s+Next Actions\b/m.test(text) || /^-\s+(Quality gate|Graph refresh|Weekly report|Report quality):/m.test(text)) {
@@ -184,7 +184,7 @@ function briefFailures(text) {
 function reportFailures(text) {
   const failures = markerFailures(text)
   const required = [
-    ['report-title', /Отч[её]т Mnemazine|Mnemazine после прогона/i],
+    ['report-title', /Отч[ее]т Mnemazine|Mnemazine после прогона/i],
     ['new-knowledge-section', /Новые и обновленн?ые знания/i],
     ['next-action-section', /Следующ(?:ий ход|ее действие)/i],
     ['verification-signal', /Проверка|риск/i]
@@ -194,9 +194,9 @@ function reportFailures(text) {
   return failures
 }
 
-// Служебная секция vault — сервис, не знание: человеческий слой её не судит (П22).
+// Служебная секция vault — сервис, не знание: человеческий слой ее не судит (П22).
 // «99 Система» — живой корпус владельца, «00 System» — публичный близнец, куда
-// install.sh кладёт «Mnemazine Protocol.md». Ровно то же исключение, что в
+// install.sh кладет «Mnemazine Protocol.md». Ровно то же исключение, что в
 // vault-quality-gate.isServicePath.
 function isVaultServiceNote(file) {
   const rel = path.relative(VAULT, file).replace(/\\/g, '/')

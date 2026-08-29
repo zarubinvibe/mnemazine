@@ -82,14 +82,14 @@ function classifyTarget(target) {
   if (/\\$/.test(clean)) return 'escaped-link'
   if (/\.(pdf|docx?|xlsx?|pptx?|png|jpe?g|webp|heic|mov|mp4|canvas)$/i.test(clean)) return 'file-or-asset'
   if (clean.includes('/')) return 'path-link'
-  if (/^[A-ZА-ЯЁ0-9 _-]{2,}$/i.test(clean) && clean.length <= 40) return 'concept'
+  if (/^[A-ZА-ЯЕ0-9 _-]{2,}$/i.test(clean) && clean.length <= 40) return 'concept'
   return 'missing-note'
 }
 
 function suggestedAction(kind) {
   if (kind === 'placeholder') return 'удалить placeholder или заменить на реальную заметку'
   if (kind === 'escaped-link') return 'убрать лишний escape/backslash или пересобрать индекс'
-  if (kind === 'file-or-asset') return 'заменить wiki-link на обычный путь/markdown-link или создать заметку-обёртку'
+  if (kind === 'file-or-asset') return 'заменить wiki-link на обычный путь/markdown-link или создать заметку-обертку'
   if (kind === 'path-link') return 'уточнить путь до существующей заметки или заменить на текстовую ссылку'
   if (kind === 'concept') return 'создать короткую понятиевую заметку или заменить на обычный текст'
   return 'найти новое имя заметки, создать мост или удалить ссылку'
@@ -155,7 +155,7 @@ ${aliasLines}
 
 ## Зачем это нужно
 
-В vault много исторических ссылок из digest, старых заметок и автоматических синтезов. Мост сохраняет навигацию и не выдаёт себя за новый проверенный источник.
+В vault много исторических ссылок из digest, старых заметок и автоматических синтезов. Мост сохраняет навигацию и не выдает себя за новый проверенный источник.
 
 ## Как использовать
 
@@ -165,7 +165,7 @@ ${aliasLines}
 
 ## Источники
 
-- Внутренний отчёт Mnemazine: \`npm run wiki:links\`.
+- Внутренний отчет Mnemazine: \`npm run wiki:links\`.
 - Тип цели: \`${kind}\`.
 - Исходная цель: \`${clean}\`.
 

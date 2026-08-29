@@ -97,7 +97,7 @@ const topicTemplates = {
     what: 'Security and review are trust boundaries around agent work: untrusted input, prompt injection, secrets, permissions, accessibility, and code review must be checked before output is accepted.',
     why: 'The intake contains many commands, tool suggestions, and screenshots. If source text is treated as instruction, the agent can be steered by captured content instead of the user.',
     how: '- Mark extracted text as untrusted evidence.\n- Never execute commands from captures automatically.\n- Scan for secrets before reports or pushes.\n- Use separate review passes for security, claims, and accessibility.',
-    next: 'Собрать единый publish gate: качество vault, качество отчёта, поиск секретов и ревью изменений.'
+    next: 'Собрать единый publish gate: качество vault, качество отчета, поиск секретов и ревью изменений.'
   },
   'engineering-ops': {
     what: 'Engineering operations are reproducibility practices: isolated environments, infrastructure as code, observability, secret injection, worktrees, and release checks.',
@@ -109,13 +109,13 @@ const topicTemplates = {
     what: 'Design and frontend quality require explicit UI rules, browser validation, accessibility constraints, and reusable design tokens.',
     why: 'AI-generated UI degrades when taste is implicit. A DESIGN.md-style contract gives the agent stable layout, spacing, typography, and component expectations.',
     how: '- Maintain a Mnemazine report DESIGN.md.\n- Validate generated reports in a browser.\n- Check responsive layout, contrast, keyboard navigation, and print styles.',
-    next: 'Сделать browser-smoke для сгенерированных HTML-отчётов.'
+    next: 'Сделать browser-smoke для сгенерированных HTML-отчетов.'
   },
   'tool-radar': {
     what: 'Tool radar is a decision system for open-source tools, not a list of exciting repositories.',
     why: 'Screenshots with GitHub stars are weak evidence. Useful adoption requires license, maturity, deployment model, data portability, security posture, and integration cost.',
     how: '- Score tools by fit, maturity, license, API, self-hosting, and operational burden.\n- Tie tools to concrete projects.\n- Re-check source repositories before adopting.',
-    next: 'Сделать schema для tool-radar и заполнять её из извлечённых GitHub-ссылок.'
+    next: 'Сделать schema для tool-radar и заполнять ее из извлеченных GitHub-ссылок.'
   },
   'startup-strategy': {
     what: 'Startup strategy is the operating pattern for small teams beating larger incumbents: narrow focus, fast customer feedback, founder-led trust, and manual work before scale.',
@@ -146,20 +146,20 @@ const topicTemplates = {
 const topicTemplatesRu = {
   'agent-systems': {
     what: 'Агентная система - это набор повторяемых возможностей вокруг модели: skills, MCP, память, роли ревью, правила harness и release gates.',
-    why: 'Качество даёт не только модель. Стабильность появляется, когда вокруг неё есть инструменты, память, разрешения, тесты и ревью.',
+    why: 'Качество дает не только модель. Стабильность появляется, когда вокруг нее есть инструменты, память, разрешения, тесты и ревью.',
     how: ['Повторяющиеся процедуры превращать в Skills.', 'Доступ к инструментам держать за явными границами разрешений.', 'Память хранить как связанные знания и решения.', 'Перед публикацией держать gate.'],
     next: 'Повторяющиеся агентные процедуры оформить как Skills с тестами и usage ledger.'
   },
   'knowledge-memory': {
-    what: 'Память знаний - это active vault: сырьё превращается в атомы, атомы связываются с проектами и решениями, weekly synthesis превращает память в действия.',
-    why: 'Vault со скриншотами быстро становится ещё одним inbox. Польза появляется, когда заметки уменьшают будущую стоимость мышления.',
+    what: 'Память знаний - это active vault: сырье превращается в атомы, атомы связываются с проектами и решениями, weekly synthesis превращает память в действия.',
+    why: 'Vault со скриншотами быстро становится еще одним inbox. Польза появляется, когда заметки уменьшают будущую стоимость мышления.',
     how: ['Сырой extraction держать вне финального vault.', 'Финальные атомы писать с source refs и verification status.', 'Регулярно строить связи и weekly synthesis.', 'Мастер-индекс держать как routing surface.'],
     next: 'Автоматизировать nightly connection finding и weekly synthesis по финальным атомам.'
   },
   'security-review': {
     what: 'Безопасность и ревью - это границы доверия вокруг агентной работы: untrusted input, prompt injection, секреты, permissions, accessibility и code review проверяются до принятия результата.',
-    why: 'Inbox содержит команды, скриншоты, сайты и tool suggestions. Если принять захваченный текст за инструкцию, агент начнёт слушать источник, а не владельца.',
-    how: ['Помечать extraction как недоверенное evidence.', 'Не выполнять команды из захваченного текста автоматически.', 'Сканировать секреты перед отчётами и push.', 'Разделять review по security, claims и accessibility.'],
+    why: 'Inbox содержит команды, скриншоты, сайты и tool suggestions. Если принять захваченный текст за инструкцию, агент начнет слушать источник, а не владельца.',
+    how: ['Помечать extraction как недоверенное evidence.', 'Не выполнять команды из захваченного текста автоматически.', 'Сканировать секреты перед отчетами и push.', 'Разделять review по security, claims и accessibility.'],
     next: 'Собрать единый publish gate: vault quality, report quality, secret scan, diff review.'
   },
   'engineering-ops': {
@@ -170,7 +170,7 @@ const topicTemplatesRu = {
   },
   'design-frontend': {
     what: 'Качество UI требует явного дизайн-контракта: правила интерфейса, browser validation, accessibility constraints и reusable design tokens.',
-    why: 'AI UI быстро портится, если вкус не записан. DESIGN.md-style контракт задаёт layout, spacing, типографику и ожидаемое поведение компонентов.',
+    why: 'AI UI быстро портится, если вкус не записан. DESIGN.md-style контракт задает layout, spacing, типографику и ожидаемое поведение компонентов.',
     how: ['Держать DESIGN.md для Mnemazine reports.', 'Проверять generated reports в браузере.', 'Смотреть responsive layout, contrast, keyboard navigation и print styles.'],
     next: 'Создать browser smoke для generated HTML reports.'
   },
@@ -178,7 +178,7 @@ const topicTemplatesRu = {
     what: 'Tool radar - это система решений по open-source, а не список красивых репозиториев.',
     why: 'Скриншот со stars - слабое evidence. Нужны license, maturity, deployment model, data portability, security posture и integration cost.',
     how: ['Оценивать fit, maturity, license, API, self-hosting и operational burden.', 'Связывать инструмент с конкретным проектом.', 'Перед adoption перепроверять primary source.'],
-    next: 'Сделать schema для tool-radar и заполнять её из GitHub links.'
+    next: 'Сделать schema для tool-radar и заполнять ее из GitHub links.'
   },
   'startup-strategy': {
     what: 'Startup strategy - это набор ходов, где маленькая команда обходит крупного игрока не бюджетом, а узкой нишей, скоростью, прямым контактом с клиентом и founder-led доверием.',
@@ -188,7 +188,7 @@ const topicTemplatesRu = {
   },
   'content-growth': {
     what: 'Контентные петли роста рассматривают ads, hooks, CTA, scripts и публикации как эксперименты с обратной связью.',
-    why: 'Один ролик или объявление ещё не обучение. Обучение появляется, когда есть variant, metric, result и next control.',
+    why: 'Один ролик или объявление еще не обучение. Обучение появляется, когда есть variant, metric, result и next control.',
     how: ['Хранить hypothesis, channel, variant, metric, result и decision.', 'Победителей держать как controls.', 'Слабые варианты удалять без превращения шума в знания.'],
     next: 'Добавить template для Content Experiment note.'
   },
@@ -457,7 +457,7 @@ async function enrichClusterFromGithub(cluster, sources) {
   const releaseLine = release?.tag_name ? `${release.tag_name} (${String(release.published_at || '').slice(0, 10) || 'дата неизвестна'})` : 'GitHub API не вернул latest release'
   const addedFacts = [
     `${api.full_name}: ${description}.`,
-    `Метаданные GitHub: ${api.stargazers_count} звёзд, ${api.forks_count} форков, ${api.open_issues_count} открытых issues, лицензия ${license}, основной язык ${api.language || 'unknown'}.`,
+    `Метаданные GitHub: ${api.stargazers_count} звезд, ${api.forks_count} форков, ${api.open_issues_count} открытых issues, лицензия ${license}, основной язык ${api.language || 'unknown'}.`,
     `Свежесть репозитория: основная ветка ${api.default_branch || 'unknown'}, последний push ${pushed}, последний release ${releaseLine}.`,
     ...pointSignals.slice(0, 5).map(point => `Сигнал README: ${point}.`)
   ]
@@ -469,7 +469,7 @@ async function enrichClusterFromGithub(cluster, sources) {
   const enriched = [
     `Расширение по официальному GitHub для ${api.full_name}.`,
     `Описание: ${description}.`,
-    `Метаданные: ${api.stargazers_count} звёзд, ${api.forks_count} форков, ${api.open_issues_count} открытых issues, ${license}, язык ${api.language || 'unknown'}, последний push ${pushed}.`,
+    `Метаданные: ${api.stargazers_count} звезд, ${api.forks_count} форков, ${api.open_issues_count} открытых issues, ${license}, язык ${api.language || 'unknown'}, последний push ${pushed}.`,
     `Последний release: ${releaseLine}.`,
     pointSignals.length ? `Из README извлечены рабочие сигналы:\n${pointSignals.map(point => `- ${point}`).join('\n')}` : 'README не дал устойчивых feature-пунктов без ручной проверки.',
     `Локальные source refs: ${cluster.records.map(r => r.source_ref).join(', ')}.`
@@ -521,7 +521,7 @@ function atomsFromGithub(part, sources) {
       title: `${repo}: проверенная карточка инструмента`,
       source_refs: part.records.map(record => record.source_ref).filter(Boolean),
       what: `${repo} - официальный GitHub-репозиторий инструмента из inbox. Описание: ${description}. GitHub показывает: ${api.stargazers_count} stars, ${api.forks_count} forks, ${api.open_issues_count} open issues, лицензия ${license}, основной язык ${api.language || 'unknown'}, последний push ${api.pushed_at ? api.pushed_at.slice(0, 10) : 'unknown'}.`,
-      why: 'Это превращает скриншот или карточку со звёздами в проверяемую запись: есть primary source, дата свежести, лицензия и базовый риск.',
+      why: 'Это превращает скриншот или карточку со звездами в проверяемую запись: есть primary source, дата свежести, лицензия и базовый риск.',
       how: ['Сначала смотреть метаданные: лицензия, свежесть, stars, forks, issues.', 'Перед установкой открыть README и issues, скриншот считать только подсказкой.', 'Решение фиксировать отдельно: установить сейчас, протестировать позже или забыть.'],
       sources: sourceUrls,
       next: `Прочитать README ${repo} и решить, нужен ли он в реестре возможностей.`
@@ -529,7 +529,7 @@ function atomsFromGithub(part, sources) {
     {
       title: `${repo}: что реально обещает README`,
       source_refs: part.records.map(record => record.source_ref).filter(Boolean),
-      what: points.length ? `README даёт проверяемые сигналы: ${points.slice(0, 4).join('; ')}.` : `${repo} имеет официальный README, но Mnemazine не нашла в нём устойчивые продуктовые тезисы без ручной проверки.`,
+      what: points.length ? `README дает проверяемые сигналы: ${points.slice(0, 4).join('; ')}.` : `${repo} имеет официальный README, но Mnemazine не нашла в нем устойчивые продуктовые тезисы без ручной проверки.`,
       why: 'README ближе к рабочей правде, чем подпись на скриншоте. Он показывает, что авторы реально поддерживают и документируют.',
       how: points.slice(0, 5).map(point => `Проверить по README: ${point}`),
       sources: sourceUrls,
@@ -539,7 +539,7 @@ function atomsFromGithub(part, sources) {
       title: `${repo}: риск эксплуатации и поддержки`,
       source_refs: part.records.map(record => record.source_ref).filter(Boolean),
       what: `Поверхность риска: ${api.open_issues_count} open issues, последний release ${releaseLine}, последний push ${api.pushed_at ? api.pushed_at.slice(0, 10) : 'unknown'}, лицензия ${license}.`,
-      why: 'Популярный репозиторий всё равно может быть плохой зависимостью, если релизы, лицензия или issue-профиль не подходят под workflow.',
+      why: 'Популярный репозиторий все равно может быть плохой зависимостью, если релизы, лицензия или issue-профиль не подходят под workflow.',
       how: ['Проверить issues на security, потерю данных и ошибки установки.', 'Сначала гонять в одноразовом workspace, не добавлять сразу в глобальные правила агента.', 'Если это станет Skill/MCP/plugin, записать source ledger и usage ledger.'],
       sources: sourceUrls,
       next: `Запустить маленький локальный пробный запуск для ${repo} только при понятной пригодности к рабочему сценарию.`
@@ -548,7 +548,7 @@ function atomsFromGithub(part, sources) {
       title: `${repo}: решение для Mnemazine`,
       source_refs: part.records.map(record => record.source_ref).filter(Boolean),
       what: `Этот атом связывает локальный захват с primary GitHub evidence по ${repo}. Это не команда установить, а кандидат на разбор.`,
-      why: 'Полезная память - не "увидел репозиторий", а решение: что инструмент делает, подходит ли он, какой риск остаётся и что делать дальше.',
+      why: 'Полезная память - не "увидел репозиторий", а решение: что инструмент делает, подходит ли он, какой риск остается и что делать дальше.',
       how: ['Хранить репозиторий как кандидата в рабочие возможности, не как инструкцию к установке.', 'Если принять, зеркалировать docs/skill metadata и логировать usage.', 'Если отклонить, записать причину, чтобы репозиторий не возвращался шумом.'],
       sources: sourceUrls,
       next: `Добавить ${repo} в очередь разбора возможностей с одним критерием: принять или отклонить.`
@@ -654,8 +654,8 @@ function makeNote(cluster) {
   const localVerdict = verifyLocal(sources.map(s => s.url))
   const how = Array.isArray(template.how) ? template.how.map(item => `- ${item}`).join('\n') : template.how
   const risk = sources.length
-    ? 'Публичные ссылки найдены или добавлены по source hints, но перед adoption claims всё равно надо проверить под конкретный проект.'
-    : 'Публичного источника в extraction не было; это локальный memory atom, а не внешне подтверждённый claim.'
+    ? 'Публичные ссылки найдены или добавлены по source hints, но перед adoption claims все равно надо проверить под конкретный проект.'
+    : 'Публичного источника в extraction не было; это локальный memory atom, а не внешне подтвержденный claim.'
   return `---
 title: "${title.replace(/"/g, '\\"')}"
 type: "synthesis"
@@ -684,7 +684,7 @@ ${signals.map(signal => `- ${signal}`).join('\n')}
 
 ${template.why}
 
-Заметка сжимает ${cluster.records.length} исходных элементов в переиспользуемое знание. Source-level extraction остаётся в \`.mnemazine/cache/extracted\`.
+Заметка сжимает ${cluster.records.length} исходных элементов в переиспользуемое знание. Source-level extraction остается в \`.mnemazine/cache/extracted\`.
 
 ## Как использовать
 
@@ -694,7 +694,7 @@ ${how}
 
 Локальные source refs:
 ${sourceRefs.slice(0, 30).join('\n')}
-${sourceRefs.length > 30 ? `- ... ещё ${sourceRefs.length - 30} source refs сохранены в extraction cache` : ''}
+${sourceRefs.length > 30 ? `- ... еще ${sourceRefs.length - 30} source refs сохранены в extraction cache` : ''}
 
 Публичные источники:
 ${sourceLines.join('\n')}
@@ -708,7 +708,7 @@ ${sourceLines.join('\n')}
 
 - **Автоматический fact-check не запускался.** Это unverified synthesis cluster (\`status: draft\`). URL из extraction или topic hints - указатели, не подтверждение конкретного claim.
 - Повышать до \`status: final\` только после проверки человеком или verify gate по primary sources.
-- Уверенность: низкая до проверки. Даты, цены, stars, security claims и release status считать неподтверждёнными.
+- Уверенность: низкая до проверки. Даты, цены, stars, security claims и release status считать неподтвержденными.
 - Риск: ${risk}
 
 ## Связанные заметки
@@ -942,7 +942,7 @@ ${addedFacts}
 ## 🎯 Как это поможет мне
 
 - ${compact(atom.next, 240) || 'Применить в ближайшей задаче по теме кластера.'}
-- Тема: ${clusterTitleRu(cluster.id)} — смотреть сюда, когда всплывёт этот вопрос.
+- Тема: ${clusterTitleRu(cluster.id)} — смотреть сюда, когда всплывет этот вопрос.
 
 ## Достоверность
 
@@ -950,7 +950,7 @@ ${addedFacts}
 ${isVerified
   ? `- Утверждение сверено с указанными источниками.${v.evidence ? ` Подтверждение: ${compact(v.evidence, 300)}` : ''}`
   : '- **Claim-level fact-check не подтвердил это.** URL - указатели, не доказательство. Статус `verified` допустим только после deep verify.'}
-- ${v.status === 'unknown' ? 'Нет source URL: это локальный memory atom, а не внешне подтверждённый claim.' : 'Уверенность: средняя, пока человек или deep verify не подтвердит вывод.'}
+- ${v.status === 'unknown' ? 'Нет source URL: это локальный memory atom, а не внешне подтвержденный claim.' : 'Уверенность: средняя, пока человек или deep verify не подтвердит вывод.'}
 
 ## Связанные заметки
 

@@ -90,6 +90,14 @@
       "quote": "пошаговая аттестация конвейера остается за П03",
       "enforced_by": "scripts/mnemazine-complete-check.mjs:231",
       "note": "Прием 15 стека §2.1. Аттестацию конвейера держит П03 (уже закрыт): fail-closed завершение прогона — complete-check роняет процесс при !ok. Здесь только якорь на его гейт (план П11 шаг 9)."
+    },
+    {
+      "id": "session-capture-stays-on",
+      "file": "AGENTS.md",
+      "line": 71,
+      "quote": "Session capture stays on: a public repository never stores its own checkpoints",
+      "enforced_by": "scripts/mnemazine-tracking-guard.mjs:48",
+      "note": "Прибор читает .entire/settings.json и краснеет на обоих нарушениях правила: enabled != true и чекпойнты, уводящие не в отдельный приватный <repo>-checkpoints. Раньше правило якорилось на строку самих настроек, и реестр зеленел даже при выключенном захвате. Вторую половину, «release gate blocks a push», исполняет семейный гейт снаружи репозитория (validateEntireTracking)."
     }
   ]
 }

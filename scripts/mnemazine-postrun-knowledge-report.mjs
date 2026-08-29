@@ -31,7 +31,7 @@ const VAULT = resolveVault({
 })
 const REPORTS = path.resolve(arg('reports', process.env.MNEMAZINE_REPORTS || path.join(ROOT, 'reports')))
 const RUN_ID = arg('run-id', new Date().toISOString().slice(0, 10))
-const TITLE = arg('title', 'Отчёт Mnemazine по знаниям')
+const TITLE = arg('title', 'Отчет Mnemazine по знаниям')
 const LOGS = arg('logs', '')
 const RESULTS_JSON = arg('results-json', '')
 const FINAL_FILES_JSON = arg('final-files-json', '')
@@ -79,7 +79,7 @@ function present(text) {
     .replace(/с одним критерием принять\/отклонить/gi, 'с одним критерием: принять или отклонить')
     .replace(/Перед пробный запуск проверить/gi, 'Перед пробным запуском проверить')
     .replace(/режим только чтение режим/gi, 'режим только чтения')
-    .replace(/список разрешённых доменов доменов/gi, 'список разрешённых доменов')
+    .replace(/список разрешенных доменов доменов/gi, 'список разрешенных доменов')
     .replace(/web-рабочий сценарий/gi, 'браузерный сценарий')
     .replace(/черновик короткое видео/gi, 'черновик короткого видео')
     .replace(/\bfit под конкретный рабочий сценарий\b/gi, 'пригодность к конкретному рабочему сценарию')
@@ -90,7 +90,7 @@ function present(text) {
     .replace(/\bshort-form video\b/gi, 'короткое видео')
     .replace(/\bhook\/CTA\b/gi, 'крючок и призыв к действию')
     .replace(/\bread-only\b/gi, 'режим только чтение')
-    .replace(/\ballowlist\b/gi, 'список разрешённых доменов')
+    .replace(/\ballowlist\b/gi, 'список разрешенных доменов')
     .replace(/\bregistry\/ledger\b/gi, 'реестр и журнал')
     .replace(/\s+(?:src|href|alt|title)=["'][^"']*["']/gi, '')
     .replace(/\b(?:src|href|alt|title)=["'][^"']*["']/gi, '')
@@ -100,7 +100,7 @@ function present(text) {
     .replace(/\b[\w.-]+\.(?:WEBP|PNG|JPE?G|HEIC|TIFF|MOV|MP4)\b/gi, 'локальный медиафайл')
     .replace(/\bDESIGN\.md\b/gi, 'дизайн-контракт')
     .replace(/\bgetdesign\.md\b/gi, 'getdesign')
-    .replace(/\b[\wА-Яа-яЁё ._-]+\.md\b/gi, 'локальная заметка')
+    .replace(/\b[\wА-Яа-яЕе ._-]+\.md\b/gi, 'локальная заметка')
     .replace(/\b[\w.-]+\.md\b/gi, 'локальная заметка')
     .replace(/\s+/g, ' ')
     .trim()
@@ -425,7 +425,7 @@ function markdown({ records, results, mdPath, htmlPath }) {
   const dupRows = dup
     .sort((a, b) => b.files - a.files)
     .map(r => `| ${mdEsc(r.cluster)} | ${r.files} | ${noteLink(r)} | ${mdEsc(r.summary || r.title)} |`)
-  return `# Отчёт Mnemazine по знаниям
+  return `# Отчет Mnemazine по знаниям
 
 Прогон: ${RUN_ID}
 HTML: ${htmlPath}
@@ -502,7 +502,7 @@ main{padding:20px max(16px,4.5vw) 64px}.minute{display:grid;grid-template-column
 <body>
 <header class="hero">
   <div>
-    <div class="eyebrow">Отчёт Mnemazine после прогона</div>
+    <div class="eyebrow">Отчет Mnemazine после прогона</div>
     <h1>Минутная карта знаний</h1>
     <p class="lead">Сначала модули и атомы, потом действия. Подробный текст спрятан ниже, чтобы быстро понять, что появилось и зачем это нужно.</p>
     <div class="stats">
@@ -533,7 +533,7 @@ main{padding:20px max(16px,4.5vw) 64px}.minute{display:grid;grid-template-column
     <div class="details-body">
       <section class="section-title"><h2>Топ-20 к действию</h2><p>Полный рекомендуемый порядок.</p></section>
       <section class="cards">${actions.map((item, i) => `<article class="card"><div class="meta"><span class="tag">#${i + 1}</span><span class="tag">${esc(item.cluster)}</span></div><h3>${esc(item.title)}</h3><p>${esc(item.next)}</p></article>`).join('')}</section>
-      <section class="section-title"><h2>Новые и обновленные знания</h2><p>Архивная часть отчёта.</p></section>
+      <section class="section-title"><h2>Новые и обновленные знания</h2><p>Архивная часть отчета.</p></section>
       <section class="cards">${fresh.sort((a, b) => b.score - a.score).map(item => `<article class="card"><div class="meta"><span class="tag">${esc(item.cluster)}</span><span class="tag">${esc(outcomeLabel(item))}</span><span class="tag">${item.files} файлов</span></div><h3>${item.file ? `<a href="file://${esc(item.file)}">${esc(item.title)}</a>` : esc(item.title)}</h3><p>${esc(brief(item.summary || 'Описание не найдено, смотри ноту.', 180))}</p><p><strong>Как полезно:</strong> ${esc(brief(item.helps || 'Привязать к ближайшему проекту.', 160))}</p></article>`).join('')}</section>
       <section class="section-title"><h2>Дубли без потерь</h2><p>Материалы, которые подтвердили уже существующие знания.</p></section>
       <section class="dups">${dup.sort((a, b) => b.files - a.files).map(item => `<article class="dup"><b>${esc(item.title)}</b><span>${esc(item.cluster)} · ${item.files} файлов · ${esc(outcomeLabel(item))}</span></article>`).join('')}</section>

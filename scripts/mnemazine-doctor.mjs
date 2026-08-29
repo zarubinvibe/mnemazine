@@ -19,23 +19,23 @@ const WATCH = process.argv.includes('--watch')
 if (process.argv.includes('--help')) {
   console.log(`mnemazine-doctor.mjs — сводная диагностика: последний прогон, гейты корпуса,
 маркеры графа, состояние semantic-задачи, дымовые пробы. Только читает корпус:
-последовательность complete / last-run / graph:smoke / release-check ничего в нём не меняет.
+последовательность complete / last-run / graph:smoke / release-check ничего в нем не меняет.
 
 Использование: node scripts/mnemazine-doctor.mjs [флаги]
   --json                      результат в JSON
   --strict-graph              маркеры needs_update — failures, а не warnings
   --full-vault                добавить полный аудит корпуса (human-layer + vault-final-audit)
-  --watch                     следить за semantic-задачей до её остановки (только human-вывод)
+  --watch                     следить за semantic-задачей до ее остановки (только human-вывод)
   --watch-interval-seconds N  интервал watch (по умолчанию 10)
   --selftest                  селф-тест во временном каталоге
   --help                      эта справка
 
-Коды возврата: 0 — всё зелёное; 2 — провалов нет, но есть предупреждения; 1 — есть провалы или ошибка.`)
+Коды возврата: 0 — все зеленое; 2 — провалов нет, но есть предупреждения; 1 — есть провалы или ошибка.`)
   process.exit(0)
 }
 
-// Каждая красная строка несёт команду починки: доктор не только называет провал,
-// но и говорит, чем его лечить (приём эталона setup_doctor.py:501-503).
+// Каждая красная строка несет команду починки: доктор не только называет провал,
+// но и говорит, чем его лечить (прием эталона setup_doctor.py:501-503).
 const DOCTOR_FIX = {
   complete: 'npm run complete -- --require-deep',
   'human-layer': 'npm run human-layer:quality',
@@ -60,7 +60,7 @@ const COMPLETE_NO_DATA_FAILURES = new Set([
   'weekly report older than newest vault note',
   'action brief older than newest vault note',
   // Свежая установка: потолок спеки — per-machine runtime, на чистом клоне его нет.
-  // Ratchet без базы — не провал, а «ещё не прогонял» (см. complete-check spec-ceiling).
+  // Ratchet без базы — не провал, а «еще не прогонял» (см. complete-check spec-ceiling).
   'spec ceiling has no baseline yet'
 ])
 
@@ -301,7 +301,7 @@ async function selftest() {
   const doneTick = await semanticWatchTick({ MNEMAZINE_STATE: temp }, temp)
   if (!doneTick.done || !doneTick.ok) throw new Error('doctor selftest failed: finished watch tick not ok')
   await fs.rm(temp, { recursive: true, force: true })
-  // Утверждение: критичная строка несёт команду починки (три кода бесполезны, если
+  // Утверждение: критичная строка несет команду починки (три кода бесполезны, если
   // красная строка не говорит, чем лечить).
   const line = failureLine('release-check', 'release-check failed')
   if (!line.includes('как починить')) throw new Error('doctor selftest failed: failure line carries no fix')

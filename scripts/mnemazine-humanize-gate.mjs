@@ -6,9 +6,9 @@
 //   --before A --after B [--json] [--no-clean] [--porog N]  сверка одной пары
 //   --selftest                                              фикстуры (красный кролик)
 //   --baseline --vault V --out O --report R                 распределение чистоты по корпусу
-//   --sweep --vault V --changed-since ISO [--porog N]        читаемость изменённых нот (розетка run.mjs)
+//   --sweep --vault V --changed-since ISO [--porog N]        читаемость измененных нот (розетка run.mjs)
 //
-// Коды: 0 — всё на месте; 1 — потерян инвариант / hard ban / грязь; 2 — ошибка входа
+// Коды: 0 — все на месте; 1 — потерян инвариант / hard ban / грязь; 2 — ошибка входа
 // (нет файла, битый frontmatter, сканер не запустился). scan.py при hard bans выходит с 1,
 // но печатает валидный JSON — это НЕ ошибка входа, это грязный текст (наш код 1).
 import { promises as fs, existsSync } from 'node:fs'
@@ -127,7 +127,7 @@ function collectInvariants(before) {
   }
 }
 
-// ── MQM (приём 40): вердикт не бинарный — какая рубрика провалилась ───────────
+// ── MQM (прием 40): вердикт не бинарный — какая рубрика провалилась ───────────
 function mqm(lost, cleanliness) {
   const cat = k => lost.filter(l => l.kind === k)
   return {
@@ -209,8 +209,8 @@ async function runPair() {
 
 const FIX = path.join(ROOT, 'tests/fixtures/humanize')
 async function runSelftest() {
-  // Красный кролик (приём 2): битая фикстура гоняется в каждом прогоне.
-  // Зелёный кролик (broken вернул 0) = провал самого гейта.
+  // Красный кролик (прием 2): битая фикстура гоняется в каждом прогоне.
+  // Зеленый кролик (broken вернул 0) = провал самого гейта.
   const cases = [
     { name: 'note-after-broken.md', expect: 1 },
     { name: 'note-after-ok.md', expect: 0 }
@@ -232,8 +232,8 @@ async function runSelftest() {
     }
     console.log(`✓ selftest: ${c.name} → ${res.code}`)
   }
-  if (extracted === 0) { console.error('ноль извлечённых фикстур'); return 1 }
-  console.log('✓ selftest: красный кролик красный, честный рерайт зелёный')
+  if (extracted === 0) { console.error('ноль извлеченных фикстур'); return 1 }
+  console.log('✓ selftest: красный кролик красный, честный рерайт зеленый')
 
   // deslop: снимает названный слоп, держит факты, НЕ трогает то, что не умеет.
   // Красный кролик против регрессии кириллического `\b` (JS `\b` — ASCII-only).
@@ -273,7 +273,7 @@ async function runBaseline() {
   const worst = rows.slice().sort((a, b) => a.score - b.score).slice(0, 300)
     .map(r => ({ path: r.path, score: r.score, hard_ban_count: r.hard_ban_count }))
   const data = {
-    generated_at: arg('now', ''), // штамп извне (Date.now() в скриптах воркфлоу запрещён; тут CLI — допустимо, но оставляем внешним)
+    generated_at: arg('now', ''), // штамп извне (Date.now() в скриптах воркфлоу запрещен; тут CLI — допустимо, но оставляем внешним)
     vault,
     notes_scanned: rows.length,
     median_score: pct(scores, 50),
@@ -304,7 +304,7 @@ async function runBaseline() {
       '',
       `Медиана: **${data.median_score}** · p10: **${data.p10_score}**.`,
       '',
-      `Нот с hard bans: **${data.hard_ban_notes}** из ${rows.length} — но ${data.hard_ban_notes - data.slop_ban_notes} из них только за счёт сквозного «Длинное тире» (даты и заголовки).`,
+      `Нот с hard bans: **${data.hard_ban_notes}** из ${rows.length} — но ${data.hard_ban_notes - data.slop_ban_notes} из них только за счет сквозного «Длинное тире» (даты и заголовки).`,
       `Нот с настоящим слопом (кроме em-dash): **${data.slop_ban_notes}** — вот реальная очередь на очеловечивание. Sweep конвейера краснит именно на слопе, не на em-dash.`,
       '',
       '## Первые 20 худших (очередь кампании П13)',
@@ -313,7 +313,7 @@ async function runBaseline() {
       '|---|---|',
       ...worst.slice(0, 20).map(w => `| ${w.score} | \`${path.basename(w.path)}\` |`),
       '',
-      'Замер read-only: vault не изменялся. Кампания П13 берёт `worst` из json как `--worst-first`.'
+      'Замер read-only: vault не изменялся. Кампания П13 берет `worst` из json как `--worst-first`.'
     ].join('\n')
     await fs.mkdir(path.dirname(path.resolve(report)), { recursive: true })
     await fs.writeFile(report, md + '\n', 'utf8')
@@ -326,7 +326,7 @@ function isServicePath(rel) {
   return rel.split(path.sep).some(s => s.startsWith('.') || s.startsWith('_')) || rel.includes('graphify-out')
 }
 
-// Проза, как её видит sweep: без frontmatter, кода, инлайн-кода и неприкасаемых
+// Проза, как ее видит sweep: без frontmatter, кода, инлайн-кода и неприкасаемых
 // секций. Слоп меряем ровно на ней — там же, где sweep решает fatal (правило 8:
 // одна правда об «где искать слоп» на обе розетки).
 function proseForScan(text) {
@@ -342,7 +342,7 @@ function slopOf(text) { return runScanner(proseForScan(text)).slop_ban_count }
 // копулу (фактов не несут) — числа/ссылки/пути/латиница/wikilinks не трогаются,
 // потому инвариант «до» ⊆ «после» держится (сверяет preservationCheck у зовущего).
 // Em-dash легален (sweep на него не фатален), потому «является» → « — ».
-// ponytail: узкий набор — те hard bans, что снимаются без морфологии. Всё прочее
+// ponytail: узкий набор — те hard bans, что снимаются без морфологии. Все прочее
 // пас не чинит и честно роняет прогон (fail-closed). Апгрейд — LLM-эскалация на
 // 2-й итерации (как в кампании), когда живой прогон покажет незакрытый хвост.
 function matchCase(replacement, original) {
@@ -356,7 +356,7 @@ const NA = '(?![А-Яа-яЁёA-Za-z])'
 const DAN = { 'данный': 'этот', 'данная': 'эта', 'данное': 'это', 'данного': 'этого', 'данной': 'этой', 'данном': 'этом', 'данную': 'эту' }
 function deslop(text) {
   let t = text
-  // Пустые вводные — снять целиком, остаток предложения остаётся фактом.
+  // Пустые вводные — снять целиком, остаток предложения остается фактом.
   t = t.replace(new RegExp(`${NB}стоит\\s+отметить,?\\s+что\\s+`, 'gi'), '')
   t = t.replace(new RegExp(`${NB}важно\\s+понимать,?\\s+что\\s+`, 'gi'), '')
   t = t.replace(new RegExp(`${NB}можно\\s+с\\s+уверенностью\\s+сказать,?\\s+что\\s+`, 'gi'), '')
@@ -385,7 +385,7 @@ async function walkMd(dir, since, acc = []) {
 // сторожа, чтобы конвейер не падал о собственный гейт. На каждую свежую ноту:
 // гейт (слоп?) → автоправка deslop → повторный гейт; не чинится за 2 итерации →
 // прогон честно падает 1 с именем ноты. Правку принимаем, только если факты целы
-// (preservationCheck clean:false — «до» ⊆ «после») И слоп снят. Sweep остаётся
+// (preservationCheck clean:false — «до» ⊆ «после») И слоп снят. Sweep остается
 // байтовым бэкстопом после паса.
 async function runPass() {
   const vault = resolveVault({ cli: arg('vault') })
@@ -430,7 +430,7 @@ async function runPass() {
 }
 
 async function runSweep() {
-  // Розетка run.mjs: читаемость нот, изменённых с runStartedAt. Фатален СЛОП —
+  // Розетка run.mjs: читаемость нот, измененных с runStartedAt. Фатален СЛОП —
   // hard bans КРОМЕ «Длинное тире» (является/в современном мире/комплексный подход):
   // свежая нота из очеловеченного конвейера их нести не должна. Длинное тире сквозное
   // в корпусе (95% всех hard bans — даты и заголовки), потому advisory, не фатал —

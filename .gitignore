@@ -66,3 +66,6 @@ scripts/PROMPT-Codex-desktop.txt
 # Campaign plans contain private vault structure; owner chose keep them local.
 docs/campaigns/
 tests/fixtures/retrieval-questions.json
+
+# Browser page snapshots from debugging; transient, never part of the project.
+.playwright-mcp/

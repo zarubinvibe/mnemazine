@@ -75,7 +75,7 @@ function noteType(text) {
 }
 
 // Источник правды синтаксиса — git ls-files (CI и локальная машина видят одно и то же),
-// пересечённый с наличием на диске. Ручной список из 30 путей (план П11) убран: он не
+// пересеченный с наличием на диске. Ручной список из 30 путей (план П11) убран: он не
 // проверял десять отслеживаемых .mjs (в т.ч. kb-lint.mjs и normalize-old-frontmatter.mjs —
 // оба правят живой vault), ни один .sh и почти все .py.
 async function gitLsFiles() {
@@ -95,7 +95,7 @@ function syntaxTargetsFrom(tracked) {
 async function checkSyntax() {
   const targets = syntaxTargetsFrom(await gitLsFiles())
   // Отсутствие файла из списка git ls-files — провал, а не молчаливый пропуск
-  // (тот шов, через который проба «спрячь прибор» проходила зелёной).
+  // (тот шов, через который проба «спрячь прибор» проходила зеленой).
   const missing = targets.all.filter(file => !existsSync(path.join(ROOT, file)))
   if (missing.length) throw new Error(`syntax: отслеживаемые файлы отсутствуют на диске: ${missing.join(', ')}`)
   for (const file of targets.mjs) await must(`syntax:${file}`, process.execPath, ['--check', file])
@@ -476,7 +476,7 @@ aliases: ["Рабочая заметка"]
 
 ## Что это
 
-Русская финальная заметка без raw-маркеров и приватных имён файлов.
+Русская финальная заметка без raw-маркеров и приватных имен файлов.
 
 ## Как использовать
 
@@ -633,7 +633,7 @@ CLI-инструмент для разработки с LLM внутри лок�
   await must('tool decision queue smoke', process.execPath, ['scripts/mnemazine-tool-decision-queue.mjs', '--vault', vault, '--changed-since', started])
   const out = path.join(vault, '08 AI и Инструменты/Tools/Очередь разбора инструментов.md')
   const body = await fs.readFile(out, 'utf8')
-  for (const token of ['# Очередь разбора инструментов', 'Aider', 'Пробный запуск', 'берём, откладываем, забываем']) {
+  for (const token of ['# Очередь разбора инструментов', 'Aider', 'Пробный запуск', 'берем, откладываем, забываем']) {
     if (!body.includes(token)) throw new Error(`tool queue smoke failed: missing ${token}`)
   }
 }
@@ -649,7 +649,7 @@ async function completeGateSmoke() {
   await fs.writeFile(path.join(reports, 'complete-smoke.html'), [
     '<!doctype html><html><body>',
     '<main data-knowledge-atom="complete-smoke">',
-    '<h1>Отчёт Mnemazine после прогона</h1>',
+    '<h1>Отчет Mnemazine после прогона</h1>',
     '<section><h2>Новые и обновленные знания</h2><p>Свежий слой знаний на русском языке: понятно, что обработано, что проверено и какой следующий шаг нужен человеку.</p></section>',
     '<section><h2>Синтез</h2><p>Проверенная идея после обработки превращена в короткий вывод, а не оставлена как сырой захват.</p></section>',
     '<section><h2>Источники</h2>',
@@ -662,7 +662,7 @@ async function completeGateSmoke() {
     '</main></body></html>'
   ].join(''), 'utf8')
   await fs.writeFile(path.join(state, 'last-action-brief.md'), [
-    '# Короткий отчёт Mnemazine — smoke',
+    '# Короткий отчет Mnemazine — smoke',
     '',
     '## Статус',
     '',
@@ -671,7 +671,7 @@ async function completeGateSmoke() {
     '',
     '## Следующие действия',
     '',
-    '- Держать release gate зелёным.'
+    '- Держать release gate зеленым.'
   ].join('\n'), 'utf8')
   await fs.writeFile(path.join(state, 'last-run.json'), JSON.stringify({
     ok: true,
@@ -767,7 +767,7 @@ verification_status: "verified"
 ## Проверка
 
 - Статус: verified.
-- Сырой HTML исключён из финального слоя.
+- Сырой HTML исключен из финального слоя.
 
 ## Следующее действие
 
@@ -789,7 +789,7 @@ README позиционирует tech-leads-club/agent-skills как прове
 
 ## Зачем это нужно
 
-Скриншот со stars ещё не знание. Нужны первоисточник, свежесть репозитория, лицензия, открытые issues и понятный риск доверия.
+Скриншот со stars еще не знание. Нужны первоисточник, свежесть репозитория, лицензия, открытые issues и понятный риск доверия.
 
 ## Как использовать
 
@@ -866,14 +866,14 @@ source_ref: "digest:smoke"
   const report = path.join(reports, 'good.html')
   await fs.writeFile(report, [
     '<!doctype html><html><body>',
-    '<h1>Отчёт Mnemazine после прогона</h1>',
+    '<h1>Отчет Mnemazine после прогона</h1>',
     '<section><h2>Новые и обновленные знания</h2><p>Понятная сводка объясняет, что появилось, зачем это нужно, где источник и какое действие взять следующим шагом.</p></section>',
-    '<section><h2>Проверка и риск</h2><p>Сырой HTML исключён из пользовательского текста, а непроверенные утверждения остаются помеченными до ручной проверки.</p></section>',
-    '<section><h2>Следующее действие</h2><p>Запустить gate и убедиться, что отчёт читается человеком без знания внутреннего пайплайна.</p></section>',
+    '<section><h2>Проверка и риск</h2><p>Сырой HTML исключен из пользовательского текста, а непроверенные утверждения остаются помеченными до ручной проверки.</p></section>',
+    '<section><h2>Следующее действие</h2><p>Запустить gate и убедиться, что отчет читается человеком без знания внутреннего пайплайна.</p></section>',
     '</body></html>'
   ].join(''), 'utf8')
   await fs.writeFile(path.join(state, 'last-action-brief.md'), [
-    '# Короткий отчёт Mnemazine — smoke',
+    '# Короткий отчет Mnemazine — smoke',
     '',
     '## Статус',
     '',
@@ -925,9 +925,14 @@ async function repoMetadataCheck() {
   const ru = await fs.readFile(path.join(ROOT, 'README.ru.md'), 'utf8').catch(() => null)
   if (ru === null) throw new Error('README.ru.md is missing (Russian README required)')
 
+  // Каноническое имя публичного репозитория — в нижнем регистре: `git remote`
+  // (public) и full_name в GitHub API дают zarubinvibe/mnemazine. Старое ожидание
+  // с большой буквы сторожило исчезнувшее имя. Гарантия прежняя: оба README несут
+  // рабочую строку клонирования настоящего репозитория.
+  const CLONE_URL = 'https://github.com/zarubinvibe/mnemazine.git'
   for (const [label, body] of [['README.md', en], ['README.ru.md', ru]]) {
-    if (!body.includes('https://github.com/zarubinvibe/Mnemazine.git')) {
-      throw new Error(`${label} clone URL is stale or missing`)
+    if (!body.includes(CLONE_URL)) {
+      throw new Error(`${label} clone URL is stale or missing (ждем ${CLONE_URL})`)
     }
   }
 
@@ -957,6 +962,8 @@ async function lessonGateCheck() { await runMetaGate('scripts/mnemazine-lesson-g
 async function checksInventoryGate() { await runMetaGate('scripts/mnemazine-checks-inventory.mjs') }
 async function modelPinCheck() { await runMetaGate('scripts/mnemazine-model-pin-check.mjs') }
 
+async function trackingGuardCheck() { await runMetaGate('scripts/mnemazine-tracking-guard.mjs') }
+
 const NEW_CHECKS = new Set(['rules-inventory', 'doc-contract-check', 'single-truth-check', 'lesson-gate', 'checks-inventory'])
 
 // П24: every rsync/scp whose DESTINATION is the VPS in scripts/*.sh must be
@@ -985,7 +992,7 @@ async function machineClassGateCheck() {
       }
     }
   }
-  if (violations.length) throw new Error('machine-class-gate: незащищённая отправка наружу:\n' + violations.join('\n'))
+  if (violations.length) throw new Error('machine-class-gate: незащищенная отправка наружу:\n' + violations.join('\n'))
 }
 
 // Порог пяти новых гейтов: 'blocking' по умолчанию. Перевод в 'warn' — одна строка
@@ -1011,15 +1018,33 @@ async function printContracts(checks) {
 
 // --- П19 онбординг: шесть новых проверок --------------------------------------
 
-// README: восемь новых разделов в обоих файлах, одинаковый набор npm-команд EN/RU,
-// одинаковое число строк в таблице агентов (заголовочный паритет этого не ловит).
+// Пары двуязычных носителей онбординга. README.md/README.ru.md больше не пишутся
+// руками: их рендерит семейный гейт Olympuz из .github/family-page.json, и его
+// контракт общий для пяти публичных проектов — гнуть его под один репозиторий
+// нельзя. Поэтому разделы контракта П19 сторожатся там, где они теперь лежат:
+// пошаговый ход установки в docs/ONBOARDING.*, остальные разделы в docs/DETAILS.*.
+const ONBOARDING_DOC_PAIRS = [
+  ['README.md', 'README.ru.md'],
+  ['docs/ONBOARDING.md', 'docs/ONBOARDING.ru.md'],
+  ['docs/DETAILS.md', 'docs/DETAILS.ru.md']
+]
+
+async function readOnboardingDocs() {
+  const rels = ONBOARDING_DOC_PAIRS.flat()
+  const bodies = await Promise.all(rels.map(r => fs.readFile(path.join(ROOT, r), 'utf8')))
+  return Object.fromEntries(rels.map((r, i) => [r, bodies[i]]))
+}
+
+// Онбординг: семь разделов контракта в docs/DETAILS (обе версии), пошаговый ход
+// установки в docs/ONBOARDING (обе версии), одинаковый набор npm-команд EN/RU в
+// каждой паре, одинаковое число строк в таблице агентов (заголовочный паритет
+// этого не ловит).
 async function onboardingReadmeCheck() {
-  const en = await fs.readFile(path.join(ROOT, 'README.md'), 'utf8')
-  const ru = await fs.readFile(path.join(ROOT, 'README.ru.md'), 'utf8')
+  const docs = await readOnboardingDocs()
+  const en = docs['docs/DETAILS.md']; const ru = docs['docs/DETAILS.ru.md']
   const h2 = body => (body.match(/^##\s+.+$/gm) || []).map(s => s.toLowerCase())
   const enH2 = h2(en); const ruH2 = h2(ru)
   const sections = [
-    ['install goes', 'как проходит установка'],
     ['my agents', 'мои агенты'],
     ['privacy', 'приватность'],
     ['if you improved me', 'если ты меня улучшил'],
@@ -1030,25 +1055,45 @@ async function onboardingReadmeCheck() {
   ]
   const missing = []
   for (const [enA, ruA] of sections) {
-    if (!enH2.some(x => x.includes(enA))) missing.push(`README.md: раздел «${enA}»`)
-    if (!ruH2.some(x => x.includes(ruA))) missing.push(`README.ru.md: раздел «${ruA}»`)
+    if (!enH2.some(x => x.includes(enA))) missing.push(`docs/DETAILS.md: раздел «${enA}»`)
+    if (!ruH2.some(x => x.includes(ruA))) missing.push(`docs/DETAILS.ru.md: раздел «${ruA}»`)
   }
+
+  // Ход установки: в docs/ONBOARDING это не заголовок, а сам пошаговый путь.
+  // Сторожим суть, а не имя раздела: заголовок документа, команда установки,
+  // не меньше восьми нумерованных шагов, и шагов поровну в EN и RU.
+  const steps = body => (body.match(/^\d+\.\s+\*\*/gm) || []).length
+  const onboardingHeads = [
+    ['docs/ONBOARDING.md', /^#\s+onboarding/im],
+    ['docs/ONBOARDING.ru.md', /^#\s+онбординг/im]
+  ]
+  for (const [rel, head] of onboardingHeads) {
+    if (!head.test(docs[rel])) missing.push(`${rel}: нет заголовка онбординга`)
+    if (!docs[rel].includes('bash setup.sh')) missing.push(`${rel}: нет команды установки bash setup.sh`)
+    if (steps(docs[rel]) < 8) missing.push(`${rel}: ход установки короче восьми шагов (${steps(docs[rel])})`)
+  }
+  const enSteps = steps(docs['docs/ONBOARDING.md']); const ruSteps = steps(docs['docs/ONBOARDING.ru.md'])
+  if (enSteps !== ruSteps) missing.push(`шагов установки EN ${enSteps} ≠ RU ${ruSteps} (docs/ONBOARDING)`)
   if (missing.length) throw new Error('onboarding-readme: нет разделов:\n' + missing.join('\n'))
 
+  // Набор npm-команд сверяем внутри КАЖДОЙ языковой пары: команда, уехавшая из
+  // одного документа в другой только в одной из версий, так тоже видна.
   const npmToks = body => body.match(/npm (?:run [\w:-]+|start)/g) || []
-  const enToks = npmToks(en); const ruToks = npmToks(ru)
-  const npmCmds = toks => [...new Set(toks)].sort()
-  const enCmds = npmCmds(enToks); const ruCmds = npmCmds(ruToks)
-  const onlyEn = enCmds.filter(c => !ruCmds.includes(c))
-  const onlyRu = ruCmds.filter(c => !enCmds.includes(c))
-  if (onlyEn.length || onlyRu.length) {
-    throw new Error(`onboarding-readme: набор npm-команд разошёлся. только EN: ${onlyEn.join(', ') || '—'}; только RU: ${onlyRu.join(', ') || '—'}`)
+  for (const [enRel, ruRel] of ONBOARDING_DOC_PAIRS) {
+    const enCmds = [...new Set(npmToks(docs[enRel]))].sort()
+    const ruCmds = [...new Set(npmToks(docs[ruRel]))].sort()
+    const onlyEn = enCmds.filter(c => !ruCmds.includes(c))
+    const onlyRu = ruCmds.filter(c => !enCmds.includes(c))
+    if (onlyEn.length || onlyRu.length) {
+      throw new Error(`onboarding-readme: набор npm-команд разошелся (${enRel} ↔ ${ruRel}). только EN: ${onlyEn.join(', ') || '—'}; только RU: ${onlyRu.join(', ') || '—'}`)
+    }
   }
 
-  // Обязательные контрактные фрагменты: каждый обязан быть в ОБОИХ README (контракт П19,
-  // блок «Команда проверки»). Команды сверяем по ЧИСЛУ вхождений — набор-симметрия выше
-  // не ловит потерю одного из двух дублей (прецедент пробы: удаление одной из двух строк
-  // `npm run doctor:full` из RU). Текст — по языковой паре EN|RU.
+  // Обязательные контрактные фрагменты: каждый обязан быть в ОБЕИХ версиях (контракт
+  // П19, блок «Команда проверки»). Команды сверяем по ЧИСЛУ вхождений во всем наборе
+  // документов — набор-симметрия выше не ловит потерю одного из двух дублей
+  // (прецедент пробы: удаление одной из двух строк `npm run doctor:full` из RU).
+  // Текст — по языковой паре EN|RU на носителе, который его теперь несет.
   const MANDATORY = [
     { name: 'npm run doctor', cmd: 'npm run doctor' },
     { name: 'npm run doctor:full', cmd: 'npm run doctor:full' },
@@ -1058,17 +1103,20 @@ async function onboardingReadmeCheck() {
     { name: 'VPS не делает: whisper', en: 'whisper', ru: 'whisper' },
     { name: 'VPS не делает: ollama', en: 'ollama', ru: 'ollama' }
   ]
+  const allToks = rels => rels.flatMap(r => npmToks(docs[r]))
+  const enToks = allToks(ONBOARDING_DOC_PAIRS.map(p => p[0]))
+  const ruToks = allToks(ONBOARDING_DOC_PAIRS.map(p => p[1]))
   const gaps = []
   for (const f of MANDATORY) {
     if (f.cmd) {
       const enN = enToks.filter(t => t === f.cmd).length
       const ruN = ruToks.filter(t => t === f.cmd).length
-      if (enN === 0) gaps.push(`«${f.name}» → нет в README.md`)
-      if (ruN === 0) gaps.push(`«${f.name}» → нет в README.ru.md`)
-      if (enN && ruN && enN !== ruN) gaps.push(`«${f.name}» → вхождений EN ${enN} ≠ RU ${ruN} (README.ru.md)`)
+      if (enN === 0) gaps.push(`«${f.name}» → нет ни в одном английском документе онбординга`)
+      if (ruN === 0) gaps.push(`«${f.name}» → нет ни в одном русском документе онбординга`)
+      if (enN && ruN && enN !== ruN) gaps.push(`«${f.name}» → вхождений EN ${enN} ≠ RU ${ruN}`)
     } else {
-      if (!en.includes(f.en)) gaps.push(`«${f.name}» → нет в README.md`)
-      if (!ru.includes(f.ru)) gaps.push(`«${f.name}» → нет в README.ru.md`)
+      if (!en.includes(f.en)) gaps.push(`«${f.name}» → нет в docs/DETAILS.md`)
+      if (!ru.includes(f.ru)) gaps.push(`«${f.name}» → нет в docs/DETAILS.ru.md`)
     }
   }
   if (gaps.length) throw new Error('onboarding-readme: пропал обязательный контрактный фрагмент:\n' + gaps.map(g => '  ' + g).join('\n'))
@@ -1089,7 +1137,7 @@ async function onboardingReadmeCheck() {
   if (enRows !== ruRows) throw new Error(`onboarding-readme: строк в таблице агентов EN ${enRows} ≠ RU ${ruRows}`)
 }
 
-// install.sh реально зовёт доктора и не печатает безусловное «installed».
+// install.sh реально зовет доктора и не печатает безусловное «installed».
 async function installVerifiesCheck() {
   const src = await fs.readFile(path.join(ROOT, 'install.sh'), 'utf8')
   if (!src.includes('mnemazine-doctor')) throw new Error('install-verifies: install.sh не ссылается на mnemazine-doctor')
@@ -1113,7 +1161,7 @@ async function installerConsentGateCheck() {
   if (created.length) throw new Error(`installer-consent-gate: отказ создал файлы в $HOME: ${created.join(', ')}`)
 }
 
-// Каждая строка DEGRADED: несёт команду починки.
+// Каждая строка DEGRADED: несет команду починки.
 async function installerWarningsCarryFixCheck() {
   const lines = (await fs.readFile(path.join(ROOT, 'install.sh'), 'utf8')).split('\n')
   const bad = []
@@ -1135,27 +1183,42 @@ async function doctorThreeCodesCheck() {
   await must('doctor selftest (three codes)', process.execPath, ['scripts/mnemazine-doctor.mjs', '--selftest'])
 }
 
-// Интейк: раздел приватности с четырьмя каналами; вопрос про бота исполним в трёх
-// ветках без сети и без записи в $HOME; README не обещает на VPS того, чего нет.
+// Интейк: раздел приватности с четырьмя каналами; вопрос про бота исполним в трех
+// ветках без сети и без записи в $HOME; тексты не обещают на VPS того, чего нет.
 async function onboardingIntakeCheck() {
-  const en = await fs.readFile(path.join(ROOT, 'README.md'), 'utf8')
-  const ru = await fs.readFile(path.join(ROOT, 'README.ru.md'), 'utf8')
-  for (const [label, body] of [['README.md', en], ['README.ru.md', ru]]) {
-    if (!/^##\s+.*(privacy|приватность)/im.test(body)) throw new Error(`onboarding-intake: в ${label} нет раздела приватности`)
+  const docs = await readOnboardingDocs()
+  // Перечисление каналов приема переехало в раздел приватности docs/DETAILS
+  // (README рендерит семейный гейт Olympuz). Сверяем ВНУТРИ самого раздела, а не по
+  // всему файлу: слово «youtube» где-то в другой главе гарантией не является.
+  const privacySection = body => {
+    const lines = body.split('\n')
+    const start = lines.findIndex(l => /^##\s+.*(privacy|приватность)/i.test(l))
+    if (start === -1) return null
+    let end = lines.length
+    for (let i = start + 1; i < lines.length; i++) {
+      if (/^##\s/.test(lines[i])) { end = i; break }
+    }
+    return lines.slice(start, end).join('\n')
+  }
+  for (const rel of ['docs/DETAILS.md', 'docs/DETAILS.ru.md']) {
+    const section = privacySection(docs[rel])
+    if (section === null) throw new Error(`onboarding-intake: в ${rel} нет раздела приватности`)
     const channels = { deep: /deep/i, telegram: /telegram/i, 'agent-os': /agent-os/i, youtube: /youtube/i }
     for (const [name, re] of Object.entries(channels)) {
-      if (!re.test(body)) throw new Error(`onboarding-intake: в ${label} раздел приватности не называет канал ${name}`)
+      if (!re.test(section)) throw new Error(`onboarding-intake: в ${rel} раздел приватности не называет канал ${name}`)
     }
   }
+  // Сторож честности про VPS: ни один пользовательский текст не обещает на сервере
+  // того, чего там нет. Носителей теперь шесть, а не два — гарантия шире прежней.
   const vpsClaims = [
     /(Apple Vision|whisper|ollama)[^.\n]{0,80}(VPS|сервер|server|удал[её]нн)/i,
     /(VPS|сервер|server)[^.\n]{0,80}(Apple Vision|whisper|ollama)/i
   ]
-  for (const [label, body] of [['README.md', en], ['README.ru.md', ru]]) {
-    const lines = body.split('\n')
+  for (const rel of ONBOARDING_DOC_PAIRS.flat()) {
+    const lines = docs[rel].split('\n')
     for (let i = 0; i < lines.length; i++) {
       for (const re of vpsClaims) {
-        if (re.test(lines[i])) throw new Error(`onboarding-intake: ${label}:${i + 1} обещает на VPS то, чего там нет: ${lines[i].trim()}`)
+        if (re.test(lines[i])) throw new Error(`onboarding-intake: ${rel}:${i + 1} обещает на VPS то, чего там нет: ${lines[i].trim()}`)
       }
     }
   }
@@ -1198,6 +1261,7 @@ async function main() {
     ['lesson-gate', lessonGateCheck],
     ['checks-inventory', checksInventoryGate],
     ['model-pin', modelPinCheck],
+    ['tracking-guard', trackingGuardCheck],
     ['machine-class-gate', machineClassGateCheck],
     ['onboarding-readme', onboardingReadmeCheck],
     ['install-verifies', installVerifiesCheck],
@@ -1213,13 +1277,13 @@ async function main() {
   }
 
   // --only <name>: запустить одну зарегистрированную проверку (режим приходит из
-  // П19; до его закрытия обслуживает прямой вызов machine-class-gate из приёмки П24).
+  // П19; до его закрытия обслуживает прямой вызов machine-class-gate из приемки П24).
   const onlyIdx = process.argv.indexOf('--only')
   if (onlyIdx !== -1) {
     const requested = String(process.argv[onlyIdx + 1] || '').split(',').map(s => s.trim()).filter(Boolean)
     const selected = checks.filter(([n]) => requested.includes(n))
     // Пустая выборка — exit 2, а не «сдано 0/0 ✓»: опечатка в фильтре не должна
-    // печатать «приём» (прецедент разбора Фемиды).
+    // печатать «прием» (прецедент разбора Фемиды).
     if (selected.length === 0) { console.error(`empty --only selection: ${requested.join(',') || '(none)'}`); process.exit(2) }
     const okOnly = []
     const crashOnly = []

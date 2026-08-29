@@ -129,7 +129,7 @@ export function classifyFile(filePath, taxonomy, knownOverride) {
 function runClassify(file, taxonomy) {
   const res = classifyFile(file, taxonomy)
   if (res.undetermined) {
-    console.error(`НЕ ОПРЕДЕЛЁН: ${res.badClass ? `неизвестный класс «${res.badClass}»` : `раздел вне таксономии «${res.section}»`} (${path.basename(file)})`)
+    console.error(`НЕ ОПРЕДЕЛЕН: ${res.badClass ? `неизвестный класс «${res.badClass}»` : `раздел вне таксономии «${res.section}»`} (${path.basename(file)})`)
     return 2
   }
   console.log(`${res.klass}  (правило: ${res.rule})`)
@@ -157,7 +157,7 @@ function runBatch(manifest, target, taxonomy) {
   }
   if (blocked.length) {
     const { f, res } = blocked[0]
-    console.error(`ОТКАЗ (1): ${f} — класс ${res.klass} (${res.rule}) не разрешён на ${target} (разрешено: ${taxonomy.classes[res.klass].machines.join(',')})`)
+    console.error(`ОТКАЗ (1): ${f} — класс ${res.klass} (${res.rule}) не разрешен на ${target} (разрешено: ${taxonomy.classes[res.klass].machines.join(',')})`)
     console.error(`всего заблокировано: ${blocked.length} из ${files.length}`)
     return 1
   }

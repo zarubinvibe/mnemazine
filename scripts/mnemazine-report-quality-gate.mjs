@@ -13,7 +13,7 @@ function arg(name, fallback = '') {
 
 const REPORT = arg('report', '')
 const REPORTS = path.resolve(arg('reports', process.env.MNEMAZINE_REPORTS || path.join(ROOT, 'reports')))
-// fail-closed: «no reports found» больше не зелёный. Ноль отчётов = exit 2,
+// fail-closed: «no reports found» больше не зеленый. Ноль отчетов = exit 2,
 // если не передан явный --allow-empty.
 const ALLOW_EMPTY = argv.includes('--allow-empty')
 
@@ -30,7 +30,7 @@ const rawMarkers = [
   /\btemp_image[_-]/i,
   /\bIMG_\d+/,
   /\.(WEBP|PNG|JPE?G|HEIC|TIFF|MOV|MP4)\b/i,
-  /\b[\wА-Яа-яЁё ._-]+\.md\b/i
+  /\b[\wА-Яа-яЕе ._-]+\.md\b/i
 ]
 
 const requiredSignals = [
@@ -88,7 +88,7 @@ if (!reports.length) {
     console.log(JSON.stringify({ ok: true, checked: 0, note: 'no reports found (--allow-empty)' }, null, 2))
     process.exit(0)
   }
-  console.error(JSON.stringify({ ok: false, checked: 0, error: 'нет отчётов для проверки: 0 найдено (--allow-empty чтобы разрешить)' }, null, 2))
+  console.error(JSON.stringify({ ok: false, checked: 0, error: 'нет отчетов для проверки: 0 найдено (--allow-empty чтобы разрешить)' }, null, 2))
   process.exit(2)
 }
 

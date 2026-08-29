@@ -20,11 +20,11 @@ if (argv.includes('--help')) {
 Использование: node scripts/mnemazine-vault-quality-gate.mjs [флаги] [файлы...]
   --vault <путь>      корпус (иначе MNEMAZINE_VAULT или repo-local vault)
   --spec              режим NOTE-SPEC (frontmatter enum, блоки, слаги проектов)
-  --json              отчёт в JSON
+  --json              отчет в JSON
   --require-dossier   требовать полное досье секций (старый режим)
-  --changed-since <время>  проверять только ноты, изменённые после отметки
+  --changed-since <время>  проверять только ноты, измененные после отметки
   --max-failures N    остановиться после N провалов
-  --allow-empty       разрешить зелёный на пустом наборе (иначе 0 проверенных — exit 2)
+  --allow-empty       разрешить зеленый на пустом наборе (иначе 0 проверенных — exit 2)
   --help              эта справка
 
 Коды возврата: 0 — чисто; 1 — есть провалы; 2 — пустой набор без --allow-empty
@@ -40,7 +40,7 @@ const CHANGED_SINCE = arg('changed-since', '')
 const MAX_FAILURES = Number(arg('max-failures', process.env.MNEMAZINE_QUALITY_MAX_FAILURES || '0'))
 // fail-closed: ноль проверенных нот (пустой/нечитаемый vault, или changed-since
 // не совпал ни с одним файлом) — это НЕ «сдано 0/0 ✓», а exit 2. Только явный
-// --allow-empty разрешает зелёный на пустом наборе.
+// --allow-empty разрешает зеленый на пустом наборе.
 const ALLOW_EMPTY = argv.includes('--allow-empty')
 
 // Flags whose value is the NEXT argv item — without this list positional
@@ -101,8 +101,8 @@ async function walk(dir) {
 }
 
 function isServicePath(rel) {
-  // «99 Система» — служебная секция живого корпуса владельца; «00 System» — её
-  // близнец в свежесобранном (публичном) корпусе, куда install.sh кладёт
+  // «99 Система» — служебная секция живого корпуса владельца; «00 System» — ее
+  // близнец в свежесобранном (публичном) корпусе, куда install.sh кладет
   // «Mnemazine Protocol.md». Оба — сервис, не знание: NOTE-SPEC их не судит (П22).
   return (
     rel.includes('/graphify-out/') ||
@@ -120,9 +120,9 @@ function isServicePath(rel) {
 
 // «не-проверялось» добавлено 2026-07-25 по решению владельца: 1235 старых нот пришли без поля verified
 // или со значением false, и ни одно из пяти прежних значений не описывает «никто не проверял» — впихнуть
-// их в «источник-не-найден» значило бы записать в корпус ложь ради зелёного гейта.
+// их в «источник-не-найден» значило бы записать в корпус ложь ради зеленого гейта.
 // НОВАЯ нота это значение носить не должна: конвейер верифицирует материал до записи (стадия 3).
-// ё/е считаются одной буквой при сравнении: «подтверждён» и «подтвержден» —
+// е/е считаются одной буквой при сравнении: «подтвержден» и «подтвержден» —
 // одно слово, а слаги проектов в нотах пишут в обеих орфографиях.
 const norm = s => normSpecValue(s)
 
@@ -264,7 +264,7 @@ function checkSpec(text, slugs, changedSince = false) {
         if (['video', 'article', 'repo'].includes(sourceType)) reasons.push(`subject: self при source_type: ${sourceType} — self-нота с чужим источником (§18.4)`)
       }
     } else if (changedSince) {
-      reasons.push('subject: отсутствует (обязателен для новой/изменённой ноты)')
+      reasons.push('subject: отсутствует (обязателен для новой/измененной ноты)')
     }
 
     // data_class (§17.8, П24): необязательное; если есть — из закрытого списка
@@ -359,7 +359,7 @@ for (const file of files) {
   checked += 1
   const text = await fs.readFile(file, 'utf8')
   // «## Атомизировано» больше НЕ освобождает ноту от суда (план П06 шаг 1):
-  // сырьё (badMarkers), отсутствие источника и смыслового блока валят её как любую
+  // сырье (badMarkers), отсутствие источника и смыслового блока валят ее как любую
   // другую. Единственное смягчение — при --require-dossier такая нота не обязана
   // нести шесть секций старого досье: это другой формат, а не индульгенция.
   const atomized = /^##\s+Атомизировано(?:\s|$)/m.test(text)

@@ -2,15 +2,15 @@
 // Одна правда (план П11, метод-правило 8). Ловит СОДЕРЖАТЕЛЬНЫЙ дубль, а не различие хешей.
 //
 //  - CLAUDE.md/AGENTS.md: одна обязана быть указателем (симлинк или ≤5 строк, называющие
-//    другую), другая — каноном. Требование черновика «sha256(A)!=sha256(B)→1» ПЕРЕВЁРНУТО:
+//    другую), другая — каноном. Требование черновика «sha256(A)!=sha256(B)→1» ПЕРЕВЕРНУТО:
 //    оно закрепляло дубль. П05 сделал указателем CLAUDE.md (канон — AGENTS.md); прибор
-//    распознаёт указатель в любую сторону. Оба указателя / канон схлопнулся / нет указателя → 1.
+//    распознает указатель в любую сторону. Оба указателя / канон схлопнулся / нет указателя → 1.
 //  - enum SPEC_TYPES (mnemazine-note-spec.mjs) сходится с таблицей docs/NOTE-SPEC.md и с любой
 //    второй литеральной копией; расхождение → 1.
-//  - knowledge-note, встреченный в приёмке или человеческом гейте при отсутствии в SPEC_TYPES → 1.
-//  - две одноимённые функции strictKnowledgeReady с разным телом → 1.
+//  - knowledge-note, встреченный в приемке или человеческом гейте при отсутствии в SPEC_TYPES → 1.
+//  - две одноименные функции strictKnowledgeReady с разным телом → 1.
 //
-// Коды: 0 — одна правда; 1 — дубль/расхождение; 2 — ноль сравнённых пар.
+// Коды: 0 — одна правда; 1 — дубль/расхождение; 2 — ноль сравненных пар.
 
 import { existsSync, readFileSync, lstatSync, readlinkSync, readdirSync } from 'node:fs'
 import { mkdtempSync, writeFileSync, rmSync } from 'node:fs'
@@ -209,7 +209,7 @@ function packageScriptTrackedPathCheck() {
 
 function evaluate() {
   const failures = []
-  let pairs = 0 // число сравнённых категорий (не число провалов)
+  let pairs = 0 // число сравненных категорий (не число провалов)
 
   const pair = evaluatePair(path.join(ROOT, 'CLAUDE.md'), path.join(ROOT, 'AGENTS.md'))
   if (pair.present) { pairs++; if (!pair.ok) failures.push(pair.reason) }
@@ -222,7 +222,7 @@ function evaluate() {
   pairs++; failures.push(...strictKnowledgeReadyDivergence())
   pairs++; failures.push(...packageScriptTrackedPathCheck())
 
-  if (pairs === 0) return { code: 2, failures: ['ноль сравнённых пар'] }
+  if (pairs === 0) return { code: 2, failures: ['ноль сравненных пар'] }
   return { code: failures.length ? 1 : 0, failures, pairs }
 }
 
@@ -233,7 +233,7 @@ function selftest() {
     writeFileSync(path.join(tmp, 'CLAUDE.md'), body, 'utf8')
     writeFileSync(path.join(tmp, 'AGENTS.md'), body, 'utf8')
     const pair = evaluatePair(path.join(tmp, 'CLAUDE.md'), path.join(tmp, 'AGENTS.md'))
-    if (pair.ok) { console.error('selftest FAILED: два одинаковых канона прошли зелёным'); return 1 }
+    if (pair.ok) { console.error('selftest FAILED: два одинаковых канона прошли зеленым'); return 1 }
     const failures = packageScriptTrackedPathFailures({
       'graph:clean': 'python3 scripts/graphify_clean.py',
       'combo': 'node scripts/ok.mjs && bash install.sh',

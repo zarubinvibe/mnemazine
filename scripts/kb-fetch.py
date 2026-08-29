@@ -3,7 +3,7 @@
 
 Бесплатный каскад скрейпа Мнемозины (решение 2026-07-25, docs/PLAN + scrape-decision):
   ярус 0  markitdown  — бинарники (pdf/docx/pptx/xlsx) и медиа-домены → стадия 0
-  ярус 1  trafilatura — статический HTML (~80% случаев), русский проверен живьём
+  ярус 1  trafilatura — статический HTML (~80% случаев), русский проверен живьем
   ярус 2  needs_js    — exit 2: агент сам эскалирует на Playwright MCP / WebFetch
   remote  Jina Reader — ТОЛЬКО с --allow-remote и только публичное: квотный тариф,
           по правилу владельца это категория «платно», в автоматику не входит.
@@ -22,7 +22,7 @@ from datetime import datetime, timezone
 
 import certifi
 
-# ponytail: trafilatura живёт в venv kb-web и не лежит на PATH — берём его напрямую,
+# ponytail: trafilatura живет в venv kb-web и не лежит на PATH — берем его напрямую,
 # фолбэк на PATH оставлен для чужих машин
 TRAFILATURA = os.environ.get(
     "MNEMAZINE_TRAFILATURA_BIN",
@@ -71,14 +71,14 @@ def boiler_ratio(text):
 
 
 def fetch_html(url, timeout):
-    # кириллица в пути/квери валит urllib ascii-кодеком — percent-кодируем всё вне ASCII
+    # кириллица в пути/квери валит urllib ascii-кодеком — percent-кодируем все вне ASCII
     url = urllib.parse.quote(url, safe=":/?&=#%+@;,$!*'()[]~-._")
     req = urllib.request.Request(url, headers={"User-Agent": UA})
     with urllib.request.urlopen(req, timeout=timeout, context=SSL_CTX) as r:
         raw = r.read()
         ctype = r.headers.get("Content-Type", "")
         final = r.geturl()
-    # charset живёт в HTTP-заголовке (легаси-рунет: koi8-r/1251 без <meta>) — из файла его
+    # charset живет в HTTP-заголовке (легаси-рунет: koi8-r/1251 без <meta>) — из файла его
     # не восстановить, поэтому нормализуем в utf-8 здесь, до экстракции
     charset = ""
     if "charset=" in ctype.lower():
@@ -101,7 +101,7 @@ def fetch_html(url, timeout):
 
 
 def run_trafilatura(raw):
-    # HTML подаётся в stdin (флаг -i ждёт СПИСОК URL-ов, не документ); байты уже
+    # HTML подается в stdin (флаг -i ждет СПИСОК URL-ов, не документ); байты уже
     # нормализованы в utf-8 по HTTP-charset в fetch_html
     r = subprocess.run([TRAFILATURA, "--output-format", "markdown"], input=raw,
                        capture_output=True, timeout=60)
@@ -109,7 +109,7 @@ def run_trafilatura(raw):
 
 
 def run_markitdown(target, timeout=120):
-    # URL скачиваем сами (у markitdown свой fetch без наших сертификатов/UA), файл отдаём как есть
+    # URL скачиваем сами (у markitdown свой fetch без наших сертификатов/UA), файл отдаем как есть
     if target.startswith("http"):
         req = urllib.request.Request(target, headers={"User-Agent": UA})
         with urllib.request.urlopen(req, timeout=60, context=SSL_CTX) as r:

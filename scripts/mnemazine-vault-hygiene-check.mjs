@@ -9,20 +9,20 @@
 //                             свежий срез vault снимается самим --compare в момент
 //                             запуска, отдельный after-слепок не нужен (можно вывести
 //                             побочно через --after-out <file>). Без позиционного
-//                             аргумента before берётся из .mnemazine/state/vault-
+//                             аргумента before берется из .mnemazine/state/vault-
 //                             hygiene-before.json. Нет before-слепка → exit 2
-//                             (fail-closed: сверка без базиса — это не «зелёный»).
+//                             (fail-closed: сверка без базиса — это не «зеленый»).
 //                             Расхождение → exit 1 с именами пропавших/появившихся
 //                             файлов. Допустимые новые basename читаются из манифеста
 //                             .mnemazine/state/vault-hygiene-allowed-new.json — объявление
-//                             живёт в ДАННЫХ, а не во флаге вызова.
+//                             живет в ДАННЫХ, а не во флаге вызова.
 //   --converge                сходимость замерщиков битых wikilink: число от
 //                             mnemazine-kb-lint.mjs --json --limit=500 против
 //                             независимого грубого обхода ниже. Расхождение → exit 1.
 //
 // Грубый обход сознательно НЕ исключает graphify-out* — именно этим два замерщика
 // расходились до П15 (один считал внутри graphify, другой снаружи). После выноса
-// мёртвых бэкапов оба обязаны давать одно число; вернувшийся бэкап снова их разводит,
+// мертвых бэкапов оба обязаны давать одно число; вернувшийся бэкап снова их разводит,
 // и --converge обязан упасть (враждебная проба 3 плана П15).
 //
 // Все обходы — под LC_ALL=C: BSD uniq/sort под en_US.UTF-8 схлопывает разные
@@ -93,7 +93,7 @@ const SKIP_DIRS = new Set(['.git', '.obsidian', '.mnemazine'])
 //                     рабочего graphify-out (его GRAPH_REPORT.md линкует метки кластеров,
 //                     а не ноты). Вернувшийся из архива бэкап грубый обход увидит — и
 //                     замерщики разойдутся, чего требует враждебная проба 3 плана П15.
-// graphify: 'all'   — слепок: видит вообще всё.
+// graphify: 'all'   — слепок: видит вообще все.
 async function walkVault(vault, { graphify = 'none' } = {}) {
   const md = []
   const dirs = new Set()
@@ -226,14 +226,14 @@ async function snapshot(outPath) {
 // --- Сверка before-слепка с ЖИВЫМ диском -------------------------------------
 // --compare [before] сверяет before-слепок со свежим срезом vault, который
 // снимается самим --compare в момент запуска. До П15b сравнивались два
-// СОХРАНЁННЫХ JSON — гейт был слеп к подложке в живом vault, если after-слепок
+// СОХРАНЕННЫХ JSON — гейт был слеп к подложке в живом vault, если after-слепок
 // не пересняли. Отдельный after-слепок больше не участвует в сверке; при нужде
 // живой срез можно вывести побочно через --after-out <file>.
 // Fail-closed: нет before-слепка (или он битый) → exit 2, сверка без базиса
-// не считается «зелёной».
+// не считается «зеленой».
 // Допустимые новые basename живут в манифесте .mnemazine/state/vault-hygiene-allowed-new.json
 // и читаются самим --compare, без флагов. --allow-new <a,b,c> [--reason <текст>] —
-// НЕ обход: он дописывает записи в манифест, после чего сверка идёт по манифесту.
+// НЕ обход: он дописывает записи в манифест, после чего сверка идет по манифесту.
 // Любая другая пропажа/появление → exit 1 с именем.
 async function compare(beforePath) {
   let before
@@ -281,7 +281,7 @@ async function compare(beforePath) {
   const declared = added.filter(x => allowNew.has(x))
   for (const name of declared) console.log(`ожидаемая новая (манифест): ${name} — ${reasonByName.get(name) || 'без причины'}`)
   if (missing.length === 0 && undeclared.length === 0) {
-    console.log(`compare OK: пропавших нет, появившихся сверх объявленных нет (${b.size} имён до)`)
+    console.log(`compare OK: пропавших нет, появившихся сверх объявленных нет (${b.size} имен до)`)
     process.exit(0)
   }
   for (const name of missing) console.log(`ПРОПАЛА: ${name}`)
@@ -296,7 +296,7 @@ async function converge() {
   const run = spawnSync(process.execPath, [KB_LINT, '--json', '--limit=500', '--vault', vault], {
     encoding: 'utf8', env: { ...process.env, LC_ALL: 'C' }, maxBuffer: 64 * 1024 * 1024
   })
-  // kb-lint возвращает 1 при critical-находках — это не ошибка запуска, JSON всё равно в stdout.
+  // kb-lint возвращает 1 при critical-находках — это не ошибка запуска, JSON все равно в stdout.
   const raw = String(run.stdout || '')
   const start = raw.indexOf('{')
   const end = raw.lastIndexOf('}')

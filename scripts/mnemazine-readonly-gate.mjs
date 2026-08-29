@@ -2,7 +2,7 @@
 // Readonly-gate (план П08): config/command-surface.json обязан покрывать каждую
 // цель package.json, а цели с writes.vault=false доказывают это поведением —
 // прогоном по фикстур-корпусу tests/fixtures/readonly/ со снимком содержимого
-// до и после. Изменённый/удалённый/добавленный файл фикстуры = провал с именем
+// до и после. Измененный/удаленный/добавленный файл фикстуры = провал с именем
 // цели. Пустая выборка (0 проверенных целей) = провал: «сдано 0/0» не считается.
 //   node scripts/mnemazine-readonly-gate.mjs [--only <цель>] [--help]
 //   node scripts/mnemazine-readonly-gate.mjs --selftest
@@ -33,10 +33,10 @@ if (argv.includes('--help')) {
    (writes: {vault, repo, home, net} + назначение). Нет строки — exit 1.
 2) Каждая цель с writes.vault=false прогоняется по копии фикстур-корпуса
    tests/fixtures/readonly/ со снимком sha256 до и после. Хотя бы один
-   изменённый, удалённый или добавленный файл — exit 1 с именем цели.
+   измененный, удаленный или добавленный файл — exit 1 с именем цели.
    Цель с "probe": false пропускается только с "probe_reason".
 3) --selftest: временная копия декларации помечает заведомо пишущую цель
-   как vault:false, и прибор обязан поймать её кодом 1.
+   как vault:false, и прибор обязан поймать ее кодом 1.
 
 Флаги: --only <цель> — одна цель; --selftest — самопроверка прибора; --help.
 Коды возврата: 0 — декларация полна и правдива; 1 — есть провалы.`)
@@ -107,7 +107,7 @@ function runShell(command, env, timeoutSec) {
     let stderrTail = ''
     child.stderr.on('data', chunk => { stderrTail = (stderrTail + String(chunk)).slice(-2000) })
     const timer = setTimeout(() => {
-      try { process.kill(-child.pid, 'SIGKILL') } catch { /* уже ушёл */ }
+      try { process.kill(-child.pid, 'SIGKILL') } catch { /* уже ушел */ }
     }, timeoutSec * 1000)
     child.on('close', code => {
       clearTimeout(timer)
@@ -188,7 +188,7 @@ async function checkSurface({ scripts, surface, only = '' }) {
     const verdict = await probeTarget(name, command, entry)
     probed += 1
     if (verdict.timeout) violations.push(`${name}: проба не завершилась за таймаут — замер недействителен`)
-    if (verdict.dirt.length) violations.push(`${name}: фикстур-корпус изменён — ${verdict.detail}`)
+    if (verdict.dirt.length) violations.push(`${name}: фикстур-корпус изменен — ${verdict.detail}`)
   }
   if (probed === 0 && !only) errors.push('ноль проверенных целей: пустая выборка — это не «сдано»')
   return { errors, violations, probed, skipped }

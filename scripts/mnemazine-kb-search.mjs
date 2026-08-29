@@ -37,20 +37,20 @@ if (argv.includes('--help')) {
 Использование: node scripts/mnemazine-kb-search.mjs --topic "<тема>" [флаги]
   --topic "<тема>"   тема поиска (обязательна)
   --vault <путь>     корпус (иначе MNEMAZINE_VAULT или repo-local vault)
-  --out <каталог>    каталог отчёта (иначе MNEMAZINE_REPORTS или ./reports);
+  --out <каталог>    каталог отчета (иначе MNEMAZINE_REPORTS или ./reports);
                      каталог внутри корпуса — отказ с кодом 2
-  --stdout           отчёт в stdout, файл не создаётся
+  --stdout           отчет в stdout, файл не создается
   --json             машинная выдача в stdout: results[] с note/score/subject/snippets
   --deep             LLM-рой: планирование запроса, шард-агенты, синтез
   --verify           отбраковка необоснованных находок (только с --deep)
   --concurrency N    параллелизм роя (по умолчанию 4)
   --max-notes N      потолок кандидатов для роя (по умолчанию 60)
   --shard-size N     заметок на агента (по умолчанию 6)
-  --max-shards N     жёсткий потолок агентов в deep (по умолчанию 12)
+  --max-shards N     жесткий потолок агентов в deep (по умолчанию 12)
   --selftest         селф-тест во временном каталоге
   --help             эта справка
 
-Коды возврата: 0 — отчёт готов; 1 — ошибка или нет темы; 2 — отказ: каталог отчёта внутри корпуса.`)
+Коды возврата: 0 — отчет готов; 1 — ошибка или нет темы; 2 — отказ: каталог отчета внутри корпуса.`)
   process.exit(0)
 }
 const PROVIDER = arg('provider', process.env.MNEMAZINE_LLM || activeProvider())
@@ -458,11 +458,11 @@ if (SELFTEST) {
   if (!topic) { console.error('Usage: mnemazine-kb-search.mjs --topic "<тема>" [--deep] [--vault <p>]'); process.exit(1) }
   const vault = resolveVault({ cli: arg('vault') })
   const outDir = path.resolve(arg('out', process.env.MNEMAZINE_REPORTS || path.join(process.cwd(), 'reports')))
-  // fail-closed: каталог отчёта внутри корпуса превращает просмотр в правку
+  // fail-closed: каталог отчета внутри корпуса превращает просмотр в правку
   // корпуса — отказ держит код, а не привычку (план П08). С --stdout файла нет.
   const relOut = path.relative(vault, outDir)
   if (!STDOUT && !JSON_OUT && (relOut === '' || (!relOut.startsWith('..') && !path.isAbsolute(relOut)))) {
-    console.error(`[kb-search] отказ: каталог отчёта внутри корпуса (out=${outDir}, vault=${vault}). Укажи --out вне корпуса или --stdout.`)
+    console.error(`[kb-search] отказ: каталог отчета внутри корпуса (out=${outDir}, vault=${vault}). Укажи --out вне корпуса или --stdout.`)
     process.exit(2)
   }
   run(topic, vault, outDir, { stdout: STDOUT, json: JSON_OUT })

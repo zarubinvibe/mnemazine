@@ -13,7 +13,7 @@
 //   Блокирующий claim с несходящимся кодом → провал; warn → предупреждение. Claim с
 //   execute:false не исполняется (например doctor: он сам гоняет release-check — рекурсия).
 //
-// Коды: 2 — ноль извлечённых утверждений; 1 — любой блокирующий провал; 0 — иначе.
+// Коды: 2 — ноль извлеченных утверждений; 1 — любой блокирующий провал; 0 — иначе.
 
 import { existsSync, readFileSync } from 'node:fs'
 import { mkdtempSync, writeFileSync, rmSync } from 'node:fs'
@@ -140,7 +140,7 @@ function loadClaims() {
 
 function selftest() {
   // Красные кролики: несуществующая npm-цель обязана покраснеть — латинская И кириллическая
-  // (кириллица — тот самый пропуск, что дал ложный зелёный до фикса), с именем цели и строкой.
+  // (кириллица — тот самый пропуск, что дал ложный зеленый до фикса), с именем цели и строкой.
   const scripts = pkgScripts()
   const tracked = gitTracked()
   const cases = [
@@ -152,7 +152,7 @@ function selftest() {
     const { failures } = checkOutput({ docs, scripts, tracked })
     const hit = failures.find(f => f.includes(target))
     if (!hit) {
-      console.error(`selftest FAILED: красный кролик (${label}: ${target}) прошёл зелёным`)
+      console.error(`selftest FAILED: красный кролик (${label}: ${target}) прошел зеленым`)
       return 1
     }
     if (!/README\.md:\d+:/.test(hit)) {
@@ -178,7 +178,7 @@ function main() {
   const declared = runClaims(claims)
 
   const totalChecked = out.checked + vault.checked + declared.checked
-  if (totalChecked === 0) { console.error('ноль извлечённых утверждений'); process.exit(2) }
+  if (totalChecked === 0) { console.error('ноль извлеченных утверждений'); process.exit(2) }
 
   const failures = [...out.failures, ...vault.failures, ...declared.failures]
   for (const w of declared.warnings) console.error(`warn: ${w}`)

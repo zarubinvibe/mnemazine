@@ -1,6 +1,6 @@
 export const meta = {
   name: 'mnemazina-pipeline',
-  description: 'Мнемозина-контролёр: конвейер знаний с воротами полноты + токеносбережение (hash-cache, markitdown, локальный OCR, cost-aware тиры). Ни один файл инбокса не архивируется и прогон не закрывается «done», пока сверщик (mnemazina-reconciler) не докажет на диске, что каждый файл получил ноту или зафиксированную причину. Режимы: INTAKE / FIND / INLINE.',
+  description: 'Мнемозина-контролер: конвейер знаний с воротами полноты + токеносбережение (hash-cache, markitdown, локальный OCR, cost-aware тиры). Ни один файл инбокса не архивируется и прогон не закрывается «done», пока сверщик (mnemazina-reconciler) не докажет на диске, что каждый файл получил ноту или зафиксированную причину. Режимы: INTAKE / FIND / INLINE.',
   whenToUse: 'Авто-триггер на каждое сообщение в проекте Мнемозина — включая вставленную ссылку, длинный текст, скрин или просьбу «разбери инбокс / сохрани в базу», даже без слов «Мнемозина» и /kb, потому что недосработавший триггер молча теряет материал. Также Workflow({ name: "mnemazina-pipeline", args: "<message>" })',
   phases: [
     { title: 'Guard', detail: 'Git-снапшот, lockfile, Ollama-зонд, ретеншн архива' },
@@ -9,9 +9,9 @@ export const meta = {
     { title: 'Process', detail: 'Параллельно: markitdown/локальный-OCR → extract→atomize→verify→classify→refine, нота/атомы с source:' },
     { title: 'Store', detail: 'Запись нот/атомных managed blocks + индексы (БЕЗ архивации)' },
     { title: 'Reconcile', detail: 'ГЕЙТ полноты: каждый файл → нота или причина. Ретрай дыр' },
-    { title: 'Archive', detail: 'mv учтённых + cached; дыры остаются в инбоксе. Запись hash-кэша' },
+    { title: 'Archive', detail: 'mv учтенных + cached; дыры остаются в инбоксе. Запись hash-кэша' },
     { title: 'Graphify', detail: 'Финал всегда, потому что граф — память Мнемозины: обновить + авточистка шаблон-узлов (graphify_clean.py)' },
-    { title: 'VisualReport', detail: 'Светлый Apple-style HTML/MD отчёт: схема знаний, атомы, дубли, топ-20 действий' },
+    { title: 'VisualReport', detail: 'Светлый Apple-style HTML/MD отчет: схема знаний, атомы, дубли, топ-20 действий' },
     { title: 'Briefing', detail: 'Кросс новых знаний с профилем владельца → «что применить сейчас»' },
     { title: 'SelfReflection', detail: 'После Graphify/Briefing: agent trace + что сработало/сломалось/урок/фикс для самообучения' },
     { title: 'Find', detail: 'Grep + граф + ранжирование по проектам' },
@@ -117,12 +117,12 @@ const observeRun = async function (label) {
 }
 
 // Mode-detect: извлечь человеческое сообщение, НЕ сериализуя весь объект args.
-// Объект args = { now, message }: now идёт в RUN_ID (стр.26), message — это userMessage.
+// Объект args = { now, message }: now идет в RUN_ID (стр.26), message — это userMessage.
 // JSON.stringify(args) тут ломал бы isInlineContent (длина >80) → ложная inline-нота.
 const userMessage = (function () {
   if (!args) return ''
   if (typeof args === 'string') {
-    // строка может быть JSON-обёрткой { now, message } или просто текстом
+    // строка может быть JSON-оберткой { now, message } или просто текстом
     var t = args.trim()
     if (t.charAt(0) === '{') {
       try { var p = JSON.parse(t); if (p && typeof p === 'object') return String(p.message || p.text || '') } catch (e) {}
@@ -174,7 +174,7 @@ const guardResult = await agent(
   '2. Lockfile /tmp/kb-run.lock: если жив (kill -0) → error "lock_active"; иначе echo $$ > lock.\n' +
   '3. Зонд локальных движков (local-first, $0). Исполни ДОСЛОВНО и верни вывод: ' +
   'ls -l "' + OCR_BIN + '" "' + WHISPER_BIN + '" 2>&1 | head -4 → в поле ocr_probe. ' +
-  'Затем ocr_ready = ([ -x "' + OCR_BIN + '" ] даёт истину), whisper_ready = ([ -x "' + WHISPER_BIN + '" ] даёт истину). ' +
+  'Затем ocr_ready = ([ -x "' + OCR_BIN + '" ] дает истину), whisper_ready = ([ -x "' + WHISPER_BIN + '" ] дает истину). ' +
   'Оба поля ОБЯЗАТЕЛЬНЫ и должны быть результатом реального запуска команды, а не предположением: ' +
   'ocr_ready=false останавливает весь прогон, поэтому ложное «нет» дороже любой другой ошибки здесь. ' +
   'Ollama не зондируй: для извлечения он не используется (llava галлюцинирует).\n' +
@@ -192,7 +192,7 @@ const guardResult = await agent(
       archive_path: { type: 'string' }, run_date: { type: 'string' }, error: { type: ['string', 'null'] }
     },
     // ocr_ready/whisper_ready ОБЯЗАТЕЛЬНЫ (2026-07-25, измерено на живом прогоне). Они читаются как
-    // `!!guardResult.ocr_ready`, то есть ОТСУТСТВИЕ поля неотличимо от «движка нет» — и жёсткий гейт
+    // `!!guardResult.ocr_ready`, то есть ОТСУТСТВИЕ поля неотличимо от «движка нет» — и жесткий гейт
     // ниже останавливает прогон. Ровно это и случилось: сторож вернул {"embed_ready":true}, поле ocr_ready
     // не вернул, и 75 файлов встали с вердиктом «Apple Vision недоступен», хотя бинарь работал
     // (`vision-ocr IMG_5596.PNG` распознал русский текст с первого запуска).
@@ -202,7 +202,7 @@ const guardResult = await agent(
   }
 )
 if (guardResult && guardResult.error === 'lock_active') {
-  log('Прогон уже идёт. Удали /tmp/kb-run.lock.')
+  log('Прогон уже идет. Удали /tmp/kb-run.lock.')
   return { error: 'lock_active' }
 }
 const embedReady = guardResult ? !!guardResult.embed_ready : false
@@ -219,7 +219,7 @@ if (isInlineContent) {
     '(если занято — числовой суффикс). Контент:\n' + userMessage + '\nWrite tool. Верни путь.',
     { label: 'save-inline', phase: 'Guard', model: 'haiku' }
   )
-  log('Inline-контент сохранён в инбокс')
+  log('Inline-контент сохранен в инбокс')
 }
 
 // ---------- CENSUS: наземная правда + hash-cache (обработанное = 0 токенов) ----------
@@ -246,7 +246,7 @@ if (trueCount === 0) {
   return { status: 'empty_inbox', run_id: RUN_ID, message: 'Инбокс $HOME/Desktop/Mnemazine Inbox пуст. Добавь материалы или /kb find <запрос>.', observability_log: OBS_LOG }
 }
 if (inboxFiles.length === 0) {
-  // всё из кэша — ничего не обрабатываем, архивируем и закрываем (0 токенов LLM)
+  // все из кэша — ничего не обрабатываем, архивируем и закрываем (0 токенов LLM)
   if (cachedFiles.length > 0) {
     await agent(
       'mkdir -p "' + archiveDir + '"; перемести (mv) эти уже-обработанные файлы в архив:\n' + cachedFiles.join('\n') + '\nВерни {archived:N}.',
@@ -270,10 +270,10 @@ log('Census: ' + allCensus.length + ' файлов (' + inboxFiles.length + ' н
 phase('Triage')
 const OCR_DIR = INBOX + '/.ocr'
 const imageFiles = inboxFiles.filter(function (f) { return /\.(png|webp|jpe?g|heic|heif|tiff?|gif|bmp)$/i.test(f) })
-// ⛔ ЖЁСТКИЙ ГЕЙТ LOCAL-FIRST: есть картинки, но OCR-движок недоступен → СТОП (НЕ тихий облачный фолбэк на весь OCR).
+// ⛔ ЖЕСТКИЙ ГЕЙТ LOCAL-FIRST: есть картинки, но OCR-движок недоступен → СТОП (НЕ тихий облачный фолбэк на весь OCR).
 // На Linux-VPS Apple Vision невозможен → image-батч останавливается; текст/видео-батчи идут дальше. На Mac: чинить бинарь.
 if (imageFiles.length > 0 && !ocrReady) {
-  log('⛔ СТОП: ' + imageFiles.length + ' картинок, но Apple Vision OCR недоступен (' + OCR_BIN + '). Local-first нарушен — облачный fallback на весь OCR запрещён.')
+  log('⛔ СТОП: ' + imageFiles.length + ' картинок, но Apple Vision OCR недоступен (' + OCR_BIN + '). Local-first нарушен — облачный fallback на весь OCR запрещен.')
   await releaseRunLock('ocr-missing')
   return { error: 'ocr_engine_missing', run_id: RUN_ID, images: imageFiles.length,
     // Улика вместе с вердиктом: 2026-07-25 этот гейт остановил 75 файлов на РАБОТАЮЩЕМ бинаре — сторож
@@ -349,11 +349,11 @@ if (mediaFiles.length > 0) {
 const triageResult = await agent(
   'Ты — mnemazina-triage (Сопиков, каталогизатор). Новые файлы инбокса (уже-обработанные исключены hash-кэшем):\n' +
   inboxFiles.join('\n') + '\n\n' +
-  'OCR-текст каждой картинки УЖЕ извлечён локально и лежит в ' + OCR_DIR + '/<имя файла>.txt.\n' +
-  'ТРАНСКРИПТ каждого видео/аудио УЖЕ извлечён локально (whisper) и лежит в ' + TRANSCRIPT_DIR + '/<имя файла>.txt.\n' +
-  '⛔ ЗАПРЕЩЕНО открывать сами .png/.webp/.jpg/.mov/.mp4 (дорого/невозможно). Содержание читай ТОЛЬКО из сайдкар-.txt через Read (дешёвый текст).\n\n' +
+  'OCR-текст каждой картинки УЖЕ извлечен локально и лежит в ' + OCR_DIR + '/<имя файла>.txt.\n' +
+  'ТРАНСКРИПТ каждого видео/аудио УЖЕ извлечен локально (whisper) и лежит в ' + TRANSCRIPT_DIR + '/<имя файла>.txt.\n' +
+  '⛔ ЗАПРЕЩЕНО открывать сами .png/.webp/.jpg/.mov/.mp4 (дорого/невозможно). Содержание читай ТОЛЬКО из сайдкар-.txt через Read (дешевый текст).\n\n' +
   '1. Сверься с ' + VAULT + '/99 Система/Лог обработки.md.\n' +
-  '2. Картинка → читай ' + OCR_DIR + '/<basename>.txt. Видео/аудио (type=video) → читай ' + TRANSCRIPT_DIR + '/<basename>.txt. Гипотезу/группировку строй по этому тексту, не по имени файла — имя часто врёт о содержании. Пустой .txt — штатный случай, не ошибка: classified reason=noise (нет текста/речи) или unreadable (битый). Разные видео = разные юниты, потому что юнит рождает одну ноту и склейка разных видео теряет темы.\n' +
+  '2. Картинка → читай ' + OCR_DIR + '/<basename>.txt. Видео/аудио (type=video) → читай ' + TRANSCRIPT_DIR + '/<basename>.txt. Гипотезу/группировку строй по этому тексту, не по имени файла — имя часто врет о содержании. Пустой .txt — штатный случай, не ошибка: classified reason=noise (нет текста/речи) или unreadable (битый). Разные видео = разные юниты, потому что юнит рождает одну ноту и склейка разных видео теряет темы.\n' +
   '3. Для каждого файла реши: часть юнита-знания или причина-исключение.\n' +
   '   Группируй серии (скрины одного поста/треда → один юнит — сверяй по OCR-тексту). Разные темы → разные юниты.\n' +
   '   Тип: screenshot|image|pdf|text|url|code|video|other. Причины: dup|noise|unreadable.\n' +
@@ -404,7 +404,7 @@ if (typeof process !== 'undefined' && process.env.MNEMAZINE_SKIP_GROUPS_FILE) {
     const skip = new Set(Array.isArray(skipGroups) ? skipGroups : [])
     const beforeSkip = tieredUnits.length
     tieredUnits = tieredUnits.filter(function (u) { return !skip.has(u.group_id) })
-    log('RESUME: пропускаю ' + (beforeSkip - tieredUnits.length) + ' уже завершённых групп; осталось ' + tieredUnits.length)
+    log('RESUME: пропускаю ' + (beforeSkip - tieredUnits.length) + ' уже завершенных групп; осталось ' + tieredUnits.length)
   } catch (err) {
     log('RESUME: не смог прочитать MNEMAZINE_SKIP_GROUPS_FILE, иду полным списком: ' + String(err && err.message ? err.message : err))
   }
@@ -417,7 +417,7 @@ const dag = {
   tasks: tieredUnits.map(function (u) {
     return { id: u.group_id, phase: 'Process', files: u.files, type: u.type, tier: u.tier, depends_on: ['Guard', 'Census', 'Triage'], write_scope: VAULT, status: 'planned' }
   }),
-  gates: ['## МАНИФЕСТ ПОЛНЫЙ ✓', '## ПОКРЫТИЕ ПОЛНОЕ ✓', '## АРХИВ РАЗРЕШЁН ✓']
+  gates: ['## МАНИФЕСТ ПОЛНЫЙ ✓', '## ПОКРЫТИЕ ПОЛНОЕ ✓', '## АРХИВ РАЗРЕШЕН ✓']
 }
 await agent(
   'Запиши DAG artifact Мнемозины через Write. Путь: ' + DAG_FILE + '\nJSON:\n' + JSON.stringify(dag, null, 2),
@@ -429,25 +429,25 @@ const processorPrompt = function (unit) {
   return 'Ты — mnemazina-processor (Ломоносов). Обработай один материал через стадии 2-5 Мнемозины.\n\n' +
     'MATERIAL_PATH: ' + unit.files.join(', ') + '\nTYPE: ' + unit.type + '\nTIER: ' + unit.tier +
     '\nGROUP_ID: ' + unit.group_id + '\nVAULT: ' + VAULT + '\n\n' +
-    'Стадия 2 Извлечение — извлекай локально до Claude, потому что сырьё в контексте жжёт токены без пользы:\n' +
-    '  PDF/DOCX/PPTX/XLSX/EPUB → `markitdown "<файл>"` (CLI) → markdown-текст. Сырьё/vision в контекст не грузи — markdown в разы дешевле.\n' +
-    '  screenshot/image → OCR-текст УЖЕ извлечён локально (Apple Vision) в ' + OCR_DIR + '/<имя файла>.txt. Прочитай этот .txt через Read. ⛔ НЕ открывай саму .png/.webp (дорогой vision). Только если .txt пуст/обрезан И TIER 3 (макс-точность) → разрешён фолбэк Read(vision) на картинку. НЕ ollama/llava.\n' +
+    'Стадия 2 Извлечение — извлекай локально до Claude, потому что сырье в контексте жжет токены без пользы:\n' +
+    '  PDF/DOCX/PPTX/XLSX/EPUB → `markitdown "<файл>"` (CLI) → markdown-текст. Сырье/vision в контекст не грузи — markdown в разы дешевле.\n' +
+    '  screenshot/image → OCR-текст УЖЕ извлечен локально (Apple Vision) в ' + OCR_DIR + '/<имя файла>.txt. Прочитай этот .txt через Read. ⛔ НЕ открывай саму .png/.webp (дорогой vision). Только если .txt пуст/обрезан И TIER 3 (макс-точность) → разрешен фолбэк Read(vision) на картинку. НЕ ollama/llava.\n' +
     '  URL → kb-fetch "<url>" (локальный каскад $0: markitdown для бинарников, trafilatura для HTML, кодировки чинит сам; exit 2 = needs_js → Playwright MCP/WebFetch; exit 3 = заблокировано → «источник недоступен», содержимое не выдумывать).\n' +
     '  video/audio → ТРАНСКРИПТ уже готов локально (whisper) в ' + TRANSCRIPT_DIR + '/<имя файла>.txt. Прочитай через Read. ⛔ НЕ открывай саму .mov/.mp4. Пустой транскрипт (нет речи) → outcome="noise". Иначе транскрипт = вход-семя → обогащай как текст (стадия 3).\n' +
     (embedReady
-      ? '⚡ Стадия 2.5 Пре-дедуп — до стадии 3, потому что дубль дешевле поймать до дорогого ресёрча: прогони извлечённое семя:\n' +
-        '  ' + EMBED_PY + ' "' + EMBED_SC + '" query "' + EMBED_IDX + '" "<первые ~400 симв извлечённого текста>" 3 ' + DUP_THRESHOLD + '\n' +
-        '  Матч top≥' + DUP_THRESHOLD + ' → прочитай совпавшую ноту. Та же суть → outcome="dup", note_path=совпавшая, стоп: стадию 3 не запускай (никакого Firecrawl) и новую ноту не пиши, потому что ресёрч дубля сжигает бюджет впустую. Разное/нет матча → продолжай на стадию 3.\n'
+      ? '⚡ Стадия 2.5 Пре-дедуп — до стадии 3, потому что дубль дешевле поймать до дорогого ресерча: прогони извлеченное семя:\n' +
+        '  ' + EMBED_PY + ' "' + EMBED_SC + '" query "' + EMBED_IDX + '" "<первые ~400 симв извлеченного текста>" 3 ' + DUP_THRESHOLD + '\n' +
+        '  Матч top≥' + DUP_THRESHOLD + ' → прочитай совпавшую ноту. Та же суть → outcome="dup", note_path=совпавшая, стоп: стадию 3 не запускай (никакого Firecrawl) и новую ноту не пиши, потому что ресерч дубля сжигает бюджет впустую. Разное/нет матча → продолжай на стадию 3.\n'
       : '') +
-    'Стадия 3 ИССЛЕДОВАНИЕ+ОБОГАЩЕНИЕ (только если НЕ дубль; извлечённое это ВХОД-СЕМЯ, не тело ноты):\n' +
-    '  1) Определи тему/сущность/URL из извлечённого. 2) Активно исследуй первоисточник: поиск — WebSearch (встроенный, бесплатный; рунет-темы дополняй kb-search --ru), чтение целевых URL — kb-fetch (локально, $0); recon→оцени→читай целевые. Firecrawl — только по явной команде владельца (кредиты), sgai удалён из конвейера. ' +
+    'Стадия 3 ИССЛЕДОВАНИЕ+ОБОГАЩЕНИЕ (только если НЕ дубль; извлеченное это ВХОД-СЕМЯ, не тело ноты):\n' +
+    '  1) Определи тему/сущность/URL из извлеченного. 2) Активно исследуй первоисточник: поиск — WebSearch (встроенный, бесплатный; рунет-темы дополняй kb-search --ru), чтение целевых URL — kb-fetch (локально, $0); recon→оцени→читай целевые. Firecrawl — только по явной команде владельца (кредиты), sgai удален из конвейера. ' +
     '3) Вытащи максимум из первоисточника: все разделы, цифры, примеры, тактики, связанные офиц.ресурсы. ' +
     '3b) Реальный опыт живых пользователей обязателен, потому что нота без практики — пересказ маркетинга: как этим реально пользуются (Reddit, HN, GitHub issues/discussions, профильные/рейтинговые сайты — Product Hunt, G2, отзывы, тематические форумы). Вытащи лайфхаки, баги, подводные камни, паттерны использования, за/против — с тред-URL. ' +
     '⚠ Фильтр сигнала: бери только реально обсуждаемое — живая дискуссия, много откликов/комментов/upvotes. Игнорируй разовые промо, анонсы, пресс-релизы, низко-сигнальные посты без обсуждения, потому что один голос без откликов — не опыт сообщества. Нет реального обсуждения → пометь «практик-опыт: не найдено живого обсуждения» — это честный штатный результат, не выдумывай. ' +
     'Нота строится из ИССЛЕДОВАННОГО, не из одного скрина. 4) Каждый блок фактов → пометь источник-URL; раздели из-первоисточника / из-опыта-юзеров / из-скрина / добавлено-агентом.\n' +
     '  ⚠ Обогащение обязательно для каждого юнита, потому что без него нота вырождается в подпись к скрину: даже крошечная зацепка (название тулзы, один скрин, обрывок) расширяется через WebSearch+kb-fetch до полного знания. Пропуск обогащения = брак — такая нота не отвечает на вопрос «как применить», ради которого база существует.\n' +
-    '  Антигаллюцинация: каждый добавленный факт ведёт к fetched-источнику (цитируй URL), и контент этого URL реально содержит факт — открой и сверь, потому что «ссылка живая» ≠ подтверждение (числа/даты/ID дословно, репо → GitHub API); скрин-текст один — лишь входной запрос. Глубина по TIER: 0/1 — обогащение обязательно (≥1 первоисточник) · 2 полное исследование · 3 (мед/юр/фин/спорное) глубокое, ≥2 источника, потому что там цена ошибки выше цены токенов. Ни один тир не пропускает обогащение.\n' +
-    '  verified: подтверждён|источник-не-найден|непроверяемо-методом|облако-недоступно.\n' +
+    '  Антигаллюцинация: каждый добавленный факт ведет к fetched-источнику (цитируй URL), и контент этого URL реально содержит факт — открой и сверь, потому что «ссылка живая» ≠ подтверждение (числа/даты/ID дословно, репо → GitHub API); скрин-текст один — лишь входной запрос. Глубина по TIER: 0/1 — обогащение обязательно (≥1 первоисточник) · 2 полное исследование · 3 (мед/юр/фин/спорное) глубокое, ≥2 источника, потому что там цена ошибки выше цены токенов. Ни один тир не пропускает обогащение.\n' +
+    '  verified: подтвержден|источник-не-найден|непроверяемо-методом|облако-недоступно.\n' +
     'Стадия 3.5 АТОМИЗАЦИЯ — обязательна для смешанных гайдов/транскриптов/лонгридов:\n' +
     '  Если в материале несколько независимых тем, верни atoms[] и не делай одну обзорную ноту — обзорная нота смешанного источника не находится ни по одной из тем. Один источник может породить 2-20 атомов.\n' +
     '  Каждый atom: stable atom_id, topic, section, target_note_hint, source_anchor, confidence, note_md. Классифицируй каждый atom отдельно по _ROUTING.md.\n' +
@@ -455,13 +455,13 @@ const processorPrompt = function (unit) {
     '  Не дроби механически каждый заголовок: дроби только при смене смысла/проекта/раздела.\n' +
     'Стадия 4 Классификация: читай _ROUTING.md в корне vault (нет там — 99 Система/_ROUTING.md), выбери уверенный раздел.\n' +
     (embedReady
-      ? 'Стадия 4.5 Семантический дедуп — до записи, потому что дубль в vault дороже ловить после: прогони извлечённый текст:\n' +
+      ? 'Стадия 4.5 Семантический дедуп — до записи, потому что дубль в vault дороже ловить после: прогони извлеченный текст:\n' +
         '  ' + EMBED_PY + ' "' + EMBED_SC + '" query "' + EMBED_IDX + '" "<первые ~400 симв сути>" 3 ' + DUP_THRESHOLD + '\n' +
         '  matches непустой (top≥' + DUP_THRESHOLD + ') → прочитай совпавшую ноту. Та же суть → outcome="dup", note_path=совпавшая, новую не создавай — дубль размывает поиск и графовые связи. Разное → пиши.\n'
       : '') +
     'Стадия 5 Огранка: читай _ШАБЛОНЫ.md + _ПРОЕКТЫ.md. Нота — полное знание-досье, а не подпись к скрину и не краткая справка. Исходник — seed; финал расширяет тему максимально полезно. Порядок блоков фиксирован по NOTE-SPEC, потому что агент режет чтение сверху: «Короткий ответ» (первым, 2-4 самодостаточных предложения — прочитавший только его уже может действовать) → «Механика» → «Применение» (команды/шаги/шаблон/конфиг) → «Примеры и контрпримеры» → «Ошибки и границы» → «Опыт практиков» (только с URL тредов/issues) → «🎯 Как это поможет мне» (по именам проектов из _ПРОЕКТЫ.md) → «Достоверность» (каждая строка самодостаточна: кто/когда/версия/URL; внутри подраздел «Рассмотрено и отклонено» — что проверялось и почему исключено) → «Связанные темы» (типизированные связи текстом: расширяет [[X]] · противоречит [[Y]] · предшествует [[Z]] · инструмент-для [[W]]) → «Следующий ход» (конкретное действие, не «изучить глубже»). Если тема типа «принцип Парето» — раскрыть не только 80/20, а происхождение, математику/power-law связь, бизнес-примеры, где правило НЕ работает, типичные ошибки применения, чек-лист использования и связанные концепции. Атом (тонкая нота) законен: блоки «Примеры и контрпримеры»/«Ошибки и границы»/«Опыт практиков» могут отсутствовать, но «Короткий ответ», «🎯 Как это поможет мне» и «Достоверность» обязательны всегда — без них нота не находится и не проходит ре-верификацию claim↔источник.\n\n' +
-    'Запиши ноту через Write (незаписанная нота = дыра покрытия и дорогой ретрай-раунд) в ' + VAULT + '/<раздел>/<дата> — <русский Заголовок>.md. Frontmatter по NOTE-SPEC: `type: <по содержанию: tool-card (инструмент/репо — тогда ещё repo/stars/license/risk) | concept | synthesis | decision | reference>`, `verified: <подтверждён | источник-не-найден | непроверяемо-методом | облако-недоступно>`, `source: local-media:' + String(hashOf[unit.files[0]] || '').slice(0, 16) + '`, `source_hash: ' + (hashOf[unit.files[0]] || '') + '`, `run_id: ' + RUN_ID + '`, `processor_model: codex-enriched`, `workflow: mnemosyne-mnemazina-pipeline`, `verification_status: verified-with-public-sources`, `status: final`.\n' +
-    'Также добавь во frontmatter YAML-блок `sources:` с двумя строками на каждый исходник группы — basename и local-media-ref: сверщик (mnemazina-reconciler) считает покрытие грепом basename по `source:`/`sources:`, а local-media:hash нужен для ре-верификации claim↔источник и hash-cache; нота без basename в `sources:` уйдёт в ретрай как провенанс-дыра:\nsources:\n' + unit.files.map(function (uf) { return '  - ' + base(uf) + '\n  - local-media:' + String(hashOf[uf] || '').slice(0, 16) }).join('\n') + '\n' +
+    'Запиши ноту через Write (незаписанная нота = дыра покрытия и дорогой ретрай-раунд) в ' + VAULT + '/<раздел>/<дата> — <русский Заголовок>.md. Frontmatter по NOTE-SPEC: `type: <по содержанию: tool-card (инструмент/репо — тогда еще repo/stars/license/risk) | concept | synthesis | decision | reference>`, `verified: <подтвержден | источник-не-найден | непроверяемо-методом | облако-недоступно>`, `source: local-media:' + String(hashOf[unit.files[0]] || '').slice(0, 16) + '`, `source_hash: ' + (hashOf[unit.files[0]] || '') + '`, `run_id: ' + RUN_ID + '`, `processor_model: codex-enriched`, `workflow: mnemosyne-mnemazina-pipeline`, `verification_status: verified-with-public-sources`, `status: final`.\n' +
+    'Также добавь во frontmatter YAML-блок `sources:` с двумя строками на каждый исходник группы — basename и local-media-ref: сверщик (mnemazina-reconciler) считает покрытие грепом basename по `source:`/`sources:`, а local-media:hash нужен для ре-верификации claim↔источник и hash-cache; нота без basename в `sources:` уйдет в ретрай как провенанс-дыра:\nsources:\n' + unit.files.map(function (uf) { return '  - ' + base(uf) + '\n  - local-media:' + String(hashOf[uf] || '').slice(0, 16) }).join('\n') + '\n' +
     'Материал — заявка `agent-research--<project>--<slug>.md` (боковая дверь агента) → frontmatter дополнительно: `type: agent-research`, `project: <project из имени файла>`, `agent: <кто заявил — из тела заявки; не указан → project>`, `claim_status: provisional`, потому что по NOTE-SPEC агентское знание рождается провизорным и смешивается с проверенным корпусом только операцией graduate.\n' +
     'Дубль существующей ноты → outcome="dup", note_path=путь. Смешанный материал → outcome="atoms" и заполненный atoms[]. Шум/нечитаемо → outcome="noise"/"unreadable". Видео с транскриптом → обрабатывается как текст ("note" или "atoms"); видео без речи → "noise"; транскрипт не получен → "deferred". Все эти исходы штатные, не ошибки — честный "noise"/"deferred" лучше выдуманной ноты. Иначе "note".\n\n' +
     'Верни JSON: { "group_id", "files": ' + JSON.stringify(unit.files) + ', "outcome", "section", "filename", ' +
@@ -505,7 +505,7 @@ const storeResult = await agent(
   })) + '\n\n' +
   'Для outcome="note": grep дубли в разделе; запиши .md (frontmatter с source: сохрани — по нему сверщик находит покрытие файла); wikilinks.\n' +
   'Для outcome="atoms": обрабатывай каждый atom отдельно, потому что атомы уходят в разные ноты и разделы. Если target_note_hint/grep показывает существующую ноту — вставь/обнови managed block `<!-- MNEMOZINA_ATOM_START <atom_id> --> ... <!-- MNEMOZINA_ATOM_END <atom_id> -->`; если подходящей ноты нет — создай отдельную ноту atom.section/atom.target_note_hint. Не плодить обзорную ноту смешанного источника.\n' +
-  'Стадия 7 (батчем): обнови _Содержание.md, _МАСТЕР-ИНДЕКС.md (пересчёт), _ROUTING.md, Лог обработки.md.\n' +
+  'Стадия 7 (батчем): обнови _Содержание.md, _МАСТЕР-ИНДЕКС.md (пересчет), _ROUTING.md, Лог обработки.md.\n' +
   'Не делай mv и не запускай graphify — это отдельные финальные фазы конвейера, их запуск отсюда задвоит работу. Верни JSON: { "stored": ["путь"], "merged": [], "new_sections": [], "errors": [] }',
   {
     label: 'store', phase: 'Store', agentType: 'mnemazina-librarian', model: modelForRole('store'),
@@ -518,7 +518,7 @@ const storeResult = await agent(
 )
 
 // ========== ГЕЙТ КАЧЕСТВА НОТ (NOTE-SPEC): после Store, до Reconcile ==========
-// Провал ноты = её источники уходят в дыры ретрая (та же механика, что провенанс-дыры), не в раздел:
+// Провал ноты = ее источники уходят в дыры ретрая (та же механика, что провенанс-дыры), не в раздел:
 // пожелание шаблона исполняется вероятностно, а код-гейт всегда (docs/NOTE-SPEC.md проекта mnemazine).
 const storedNotes = (storeResult && storeResult.stored) ? storeResult.stored : []
 const gateSince = NOW || runDate || ''
@@ -574,8 +574,8 @@ let recon = await agent(reconcilePrompt(), {
 // ПОЛНОЕ ✓» с unaccounted=0, тогда как на диске файл tmpImage_8B654E2A-….JPG не имел ни ноты, ни
 // сайдкара, ни записи причины — и при этом прекрасно читался Apple Vision. Сверщик — LLM, которая сама
 // грепает и сама выносит вердикт по своему грепу (в том же прогоне она чинила собственный баг грепа
-// по ходу проверки). Подсчёт покрытия — не суждение, а греп, значит его место в коде с кодом возврата.
-// Список дыр берём из скрипта; LLM-сверщик остаётся для КЛАССИФИКАЦИИ причины, но перекрыть код не может.
+// по ходу проверки). Подсчет покрытия — не суждение, а греп, значит его место в коде с кодом возврата.
+// Список дыр берем из скрипта; LLM-сверщик остается для КЛАССИФИКАЦИИ причины, но перекрыть код не может.
 async function codeCoverageGate(tag) {
   const r = childProcess.spawnSync(process.execPath, [
     'scripts/mnemazine-coverage-check.mjs',
@@ -595,7 +595,7 @@ async function codeCoverageGate(tag) {
 function mergeCodeGaps(list, codeGaps) {
   codeGaps.forEach(function (f) {
     if (list.indexOf(f) === -1) {
-      log('⚠ КОД-ГЕЙТ нашёл дыру, которую сверщик не назвал: ' + base(f))
+      log('⚠ КОД-ГЕЙТ нашел дыру, которую сверщик не назвал: ' + base(f))
       list.push(f)
     }
   })
@@ -607,8 +607,8 @@ qualityFailedFiles.forEach(function (f) { if (unaccounted.indexOf(f) === -1) una
 
 if (unaccounted.length > 0) {
   // Раздели дыры: ПРОВЕНАНС-дыра (файл из юнита, чья группа УЖЕ дала ноту — нота просто не перечислила его в sources:)
-  // vs НАСТОЯЩАЯ дыра-знание (группа ноты не дала). Провенанс чиним дёшево патчем frontmatter; настоящую — Sonnet-ресёрчем.
-  // Quality-провал имеет ноту, но браковую — sources-патч её не чинит, поэтому он всегда настоящая дыра.
+  // vs НАСТОЯЩАЯ дыра-знание (группа ноты не дала). Провенанс чиним дешево патчем frontmatter; настоящую — Sonnet-ресерчем.
+  // Quality-провал имеет ноту, но браковую — sources-патч ее не чинит, поэтому он всегда настоящая дыра.
   const notePathByFile = {}
   tieredUnits.forEach(function (u) {
     const res = processResults.find(function (r) { return r && r.group_id === u.group_id && r.outcome === 'note' })
@@ -617,9 +617,9 @@ if (unaccounted.length > 0) {
   const provenanceGaps = unaccounted.filter(function (f) { return notePathByFile[base(f)] && qualityFailedFiles.indexOf(f) === -1 })
   const realGaps = unaccounted.filter(function (f) { return !notePathByFile[base(f)] || qualityFailedFiles.indexOf(f) !== -1 })
   if (provenanceGaps.length > 0) {
-    log('ГЕЙТ 2: ' + provenanceGaps.length + ' провенанс-дыр (группа дала ноту, sources: неполон) → дешёвый патч frontmatter (haiku), БЕЗ ре-ресёрча')
+    log('ГЕЙТ 2: ' + provenanceGaps.length + ' провенанс-дыр (группа дала ноту, sources: неполон) → дешевый патч frontmatter (haiku), БЕЗ ре-ресерча')
     await agent(
-      'Чистая механика, БЕЗ ресёрча и без новых нот. Для каждой пары {file → note} добавь basename файла в frontmatter-блок `sources:` указанной ноты (создай поле `sources:` списком «  - <basename>», если его ещё нет; не дублируй строки). Этим файл считается покрытым — он уже отражён в этой ноте.\nПАРЫ:\n' + provenanceGaps.map(function (f) { return base(f) + ' → ' + (notePathByFile[base(f)] || '') }).join('\n') + '\nВерни { "patched": N }.',
+      'Чистая механика, БЕЗ ресерча и без новых нот. Для каждой пары {file → note} добавь basename файла в frontmatter-блок `sources:` указанной ноты (создай поле `sources:` списком «  - <basename>», если его еще нет; не дублируй строки). Этим файл считается покрытым — он уже отражен в этой ноте.\nПАРЫ:\n' + provenanceGaps.map(function (f) { return base(f) + ' → ' + (notePathByFile[base(f)] || '') }).join('\n') + '\nВерни { "patched": N }.',
       { label: 'patch-sources', phase: 'Reconcile', agentType: 'mnemazina-librarian', model: 'haiku',
         schema: { type: 'object', properties: { patched: { type: 'number' } } } }
     )
@@ -635,7 +635,7 @@ if (unaccounted.length > 0) {
           'Скрин/картинка → OCR локально: `"' + OCR_BIN + '" "' + f + '"` (Apple Vision, 0 токенов). Пусто/мусор → Read(vision) — в ретрае это допустимый последний шанс. Не ollama/llava: галлюцинирует.\n' +
           'Извлеки контент (это вход-семя, не тело ноты), исследуй первоисточник (WebSearch → чтение URL через kb-fetch; kb-search как фолбэк поиска) и собери максимум по теме, классифицируй (читай ' + VAULT + '/_ROUTING.md — реестр лежит в корне vault), ' +
           'запиши ноту через Write в ' + VAULT + '/<раздел>/' + (runDate || '2026-01-01') + ' — <Заголовок>.md ' +
-          'с обязательным `source: ' + sourceRef + '`' + (sourceHash ? ', `source_hash: ' + sourceHash + '`' : '') + ', `sources: ["' + base(f) + '"' + (sourceHash ? ', "' + sourceRef + '"' : '') + ']` (basename обязателен — сверщик считает покрытие грепом basename) + блоком «Как помогает мне». Нота этого источника уже существует, но провалила гейт NOTE-SPEC → перепиши её по NOTE-SPEC тем же путём, вторую не плоди. Видео/аудио → локальная транскрипция whisper (0 токенов) или deferred — это штатный исход, не ошибка. ' +
+          'с обязательным `source: ' + sourceRef + '`' + (sourceHash ? ', `source_hash: ' + sourceHash + '`' : '') + ', `sources: ["' + base(f) + '"' + (sourceHash ? ', "' + sourceRef + '"' : '') + ']` (basename обязателен — сверщик считает покрытие грепом basename) + блоком «Как помогает мне». Нота этого источника уже существует, но провалила гейт NOTE-SPEC → перепиши ее по NOTE-SPEC тем же путем, вторую не плоди. Видео/аудио → локальная транскрипция whisper (0 токенов) или deferred — это штатный исход, не ошибка. ' +
           'Финальный ответ — только путь записанной ноты.',
           { label: 'retry-' + base(f), phase: 'Reconcile', model: 'sonnet' }
         )
@@ -659,21 +659,21 @@ log(coverageFull ? '## ПОКРЫТИЕ ПОЛНОЕ ✓' : '## ПОКРЫТИЕ
 
 // ========== ГЕЙТ 3: АРХИВ + запись hash-кэша ==========
 phase('Archive')
-// архивируем учтённые новые + cached (они уже обработаны ранее)
+// архивируем учтенные новые + cached (они уже обработаны ранее)
 const accountedNew = inboxFiles.filter(function (f) { return unaccounted.indexOf(f) === -1 })
 const toArchive = accountedNew.concat(cachedFiles)
-// archiveVerified остаётся null, когда архивировать нечего, и числом — когда мера была снята.
+// archiveVerified остается null, когда архивировать нечего, и числом — когда мера была снята.
 let archiveVerified = null
 if (toArchive.length > 0) {
   await agent(
-    'Ты — mnemazina-librarian, ГЕЙТ-3. Перемести (mv) ТОЛЬКО эти учтённые исходники в архив ' + archiveDir + ':\n' +
-    toArchive.join('\n') + '\n\nФайлы НЕ из списка — НЕ трогай: файл вне списка — непокрытая дыра, и mv спрятал бы её от следующего прогона. mkdir -p "' + archiveDir + '"; mv каждый. Верни { "archived": N }.',
+    'Ты — mnemazina-librarian, ГЕЙТ-3. Перемести (mv) ТОЛЬКО эти учтенные исходники в архив ' + archiveDir + ':\n' +
+    toArchive.join('\n') + '\n\nФайлы НЕ из списка — НЕ трогай: файл вне списка — непокрытая дыра, и mv спрятал бы ее от следующего прогона. mkdir -p "' + archiveDir + '"; mv каждый. Верни { "archived": N }.',
     { label: 'archive', phase: 'Archive', agentType: 'mnemazina-librarian', model: 'haiku',
       schema: { type: 'object', properties: { archived: { type: 'number' } } } }
   )
-  // ЗАМЕР, а не отчёт (2026-07-25): прогон вернул archived=73 и маркер «АРХИВ РАЗРЕШЁН ✓», тогда как в
+  // ЗАМЕР, а не отчет (2026-07-25): прогон вернул archived=73 и маркер «АРХИВ РАЗРЕШЕН ✓», тогда как в
   // инбоксе осталось 72 из 73 файлов — маркер был литералом в коде, а число пришло от агента о самом себе.
-  // Считаем то, что реально осталось лежать: сколько из toArchive ещё в инбоксе.
+  // Считаем то, что реально осталось лежать: сколько из toArchive еще в инбоксе.
   archiveVerified = fsMod.readdirSync(INBOX, { withFileTypes: true })
     .filter(function (entry) { return entry.isFile() && !entry.name.startsWith('.') })
     .length
@@ -681,7 +681,7 @@ if (toArchive.length > 0) {
     log('⚠ ГЕЙТ 3: в инбоксе осталось ' + archiveVerified + ' записей при ' + unaccounted.length + ' дырах — архивация НЕ отработала, разбирать руками.')
   }
 }
-// hash-cache: запиши хэши новых учтённых нот-файлов → следующий прогон их скипнет за 0 токенов
+// hash-cache: запиши хэши новых учтенных нот-файлов → следующий прогон их скипнет за 0 токенов
 const hashPayload = accountedNew.map(function (f) { return { hash: hashOf[f] || '', file: base(f) } }).filter(function (x) { return x.hash })
 if (hashPayload.length > 0) {
   await agent(
@@ -718,7 +718,7 @@ const graphRes = await agent(
   { label: 'graphify', phase: 'Graphify', model: 'haiku',
     schema: { type: 'object', properties: { graph: { type: 'string' } } } }
 )
-log('## ГРАФ ОБНОВЛЁН ✓ — ' + ((graphRes && graphRes.graph) || 'skip') + ' (память Мнемозины, авточистка шаблонов)')
+log('## ГРАФ ОБНОВЛЕН ✓ — ' + ((graphRes && graphRes.graph) || 'skip') + ' (память Мнемозины, авточистка шаблонов)')
 
 // Обязательные код-шаги финала: core-индексы + --check гейт + lint catch-up 36ч (ночное расписание
 // могло не сработать — догоняем при ближайшем запуске). graphify не дублируем — прогнан агентом выше.
@@ -750,7 +750,7 @@ const MZ_RESOLVE =
   'case "$c" in *.mjs) node "$c" "$@";; *) "$c" "$@";; esac; return $?; ' +
   'done; echo "MZ_NOT_FOUND:$n" >&2; return 127; }; '
 
-// ---------- ВИЗУАЛЬНЫЙ POST-RUN ОТЧЁТ (Apple-light, Emil Kowalski design contract) ----------
+// ---------- ВИЗУАЛЬНЫЙ POST-RUN ОТЧЕТ (Apple-light, Emil Kowalski design contract) ----------
 phase('VisualReport')
 const reportPayload = processResults.map(function (r) {
   return {
@@ -767,8 +767,8 @@ const reportPayload = processResults.map(function (r) {
   }
 })
 const visualReport = await agent(
-  'Финал Мнемозины — создай светлый Apple-style визуальный отчёт знаний после прогона: схема кластеров → ноты → малые атомы, плюс топ-20 действий. ' +
-  'Дизайн-контракт: Emil Kowalski, Apple-light, тихая типографика, 8px radius, без тяжёлых градиентов/теней, prefers-reduced-motion.\n' +
+  'Финал Мнемозины — создай светлый Apple-style визуальный отчет знаний после прогона: схема кластеров → ноты → малые атомы, плюс топ-20 действий. ' +
+  'Дизайн-контракт: Emil Kowalski, Apple-light, тихая типографика, 8px radius, без тяжелых градиентов/теней, prefers-reduced-motion.\n' +
   'Выполни bash без TTY:\n' +
   MZ_RESOLVE +
   'TMP="/tmp/mnemazine-postrun-' + RUN_ID + '.json"; cat > "$TMP" <<\\JSON\n' +
@@ -788,7 +788,7 @@ const visualReport = await agent(
       error: { type: 'string' }
     } } }
 )
-log('## ВИЗУАЛЬНЫЙ ОТЧЁТ ГОТОВ ✓ — ' + ((visualReport && visualReport.html) || 'не создан'))
+log('## ВИЗУАЛЬНЫЙ ОТЧЕТ ГОТОВ ✓ — ' + ((visualReport && visualReport.html) || 'не создан'))
 
 // ---------- БРИФИНГ ПРИМЕНИМОСТИ (финал после графа, local-first, 0 LLM-токенов) ----------
 // Общий слой для Claude и Codex: читает свежие ноты по run_id, ранжирует под проекты,

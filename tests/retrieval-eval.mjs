@@ -5,7 +5,7 @@
 // Ожидания зафиксированы ДО первого прогона (2026-07-25): промах — легитимный
 // замер качества поиска, вопросы под ответы не подгоняются.
 // tests/search-eval.mjs меряет синтетический фикстур-vault; этот — живой личный vault,
-// поэтому кейс, чьё ожидание исчезло из корпуса (нота уехала/переименована),
+// поэтому кейс, чье ожидание исчезло из корпуса (нота уехала/переименована),
 // валит прогон fail-loud до замера — протухший замер хуже отсутствующего.
 //   node tests/retrieval-eval.mjs [--vault <p>] [--index <p>] [--python <bin>]
 //        [--kb-embed <p>] [--limit <n>] [--report <out.md>] [--baseline <json>]
@@ -23,7 +23,7 @@ const SPAWN_TIMEOUT_MS = 900_000 // rerank грузит кросс-энкоде�
 const MAX_BUF = 64 * 1024 * 1024
 
 // Ожидание = подстроки basename (lowercase, NFC); хит, если ЛЮБАЯ нота топ-7
-// несёт ЛЮБУЮ из них. Несколько подстрок — только когда в vault несколько
+// несет ЛЮБУЮ из них. Несколько подстрок — только когда в vault несколько
 // легитимно правильных нот про то же самое, не для смягчения замера.
 // Questions live outside the code: they are personal by nature — what YOU need to
 // find in YOUR vault. Copy tests/fixtures/retrieval-questions.example.json to
@@ -145,12 +145,12 @@ function buildReport({ results, corpusSize, indexSize, index, rerankMethod, hits
   }
   const gain = hits.rerank - hits.query
   const verdict = gain > 0
-    ? `Реранк ДАЁТ прирост над query: +${gain} (query ${hits.query}/${n} → rerank ${hits.rerank}/${n}).`
+    ? `Реранк ДАЕТ прирост над query: +${gain} (query ${hits.query}/${n} → rerank ${hits.rerank}/${n}).`
     : gain === 0
       ? `Реранк НЕ меняет hit@7 (query ${hits.query}/${n} = rerank ${hits.rerank}/${n}).`
       : `Реранк УХУДШАЕТ hit@7: ${gain} (query ${hits.query}/${n} → rerank ${hits.rerank}/${n}).`
   const compare = baseline
-    ? `Сравнимо с базой ${baseline.date}: ДА, набор вопросов сохранён. Старые числа: rg ${baseline.rg}/${baseline.n} · query ${baseline.query}/${baseline.n} · rerank ${baseline.rerank}/${baseline.n}. Новые числа: rg ${hits.rg}/${n} · query ${hits.query}/${n} · rerank ${hits.rerank}/${n}.`
+    ? `Сравнимо с базой ${baseline.date}: ДА, набор вопросов сохранен. Старые числа: rg ${baseline.rg}/${baseline.n} · query ${baseline.query}/${baseline.n} · rerank ${baseline.rerank}/${baseline.n}. Новые числа: rg ${hits.rg}/${n} · query ${hits.query}/${n} · rerank ${hits.rerank}/${n}.`
     : 'Сравнимо с базой 25.07: НЕТ — baseline-файл не передан.'
   const nextMetric = 'Метрика следующего поколения зафиксирована до этого замера: hit@fragment@7 — найден точный фрагмент ответа внутри ноты, а не только basename ноты. В П14 не включается, чтобы не ломать сравнимость с 25.07.'
   const queryReview = 'Рецензия запросов перед замером: 20 формулировок сверены с живым корпусом через fail-loud проверку ожиданий; вопросы не подгонялись под ответы.'

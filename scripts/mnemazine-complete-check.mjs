@@ -21,12 +21,12 @@ const NEEDS_UPDATE_MAX_DAYS = Number(arg('needs-update-max-days', process.env.MN
 const STRICT_GRAPH = argv.includes('--strict-graph')
 const REQUIRE_DEEP = argv.includes('--require-deep') || process.env.MNEMAZINE_REQUIRE_DEEP === '1'
 // Удаление протухшего маркера графа — только по этому явному флагу.
-// Без него маркер остаётся на месте и ложится в warnings/failures (план П08).
+// Без него маркер остается на месте и ложится в warnings/failures (план П08).
 const PRUNE_GRAPH_MARKER = argv.includes('--prune-graph-marker')
 
 if (argv.includes('--help')) {
-  console.log(`mnemazine-complete-check.mjs — сводный гейт «конвейер завершён честно»:
-инбокс пуст, coverage/качество/отчёт/человеческий слой зелёные, маркер графа учтён.
+  console.log(`mnemazine-complete-check.mjs — сводный гейт «конвейер завершен честно»:
+инбокс пуст, coverage/качество/отчет/человеческий слой зеленые, маркер графа учтен.
 
 Использование: node scripts/mnemazine-complete-check.mjs [флаги]
   --vault <путь>             корпус (иначе MNEMAZINE_VAULT, last-run.vault или repo-local vault)
@@ -37,7 +37,7 @@ if (argv.includes('--help')) {
                              (по умолчанию НИЧЕГО не удаляется — только verdict)
   --help                     эта справка
 
-Коды возврата: 0 — все проверки зелёные; 1 — есть failures или ошибка.`)
+Коды возврата: 0 — все проверки зеленые; 1 — есть failures или ошибка.`)
   process.exit(0)
 }
 
@@ -155,12 +155,12 @@ async function main() {
   if (!quality.ok) failures.push(`vault quality failed: ${quality.stderr || quality.stdout}`)
 
   // Потолок провалов спеки в продовом пути (план П06 шаг 6): гейт --spec виден
-  // приёмке, а не только вручную. Ненулевой код прибора потолка → в failures.
+  // приемке, а не только вручную. Ненулевой код прибора потолка → в failures.
   const specCeilingFile = path.join(STATE, 'spec-ceiling.json')
   if (!existsSync(specCeilingFile)) {
     // Свежая установка: потолок спеки — per-machine runtime (план П16, .mnemazine/state
     // gitignored), на чистом клоне его нет и сравнивать не с чем. Это «нет данных», а не
-    // провал: ratchet без базы — no-op. doctor распознаёт эту строку как no-data (degraded, не fatal).
+    // провал: ratchet без базы — no-op. doctor распознает эту строку как no-data (degraded, не fatal).
     failures.push('spec ceiling has no baseline yet')
   } else {
     const specCeiling = await run(process.execPath, ['scripts/mnemazine-spec-ceiling.mjs', '--check', '--vault', VAULT, '--ceiling', specCeilingFile], gateEnv)

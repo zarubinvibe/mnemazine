@@ -3,17 +3,17 @@
 //
 // Коды выхода (мастер §4):
 //   0 — контракт жив: граф на месте и свежее последней ноты, MCP-сервер стартует и отвечает,
-//       канал заявок жив, зомби-задач нет, ответ сервера несёт поле subject (§18.4).
+//       канал заявок жив, зомби-задач нет, ответ сервера несет поле subject (§18.4).
 //   1 — любое звено мертво.
 //   2 — граф не найден (отличаем «нет графа» от «звено мертво» — враждебная проба П18).
 //
 // Живой vault: MNEMAZINE_VAULT → --vault → резолвер (личный vault по rules/structure.md).
-// Путь к графу берётся из шаблона config/mcp-vault.json и ВЫЧИСЛЯЕТСЯ из MNEMAZINE_VAULT,
+// Путь к графу берется из шаблона config/mcp-vault.json и ВЫЧИСЛЯЕТСЯ из MNEMAZINE_VAULT,
 // а не зашит — иначе шаблон протухнет на чужой машине.
 //
 // Флаги:
 //   --fix-config <path>   привести шаблон mcp-vault.json к вычисляемому пути (идемпотентно)
-//   --reap-stale-tasks    зомби: status:running при мёртвом PID → stale, код 1
+//   --reap-stale-tasks    зомби: status:running при мертвом PID → stale, код 1
 //   --require-channel-proof  дополнительно требовать живой заявки, прошедшей воронку инбокса
 //   --json                машинный вывод
 import { parseArgs } from 'node:util'
@@ -46,7 +46,7 @@ function expandPath(raw, vault) {
     .replace(/^~(?=\/)/, HOME)
 }
 
-/** Достаёт последний аргумент (путь к графу) из шаблона mcp-vault.json. */
+/** Достает последний аргумент (путь к графу) из шаблона mcp-vault.json. */
 function templateGraphArg() {
   const j = JSON.parse(readFileSync(CONFIG_TEMPLATE, 'utf8'))
   const args = j?.mcpServers?.['vault-graph']?.args
@@ -85,7 +85,7 @@ function mcpProbe(graphPath) {
         if (init.error) return finish({ alive: false, reason: `initialize: ${JSON.stringify(init.error)}` })
         notify('notifications/initialized', {})
         const tools = (await send('tools/list', {})).result?.tools?.map(t => t.name) || []
-        // god_nodes даёт гарантированно существующий label → get_node на нём проверяет контракт subject.
+        // god_nodes дает гарантированно существующий label → get_node на нем проверяет контракт subject.
         const god = await send('tools/call', { name: 'god_nodes', arguments: { top_n: 1 } })
         const godText = (god.result?.content || []).map(c => c.text).join('\n')
         const label = (godText.match(/\d+\.\s+(.+?)\s+-\s+\d+\s+edges/) || [])[1] || ''
@@ -131,7 +131,7 @@ function reapStaleTasks() {
   try { t = JSON.parse(readFileSync(SEMANTIC_TASK, 'utf8')) } catch { return { zombie: true, reaped: false, note: 'нечитаемый json' } }
   if (t.status !== 'running') return { zombie: false, reaped: false, status: t.status }
   if (pidAlive(t.pid)) return { zombie: false, reaped: false, status: 'running', pid: t.pid }
-  const next = { ...t, status: 'stale', running: false, reaped_at: new Date().toISOString(), reaped_reason: `pid ${t.pid} мёртв при status:running` }
+  const next = { ...t, status: 'stale', running: false, reaped_at: new Date().toISOString(), reaped_reason: `pid ${t.pid} мертв при status:running` }
   writeFileSync(SEMANTIC_TASK, JSON.stringify(next, null, 2) + '\n')
   return { zombie: true, reaped: true, pid: t.pid }
 }
@@ -210,14 +210,14 @@ async function run({ vault: cliVault, requireChannelProof, json }) {
   const z = reapStaleTasks()
   add('no_zombie', !z.zombie, z)
 
-  // Звено 4+5: сервер стартует, отвечает, и ответ несёт поле subject (§18.4).
+  // Звено 4+5: сервер стартует, отвечает, и ответ несет поле subject (§18.4).
   const probe = await mcpProbe(graphPath)
   add('server_alive', probe.alive, { serverInfo: probe.serverInfo, tools: probe.tools, reason: probe.reason, stderr: probe.stderr })
   add('subject_contract', probe.alive ? probe.hasSubject : false, {
     probeLabel: probe.probeLabel,
     hasSubject: probe.hasSubject,
     note: probe.alive && !probe.hasSubject
-      ? 'ответ get_node не несёт поля Subject: серверный шаблон graphify 1.8.1 его не отдаёт и граф не хранит subject на узлах — §18.4 не замкнуто'
+      ? 'ответ get_node не несет поля Subject: серверный шаблон graphify 1.8.1 его не отдает и граф не хранит subject на узлах — §18.4 не замкнуто'
       : undefined,
   })
 
@@ -246,7 +246,7 @@ async function selftest() {
   eq(expandPath('$MNEMAZINE_VAULT/g.json', '/V'), '/V/g.json')
   eq(expandPath('~/vault-dir/g.json', 'x'), path.join(HOME, 'vault-dir/g.json'))
   eq(pidAlive(process.pid), true)     // сам процесс жив
-  eq(pidAlive(2 ** 31 - 1), false)    // невозможный pid мёртв
+  eq(pidAlive(2 ** 31 - 1), false)    // невозможный pid мертв
   eq(pidAlive(0), false)
   ok(templateGraphArg().includes('MNEMAZINE_VAULT'), 'шаблон вычисляем из MNEMAZINE_VAULT')
   ok(!templateGraphArg().includes(STUB), 'в шаблоне нет заглушки')
@@ -275,7 +275,7 @@ async function main() {
   }
   if (v['reap-stale-tasks']) {
     const r = reapStaleTasks()
-    console.log(v.json ? JSON.stringify(r) : (r.zombie ? `зомби ${r.reaped ? 'снят' : 'найден'}: pid ${r.pid} — ${r.note || 'status:running при мёртвом pid'}` : `зомби-задач нет (${r.status || r.note || 'ok'})`))
+    console.log(v.json ? JSON.stringify(r) : (r.zombie ? `зомби ${r.reaped ? 'снят' : 'найден'}: pid ${r.pid} — ${r.note || 'status:running при мертвом pid'}` : `зомби-задач нет (${r.status || r.note || 'ok'})`))
     return r.zombie ? 1 : 0
   }
   return run({ vault: v.vault, requireChannelProof: v['require-channel-proof'], json: v.json })

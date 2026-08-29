@@ -1,8 +1,8 @@
 #!/usr/bin/env node
-// Проверка, что проверки живы (план П11, приём 34 — молчание конвейера ≠ исправность).
+// Проверка, что проверки живы (план П11, прием 34 — молчание конвейера ≠ исправность).
 //
 //  - реестр checks из mnemazine-release-check.mjs печатается и сверяется: каждая
-//    зарегистрированная проверка ссылается на определённую функцию, и каждый новый скрипт
+//    зарегистрированная проверка ссылается на определенную функцию, и каждый новый скрипт
 //    волны 2 (пять мета-приборов П11; model-pin — когда П09 закрыт) зарегистрирован;
 //  - задания launchd com.mnemazine.*: последний код возврата из launchctl list; состояние в
 //    .mnemazine/state/checks-inventory.json с first_red_at; красным становится задание,
@@ -10,7 +10,7 @@
 //  - стык с П01: он выгружает задания на время работ. При .mnemazine/state/rebuild/П01.done.json
 //    без restored:true отсутствие задания — quarantined, не провал; после restored:true — провал.
 //
-// Коды: 0 — всё живо; 1 — мёртвая ссылка/незарегистрированный прибор/задание красное дольше N
+// Коды: 0 — все живо; 1 — мертвая ссылка/незарегистрированный прибор/задание красное дольше N
 // дней/пропавшее задание вне карантина; 2 — ноль найденных проверок в реестре.
 
 import { existsSync, readFileSync, writeFileSync, mkdirSync } from 'node:fs'
@@ -37,7 +37,7 @@ function evaluateRegistry(source, required) {
     const [, name, fn] = m
     names.push(name)
     const defined = new RegExp(`(?:async\\s+)?function\\s+${fn}\\b|const\\s+${fn}\\s*=`).test(source)
-    if (!defined) failures.push(`проверка '${name}' ссылается на неопределённую функцию ${fn}`)
+    if (!defined) failures.push(`проверка '${name}' ссылается на неопределенную функцию ${fn}`)
   }
   if (names.length === 0) return { code: 2, names, failures: ['ноль найденных проверок в реестре'] }
   for (const r of required) if (!names.includes(r)) failures.push(`прибор волны 2 не зарегистрирован в release-check: ${r}`)
@@ -169,7 +169,7 @@ function selftest() {
   // Красный кролик: реестр без обязательного прибора обязан покраснеть.
   const fake = "const checks = [\n  ['syntax', checkSyntax],\n]\nfunction checkSyntax(){}\n"
   const r = evaluateRegistry(fake, REQUIRED_WAVE2)
-  if (r.code === 0) { console.error('selftest FAILED: реестр без мета-приборов прошёл зелёным'); return 1 }
+  if (r.code === 0) { console.error('selftest FAILED: реестр без мета-приборов прошел зеленым'); return 1 }
   console.log('selftest ok: незарегистрированный прибор волны 2 краснит')
   return 0
 }

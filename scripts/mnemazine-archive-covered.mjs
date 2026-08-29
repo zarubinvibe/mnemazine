@@ -48,7 +48,7 @@ function addSourceValues(raw, out) {
 }
 
 // Provenance именованного файла (PDF/DOCX/…) — basename в `source:`/`sources:` frontmatter,
-// а не local-media-хэш скриншота. Без этого гейт не видит покрытие и не даёт архивировать.
+// а не local-media-хэш скриншота. Без этого гейт не видит покрытие и не дает архивировать.
 export function sourceBasenames(text) {
   const out = new Set()
   if (!text.startsWith('---')) return out

@@ -11,10 +11,10 @@
 //      отслеживаемые файлы одной ветки (untracked/ignored — нет по построению; file://,
 //      а не путь, чтобы --local не подтянул лишнее хардлинками). Это честная модель пуша.
 //   3. Ставит install.sh в ИЗОЛИРОВАННОМ $HOME двумя проходами: полный (реальные python-deps,
-//      MNEMAZINE_REQUIRE_PYTHON_DEPS=1 — соберётся ли окружение у постороннего) и быстрый
+//      MNEMAZINE_REQUIRE_PYTHON_DEPS=1 — соберется ли окружение у постороннего) и быстрый
 //      (MNEMAZINE_SKIP_DEPS=1 — идемпотентность). launchd не трогается (без --with-schedule).
 //   4. Идемпотентность: sha256(.mnemazine/config.json) совпадает между прогонами;
-//      .mnemazine/config.local.sh не тронут вторым прогоном (единственный защищённый файл).
+//      .mnemazine/config.local.sh не тронут вторым прогоном (единственный защищенный файл).
 //   5. doctor + release-check из клона с vault, который положил сам установщик → 0.
 //      Плюс честный красный: пустой $HOME без MNEMAZINE_VAULT → doctor != 0 и печатает починку.
 //   6. Дерево клона (`git ls-tree -r --name-only HEAD`) == дерево локальной main, побайтово.
@@ -22,7 +22,7 @@
 //   7. Пишет черновик маркера П22-readiness.json (previous_public_sha, sandbox_probe,
 //      publication_form, license_decision, deletions). Сам маркер .done.json пишет rebuild-gate.
 //
-// Прибор физически не умеет публиковать: команд сетевой записи в удалённый репозиторий
+// Прибор физически не умеет публиковать: команд сетевой записи в удаленный репозиторий
 // в файле нет вовсе — враждебная проба 3 грепает их сигнатуры и обязана дать «не найдено».
 // Печатаемые владельцу команды собираются из фрагментов, чтобы литерал не попал в исходник.
 //
@@ -57,8 +57,8 @@ function git(args, cwd = REPO) {
   return r.status === 0 ? (r.stdout || '').replace(/\n$/, '') : null
 }
 
-// Тёплый pip-cache реального пользователя, чтобы полный проход не тянул torch холодным ~1.1 ГБ.
-// Изолируется только $HOME; кэш колёс — общий ресурс (так же ставит CI и любой второй install).
+// Теплый pip-cache реального пользователя, чтобы полный проход не тянул torch холодным ~1.1 ГБ.
+// Изолируется только $HOME; кэш колес — общий ресурс (так же ставит CI и любой второй install).
 function realPipCacheDir() {
   if (process.env.PIP_CACHE_DIR) return process.env.PIP_CACHE_DIR
   const home = os.homedir()
@@ -126,7 +126,7 @@ function main() {
     // 5a. release-check из клона → 0; doctor из клона → не fatal.
     const withVault = { cwd: clone, home, env: baseEnv }
     // doctor — пост-run монитор. Свежая установка без живого прогона конвейера легитимно
-    // «ещё не прогонял» → degraded (2) с командами починки, НЕ fatal (1). Полностью зелёный
+    // «еще не прогонял» → degraded (2) с командами починки, НЕ fatal (1). Полностью зеленый
     // doctor (0) достижим только после живого прогона = именованный долг owner-todo
     // (MNEMAZINE_INBOX + токены, семья П23/П17). Арбитраж по канону П00 (ожидаемый код правится
     // плану, прецедент П09): «doctor=0» на чистом клоне недостижимо без runtime-данных →
@@ -147,7 +147,7 @@ function main() {
     // громко и напечатать починку. Резолюция vault (mnemazine-paths.mjs:12-27) падает на
     // config.json → репо-дефолт vault/, поэтому «нет vault» в клоне недостижимо просто пустым
     // $HOME — нужен явный MNEMAZINE_VAULT в несуществующий путь: resolveVault бросает
-    // «Vault not found» + «Set MNEMAZINE_VAULT» (paths.mjs:15-19), doctor выходит не-нулём.
+    // «Vault not found» + «Set MNEMAZINE_VAULT» (paths.mjs:15-19), doctor выходит не-нулем.
     const badVault = path.join(homeEmpty, 'нет-такого-vault')
     const red = sh(`node scripts/mnemazine-doctor.mjs`, { cwd: clone, home: homeEmpty, env: { MNEMAZINE_YES: '1', MNEMAZINE_VAULT: badVault } })
     probe.doctor_red_exit = red.code
@@ -188,7 +188,7 @@ function main() {
     sandbox_probe_full: probe,
     publication_form: PUBLICATION_FORM,
     license_decision: licenseFirst,
-    // Именованный долг (owner-todo, семья П23/П17): полностью зелёный doctor (0) требует живого
+    // Именованный долг (owner-todo, семья П23/П17): полностью зеленый doctor (0) требует живого
     // прогона конвейера (MNEMAZINE_INBOX + токены). На чистом клоне doctor честно degraded (2).
     doctor_operational_requires_live_run: probe.doctor_requires_live_run === true,
     pushed: false,
@@ -215,7 +215,7 @@ function main() {
 
   const out = { ok: true, previous_public_sha: prevShort, previous_public_sha_full: prevFull, sandbox_probe: draft.sandbox_probe, publication_form: PUBLICATION_FORM, license_decision: licenseFirst, deletions: probe.deletions, push_commands: pushLines.filter(Boolean), pushed: false }
   if (JSON_OUT) console.log(JSON.stringify(out, null, 2))
-  else console.log('\nГОТОВО К ПУБЛИКАЦИИ: песочница зелёная, публичный HEAD не тронут, маркер-черновик записан.')
+  else console.log('\nГОТОВО К ПУБЛИКАЦИИ: песочница зеленая, публичный HEAD не тронут, маркер-черновик записан.')
   return 0
 }
 

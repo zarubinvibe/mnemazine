@@ -6,15 +6,15 @@
 // config/rules-enforcement.json с живым `enforced_by` (<файл>:<строка> — файл есть,
 // строка в диапазоне, файл проходит node --check / bash -n / python3 -m py_compile).
 // Форма «утверждение → якорь в отдельном json», а НЕ `enforced_by:` внутри CLAUDE.md:
-// глобальная конституция держит бюджет ≤200 строк, машинные якоря её ломают.
+// глобальная конституция держит бюджет ≤200 строк, машинные якоря ее ломают.
 //
 // Новые правила мастер-плана §17.8 (класс данных) и §18 (subject) заведены сразу,
-// с полем pending_until: пока маркера их плана нет на диске — мёртвый enforced_by не
+// с полем pending_until: пока маркера их плана нет на диске — мертвый enforced_by не
 // краснит; с маркером — краснит. Так правило не теряется между волнами и не блокирует
 // их порядок.
 //
 // Коды: 0 — все правила имеют живой прибор; 1 — правило без записи, либо запись с
-// мёртвым файлом/несуществующей строкой/непроходящим синтаксисом; 2 — ноль извлечённых
+// мертвым файлом/несуществующей строкой/непроходящим синтаксисом; 2 — ноль извлеченных
 // правил (пустая выборка = провал, не «сдано 0/0»).
 
 import { existsSync, readFileSync } from 'node:fs'
@@ -29,12 +29,28 @@ const DOC_FILES = ['CLAUDE.md', 'AGENTS.md']
 const ENFORCEMENT = path.join(ROOT, 'config', 'rules-enforcement.json')
 const KEYWORDS = /\b(must not|must|never|do not|обязан|обязательно|никогда|не должен)\b/i
 
-function splitSentences(text) {
-  const out = []
+// Мягкий перенос строки внутри абзаца или пункта списка — не конец предложения.
+// Публичный контракт в AGENTS.md написан пунктами с переносом, и построчная нарезка
+// резала правило пополам: хвост «...and the release gate blocks a push...» оставался
+// без ключевого слова и вообще не попадал в выборку. Сначала склеиваем продолжение
+// с началом блока, потом режем на предложения.
+function unwrapBlocks(text) {
+  const blocks = []
   for (const rawLine of String(text).split(/\r?\n/)) {
     const line = rawLine.trim()
-    if (!line || line.startsWith('#') || line.startsWith('```')) continue
-    for (const piece of line.split(/(?<=[.!?;])\s+/)) {
+    if (!line || line.startsWith('#') || line.startsWith('```')) { blocks.push(''); continue }
+    const startsBlock = /^([-*+]|\d+\.)\s/.test(line) || line.startsWith('>') || line.startsWith('|')
+    const prev = blocks.length - 1
+    if (!startsBlock && prev >= 0 && blocks[prev]) blocks[prev] += ` ${line}`
+    else blocks.push(line)
+  }
+  return blocks.filter(Boolean)
+}
+
+function splitSentences(text) {
+  const out = []
+  for (const block of unwrapBlocks(text)) {
+    for (const piece of block.split(/(?<=[.!?;])\s+/)) {
       const t = piece.trim()
       if (t) out.push(t)
     }
@@ -93,7 +109,7 @@ function markerExists(plan) {
 
 function evaluate({ docRoot, enforcement }) {
   const extracted = extractRules(docRoot)
-  if (extracted.length === 0) return { code: 2, extracted, failures: ['ноль извлечённых правил из CLAUDE.md/AGENTS.md'] }
+  if (extracted.length === 0) return { code: 2, extracted, failures: ['ноль извлеченных правил из CLAUDE.md/AGENTS.md'] }
   const entries = Array.isArray(enforcement?.rules) ? enforcement.rules : []
   const failures = []
 
@@ -124,7 +140,7 @@ function selftest() {
     writeFileSync(path.join(tmp, 'CLAUDE.md'), '# X\n\nThe runner must never write outside the vault.\n', 'utf8')
     const r = evaluate({ docRoot: tmp, enforcement: { rules: [] } })
     if (r.code !== 1) {
-      console.error(`selftest FAILED: красный кролик прошёл зелёным (code=${r.code})`)
+      console.error(`selftest FAILED: красный кролик прошел зеленым (code=${r.code})`)
       return 1
     }
     console.log('selftest ok: правило без прибора краснит (1)')

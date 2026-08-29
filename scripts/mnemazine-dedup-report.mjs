@@ -1,8 +1,8 @@
 #!/usr/bin/env node
-// Кампания по СУЩЕСТВУЮЩИМ дублям vault — режим только-отчёт.
+// Кампания по СУЩЕСТВУЮЩИМ дублям vault — режим только-отчет.
 // Гонит kb-embed query (заголовок + первые строки ноты) против общего индекса,
-// собирает кластеры зон merge/flag, пишет отчёт в «99 Система/_lint/».
-// НИЧЕГО не мержит: мерж-вердикт — суждение, его исполняет Кими-рой по отчёту.
+// собирает кластеры зон merge/flag, пишет отчет в «99 Система/_lint/».
+// НИЧЕГО не мержит: мерж-вердикт — суждение, его исполняет Кими-рой по отчету.
 import { promises as fs } from 'node:fs'
 import { existsSync } from 'node:fs'
 import path from 'node:path'
@@ -28,9 +28,9 @@ const LIMIT = Number(arg('limit', '0')) // 0 = все ноты; >0 — смоу�
 const PYTHON = arg('python', path.join(os.homedir(), '.venvs', 'kb-embed', 'bin', 'python'))
 const KB_EMBED = arg('kb-embed', path.join(os.homedir(), '.claude', 'skills', 'mnemazina', 'kb-embed.py'))
 const QUERY_BODY_CHARS = 1200 // «первые строки»: меньше — самосовпадение ноты падает ниже merge-зоны
-// Взаимность: ребро идёт в кластеризацию, только если оба конца входят в топ-M партнёров друг друга.
+// Взаимность: ребро идет в кластеризацию, только если оба конца входят в топ-M партнеров друг друга.
 // Без этого flag-транзитивность через хабы-подборки сшила 603 из 917 нот раздела 08 в один кластер
-// (замер 2026-07-25). M=4: Camofox ×4 в одном кластере, макс кластер 249; M=3 рвёт Camofox на 3+1.
+// (замер 2026-07-25). M=4: Camofox ×4 в одном кластере, макс кластер 249; M=3 рвет Camofox на 3+1.
 const MUTUAL_TOP = Number(arg('mutual-top', '4'))
 
 const nfc = s => s.normalize('NFC')
@@ -98,7 +98,7 @@ async function noteMeta(p) {
   return { exists: true, date, chars: body.length, body }
 }
 
-// union-find: кластер = связная компонента по рёбрам merge/flag
+// union-find: кластер = связная компонента по ребрам merge/flag
 const parent = new Map()
 function find(x) {
   if (!parent.has(x)) parent.set(x, x)
@@ -151,13 +151,13 @@ async function main() {
   await Promise.all(Array.from({ length: Math.max(1, JOBS) }, worker))
 
   if (failures.length) {
-    console.error(`kb-embed query упал на ${failures.length} нотах, отчёт не пишу (fail-closed):`)
+    console.error(`kb-embed query упал на ${failures.length} нотах, отчет не пишу (fail-closed):`)
     for (const f of failures.slice(0, 10)) console.error(`  ${f.note}: ${f.detail}`)
     process.exit(1)
   }
 
-  // взаимный фильтр рёбер → union-find → сборка кластеров
-  const partners = new Map() // нота → её рёбра по убыванию combined
+  // взаимный фильтр ребер → union-find → сборка кластеров
+  const partners = new Map() // нота → ее ребра по убыванию combined
   for (const e of edges.values()) {
     for (const n of [e.a, e.b]) {
       if (!partners.has(n)) partners.set(n, [])
@@ -184,7 +184,7 @@ async function main() {
         .reduce((x, e) => (!x || e.combined > x.combined ? e : x), null)
       members.push({ path: p, ...meta, best })
     }
-    // канон: свежее побеждает, при равной дате — полнее (объём тела)
+    // канон: свежее побеждает, при равной дате — полнее (объем тела)
     members.sort((x, y) => y.date.localeCompare(x.date) || y.chars - x.chars)
     const zone = c.edges.some(e => e.zone === 'merge') ? 'merge' : 'flag'
     clusters.push({ zone, members, edges: c.edges })
@@ -194,14 +194,14 @@ async function main() {
   const today = new Date().toISOString().slice(0, 10)
   const mergeCount = clusters.filter(c => c.zone === 'merge').length
   const lines = [
-    `# Dedup-отчёт Мнемозины — ${today}`,
+    `# Dedup-отчет Мнемозины — ${today}`,
     '',
-    'Режим только-отчёт: ничего не слито. Мерж-вердикт — суждение, его исполняет Кими-рой по этому отчёту.',
+    'Режим только-отчет: ничего не слито. Мерж-вердикт — суждение, его исполняет Кими-рой по этому отчету.',
     '',
     `- Разделы: ${dirs.map(d => path.basename(d)).join(' · ')} — просканировано ${notes.length} нот`,
     `- Индекс: ${INDEX}`,
     `- Зоны (kb-embed): merge ≥ 0.90 · flag ≥ 0.72 по combined = cosine + 0.3×title_sim (title_sim ≥ 0.5)`,
-    `- Кластеризация: только взаимные рёбра (оба конца в топ-${MUTUAL_TOP} партнёров друг друга) — против сшивания через хабы-подборки`,
+    `- Кластеризация: только взаимные ребра (оба конца в топ-${MUTUAL_TOP} партнеров друг друга) — против сшивания через хабы-подборки`,
     `- Кластеров: ${clusters.length} (merge: ${mergeCount}, flag: ${clusters.length - mergeCount})`,
     '',
   ]
