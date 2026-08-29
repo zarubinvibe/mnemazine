@@ -1,5 +1,5 @@
 {
-  "schema_version": 2,
+  "schema_version": 3,
   "family_id": "zarubinvibe-pantheon",
   "catalog_version": "2026-08-26",
   "project": {
@@ -10,6 +10,11 @@
   "visuals": {
     "style_anchor_sha256": "ce524f9d22cb0092cb17aa280832e1b2ab2a77a0e01602065ec502232a3bb2d2",
     "column_reference_sha256": "9d32edd56ac55c4dd6d0425a28a2ac35035e9ab09073fc8ce0c1414b2edfb1bd",
+    "presentation": {
+      "min_width": 1600,
+      "aspect_ratio": "16:9",
+      "readme_width": "100%"
+    },
     "hero": {
       "source_path": "docs/assets/pantheon/hero-source.png",
       "source_sha256": "89e4bb9a2b903b4adb2670cceb8c5d570881e9cc1fe47a8007cff556dd9db9ca",
@@ -21,7 +26,58 @@
       "source_sha256": "462da70355fb6803273353786a9725e0c9a53477d20950590008cc095a59bdbb",
       "published_path": "docs/assets/pantheon/emblem.png",
       "published_sha256": "462da70355fb6803273353786a9725e0c9a53477d20950590008cc095a59bdbb"
-    }
+    },
+    "stages": [
+      {
+        "id": "capture",
+        "title_en": "Drop material into the inbox",
+        "title_ru": "Положите материал во входящие",
+        "diagram_en": "Capture",
+        "diagram_ru": "Захват"
+      },
+      {
+        "id": "census",
+        "title_en": "The guard counts every file",
+        "title_ru": "Сторож считает каждый файл",
+        "diagram_en": "Census",
+        "diagram_ru": "Перепись"
+      },
+      {
+        "id": "extract",
+        "title_en": "Local engines read it",
+        "title_ru": "Локальные движки читают материал",
+        "diagram_en": "Extract",
+        "diagram_ru": "Чтение"
+      },
+      {
+        "id": "verify",
+        "title_en": "Facts get a source",
+        "title_ru": "Факты получают источник",
+        "diagram_en": "Verify",
+        "diagram_ru": "Проверка"
+      },
+      {
+        "id": "refine",
+        "title_en": "One note per idea",
+        "title_ru": "Одна заметка на одну мысль",
+        "diagram_en": "Refine",
+        "diagram_ru": "Огранка"
+      },
+      {
+        "id": "store",
+        "title_en": "The note lands in the vault",
+        "title_ru": "Заметка ложится в базу",
+        "diagram_en": "Store",
+        "diagram_ru": "Хранение"
+      },
+      {
+        "id": "retrieve",
+        "title_en": "Weekly brief and search",
+        "title_ru": "Недельная сводка и поиск",
+        "diagram_en": "Retrieve",
+        "diagram_ru": "Возврат"
+      }
+    ]
   },
   "receipts": {
     "generation_path": ".github/pantheon/generation-receipt.json",
