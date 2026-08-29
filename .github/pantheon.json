@@ -38,10 +38,10 @@
         "diagram_ru": "Захват",
         "title_zh": "把材料丢进收件箱",
         "diagram_zh": "收集",
-        "source_path": "docs/assets/pantheon/workflow/01-capture-source.png",
+        "source_path": "docs/assets/pantheon/workflow/01-capture.png",
         "source_sha256": "4e7b1d84303b81ed5fa0c04ea6d674f1e182c46de9a3f2b5b923940e0947f2a2",
         "published_path": "docs/assets/pantheon/workflow/01-capture.png",
-        "published_sha256": "172a13ba0174c820ee1b7ee61c07f5e67f981348a77d01a31aebf0dd0219457e"
+        "published_sha256": "4e7b1d84303b81ed5fa0c04ea6d674f1e182c46de9a3f2b5b923940e0947f2a2"
       },
       {
         "id": "census",
@@ -51,10 +51,10 @@
         "diagram_ru": "Перепись",
         "title_zh": "守卫清点每一个文件",
         "diagram_zh": "清点",
-        "source_path": "docs/assets/pantheon/workflow/02-census-source.png",
+        "source_path": "docs/assets/pantheon/workflow/02-census.png",
         "source_sha256": "f361035499e64e99c9b6c295a5742946e893eac5501bb1b185fcd38200415e16",
         "published_path": "docs/assets/pantheon/workflow/02-census.png",
-        "published_sha256": "923f881d9e818c96d2cbd14369045e3b62c2a44621f3364c01dea33cdac813a8"
+        "published_sha256": "f361035499e64e99c9b6c295a5742946e893eac5501bb1b185fcd38200415e16"
       },
       {
         "id": "extract",
@@ -64,10 +64,10 @@
         "diagram_ru": "Чтение",
         "title_zh": "本地引擎来读",
         "diagram_zh": "读取",
-        "source_path": "docs/assets/pantheon/workflow/03-extract-source.png",
+        "source_path": "docs/assets/pantheon/workflow/03-extract.png",
         "source_sha256": "18c9c4839733a0ff961285cf28cb6b379a86eec4942b86e4b7859de448b80f42",
         "published_path": "docs/assets/pantheon/workflow/03-extract.png",
-        "published_sha256": "a7848d616daf2ab97babc453c742102912697adfd6bd47eb6ae65202de16295c"
+        "published_sha256": "18c9c4839733a0ff961285cf28cb6b379a86eec4942b86e4b7859de448b80f42"
       },
       {
         "id": "verify",
@@ -77,10 +77,10 @@
         "diagram_ru": "Проверка",
         "title_zh": "事实要有来源",
         "diagram_zh": "核验",
-        "source_path": "docs/assets/pantheon/workflow/04-verify-source.png",
+        "source_path": "docs/assets/pantheon/workflow/04-verify.png",
         "source_sha256": "f487d0084f7ad36a63a2d97f472ed124c0831877d08b872442fef2e9cbfa5c11",
         "published_path": "docs/assets/pantheon/workflow/04-verify.png",
-        "published_sha256": "9c7edf2d10a1e0ca39443d6f373d2902da5d90904aabbaefe2f7e7b64f54e752"
+        "published_sha256": "f487d0084f7ad36a63a2d97f472ed124c0831877d08b872442fef2e9cbfa5c11"
       },
       {
         "id": "refine",
@@ -90,10 +90,10 @@
         "diagram_ru": "Огранка",
         "title_zh": "一条笔记只讲一件事",
         "diagram_zh": "打磨",
-        "source_path": "docs/assets/pantheon/workflow/05-refine-source.png",
+        "source_path": "docs/assets/pantheon/workflow/05-refine.png",
         "source_sha256": "49dd83b5991f3d70b71a49cd8f4110963c674d41e6229d254a1ed07f2e9955f0",
         "published_path": "docs/assets/pantheon/workflow/05-refine.png",
-        "published_sha256": "1dd8995828d6363ce49ed736c46cf346704524ad21a7088424ba8e1759c5a5b6"
+        "published_sha256": "49dd83b5991f3d70b71a49cd8f4110963c674d41e6229d254a1ed07f2e9955f0"
       },
       {
         "id": "store",
@@ -103,10 +103,10 @@
         "diagram_ru": "Хранение",
         "title_zh": "笔记落进知识库",
         "diagram_zh": "入库",
-        "source_path": "docs/assets/pantheon/workflow/06-store-source.png",
+        "source_path": "docs/assets/pantheon/workflow/06-store.png",
         "source_sha256": "cbdbfe4a8901d8f9836ec29930ce077864121e3badf3eb06f53a650877218177",
         "published_path": "docs/assets/pantheon/workflow/06-store.png",
-        "published_sha256": "655efecb2e5df8ad1b0c31e85675a598a739f71ace414d6ac43dfdbb834cbc2f"
+        "published_sha256": "cbdbfe4a8901d8f9836ec29930ce077864121e3badf3eb06f53a650877218177"
       },
       {
         "id": "retrieve",
@@ -116,10 +116,10 @@
         "diagram_ru": "Возврат",
         "title_zh": "每周简报与检索",
         "diagram_zh": "取回",
-        "source_path": "docs/assets/pantheon/workflow/07-retrieve-source.png",
+        "source_path": "docs/assets/pantheon/workflow/07-retrieve.png",
         "source_sha256": "2978d58c41a392405e03899602c4b1f41af001dda6b932378a75902f2f5123aa",
         "published_path": "docs/assets/pantheon/workflow/07-retrieve.png",
-        "published_sha256": "4b0a0825cdaf1674e466a778d82729cc174828b37670c0cdba8fc24d71cd43b9"
+        "published_sha256": "2978d58c41a392405e03899602c4b1f41af001dda6b932378a75902f2f5123aa"
       }
     ]
   },

@@ -1,6 +1,6 @@
 # Mnemazine
 
-Mnemazine turns screenshots, PDFs, links, and recordings into finished notes you can actually reuse later.
+Mnemazine reads your pile of screenshots and links and leaves notes you actually come back to.
 
 [Русский](README.ru.md) · [中文](README.zh.md)
 
@@ -35,21 +35,21 @@ Mnemazine turns screenshots, PDFs, links, and recordings into finished notes you
 
 ## What This Is
 
-Mnemazine is a local knowledge refinery. Raw material goes into an inbox; finished notes come out into an Obsidian vault. Reading, recognition, and transcription happen on your machine, and a note is only stored once it has a source and a verdict.
+Mnemazine is a knowledge refinery. You drop anything into the inbox: screenshots, PDFs, links, voice notes. What comes out are notes in an Obsidian vault. Your own machine does the reading, the recognition and the transcription, and a note only enters the vault with a source and a verdict.
 
 ## Why It Helps
 
-Saved links and screenshots pile up and stay unread. The pile grows, the knowledge does not. Mnemazine reads that pile for you and leaves notes written for your future self, with the source attached and the duplicates merged.
+Links pile up, screenshots pile up, knowledge does not. The pile grows, nobody reads it, and six months later you cannot remember why you saved that. Mnemazine reads the pile for you and writes a note for the you of next year: with the source, without the duplicates, short enough to actually open.
 
 ## The Main Advantage
 
-**Main advantage:** the heavy work happens locally, so a repeated file costs nothing.
+**Main advantage:** the heavy part happens locally, so a repeated file costs nothing.
 
-**Why this is better:** Apple Vision recognition, parsing, transcription, and hashing run on your machine. A file that was already processed is recognised by its hash and never reaches a paid model again.
+**Why this is better:** Recognition, parsing, transcription and hashing all run on your machine. A file that has been through once is recognised by its hash and never reaches a paid model again.
 
 ## How It Works
 
-One run walks the whole pipeline. Every stage leaves evidence, and the run does not close while a file is still unaccounted for.
+One run walks the whole path. Every stage leaves evidence, and the run does not close while a single file is still unaccounted for.
 
 <!-- workflow-diagram:start -->
 
@@ -137,7 +137,7 @@ A weekly HTML brief shows what changed and what deserves action. A graph map let
 
 ## Quickstart
 
-You need Node.js 20 or newer, Python 3.11 or newer, and Git. macOS is recommended, because Apple Vision recognition is macOS only; on Linux everything else still runs.
+You need Node.js 20 or newer, Python 3.11 or newer, and git. A Mac is better: image recognition only exists there. On Linux the rest still works.
 
 ```bash
 git clone https://github.com/zarubinvibe/mnemazine.git "$HOME/Desktop/Mnemazine"
@@ -149,7 +149,7 @@ bash setup.sh
 
 Never done this before? [The onboarding](docs/ONBOARDING.md) walks the whole first run step by step and says what you see after every command.
 
-**You get:** the folders are ready, the local engines report what is installed and what is degraded, and `vault/` opens as an Obsidian vault.
+**You get:** the folders are ready, the engines say plainly what is installed and what is degraded, and `vault/` opens as an Obsidian vault.
 
 ## Simple Comparison
 
@@ -181,18 +181,18 @@ Never done this before? [The onboarding](docs/ONBOARDING.md) walks the whole fir
 - Notes marked as personal data are refused by the export gate before anything leaves.
 - Site and video parsing touch only the address you provided yourself.
 
-The full channel-by-channel table, with the guard that holds each one, is in [the reference](docs/DETAILS.md).
+What leaves through which channel, and which guard holds it, is written out in [the full reference](docs/DETAILS.md).
 
 ## Limits
 
-Status: working local system with a release check and honest exit codes.
+Status: working, with a release check and honest exit codes.
 
 - Apple Vision recognition is macOS only; on Linux screenshots fall back to the model or stay unread.
 - Verification finds sources and contradictions, but the final judgement is still yours.
 - A very large first run takes time and, in deep mode, tokens.
 - The vault is plain Markdown: no hosted service keeps a backup for you.
 
-Deeper reading: [the full reference](docs/DETAILS.md) covers ingestion of sites and video, the knowledge quality contract, the agent roster, exit codes, and troubleshooting.
+Deeper: [the full reference](docs/DETAILS.md) covers site and video intake, the quality contract, the agent roster, exit codes and troubleshooting.
 
 ## Star And Contribute
 
