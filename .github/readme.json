@@ -1,0 +1,361 @@
+{
+  "schema_version": 1,
+  "owner": "zarubinvibe",
+  "slug": "mnemazine",
+  "license_badge": "community%201.0",
+  "status_badge": "working",
+  "languages": [
+    "en",
+    "ru",
+    "zh"
+  ],
+  "quick_code": "git clone https://github.com/zarubinvibe/mnemazine.git \"$HOME/Desktop/Mnemazine\"\ncd \"$HOME/Desktop/Mnemazine\"\nbash setup.sh\nbash install.sh",
+  "text": {
+    "en": {
+      "title": "Mnemazine",
+      "name": "Mnemazine",
+      "tagline": "Mnemazine turns screenshots, PDFs, links, and recordings into finished notes you can actually reuse later.",
+      "hero_alt": "Mnemosyne in white marble beside the classical column, distilling raw fragments into a layered system of knowledge",
+      "what": "Mnemazine is a local knowledge refinery. Raw material goes into an inbox; finished notes come out into an Obsidian vault. Reading, recognition, and transcription happen on your machine, and a note is only stored once it has a source and a verdict.",
+      "why": "Saved links and screenshots pile up and stay unread. The pile grows, the knowledge does not. Mnemazine reads that pile for you and leaves notes written for your future self, with the source attached and the duplicates merged.",
+      "advantage": "the heavy work happens locally, so a repeated file costs nothing.",
+      "better": "Apple Vision recognition, parsing, transcription, and hashing run on your machine. A file that was already processed is recognised by its hash and never reaches a paid model again.",
+      "how": "One run walks the whole pipeline. Every stage leaves evidence, and the run does not close while a file is still unaccounted for.",
+      "quick_intro": "You need Node.js 20 or newer, Python 3.11 or newer, and Git. macOS is recommended, because Apple Vision recognition is macOS only; on Linux everything else still runs.",
+      "quick_extra": "No Git? Download [the ZIP](https://github.com/zarubinvibe/mnemazine/archive/refs/heads/main.zip) or [the tarball](https://github.com/zarubinvibe/mnemazine/archive/refs/heads/main.tar.gz), unpack it, and run the same two scripts inside. `setup.sh` asks where the inbox goes; `MNEMAZINE_SETUP_DRYRUN=1 bash setup.sh` previews it without touching anything.",
+      "quick_result": "the folders are ready, the local engines report what is installed and what is degraded, and `vault/` opens as an Obsidian vault.",
+      "compare": [
+        [
+          "**Mnemazine**",
+          "The pile of saved material is already unreadable",
+          "Local reading, verified notes, deduplication, weekly brief",
+          "Best results need a Mac"
+        ],
+        [
+          "Saving files into Obsidian yourself",
+          "You save a few items a week",
+          "Full control and no setup",
+          "Nothing is read, verified, or deduplicated for you"
+        ],
+        [
+          "A cloud AI notebook",
+          "You want an answer about documents you upload",
+          "Fast questions and answers",
+          "Material leaves your machine and the notes stay inside that service"
+        ],
+        [
+          "Reading it later by hand",
+          "The pile is small",
+          "Nothing to install",
+          "\"Later\" rarely arrives"
+        ]
+      ],
+      "glossary": [
+        [
+          "Vault",
+          "The folder of finished notes, opened by Obsidian"
+        ],
+        [
+          "OCR",
+          "Turning a picture of text into text you can search"
+        ]
+      ],
+      "safety": [
+        "Local by default: recognition, parsing, transcription, and hashing run on your machine.",
+        "Deep mode sends material to your chosen model provider only when you answer yes; with it off the run costs zero tokens.",
+        "The Telegram bot is yours, not a shared one, and the system works the same without it.",
+        "The bot token is stored with restrictive permissions and stays out of Git.",
+        "Notes marked as personal data are refused by the export gate before anything leaves.",
+        "Site and video parsing touch only the address you provided yourself."
+      ],
+      "safety_tail": "The full channel-by-channel table, with the guard that holds each one, is in [the reference](docs/DETAILS.md).",
+      "status": "Status: working local system with a release check and honest exit codes.",
+      "limits": [
+        "Apple Vision recognition is macOS only; on Linux screenshots fall back to the model or stay unread.",
+        "Verification finds sources and contradictions, but the final judgement is still yours.",
+        "A very large first run takes time and, in deep mode, tokens.",
+        "The vault is plain Markdown: no hosted service keeps a backup for you."
+      ],
+      "docs": "Deeper reading: [the full reference](docs/DETAILS.md) covers ingestion of sites and video, the knowledge quality contract, the agent roster, exit codes, and troubleshooting.",
+      "license": "Mnemazine Community License 1.0: free for one person, including a solo business. An organisation needs a separate agreement. See [LICENSE](LICENSE)."
+    },
+    "ru": {
+      "title": "Mnemazine",
+      "name": "Mnemazine",
+      "tagline": "Mnemazine превращает скриншоты, PDF, ссылки и записи в готовые заметки, которыми потом реально пользуешься.",
+      "hero_alt": "Мнемозина из белого мрамора у классической колонны превращает сырые обрывки в слоистую систему знания",
+      "what": "Mnemazine это локальная фабрика знания. Сырьё кладётся во входящие, а наружу выходят готовые заметки в базе Obsidian. Чтение, распознавание и расшифровка идут на вашем компьютере, и заметка сохраняется только с источником и вердиктом.",
+      "why": "Сохранённые ссылки и скриншоты копятся и остаются непрочитанными. Куча растёт, знание нет. Mnemazine читает эту кучу за вас и оставляет заметки, написанные для вас будущего, с источником и слитыми дублями.",
+      "advantage": "тяжёлая работа идёт локально, поэтому повторный файл не стоит ничего.",
+      "better": "Распознавание Apple Vision, разбор, расшифровка и хеширование идут на вашей машине. Уже обработанный файл узнаётся по хешу и больше не доходит до платной модели.",
+      "how": "Один прогон проходит весь конвейер. Каждая стадия оставляет доказательство, и прогон не закрывается, пока хоть один файл не учтён.",
+      "quick_intro": "Нужны Node.js 20 или новее, Python 3.11 или новее и Git. Лучше macOS, потому что распознавание Apple Vision есть только там; на Linux работает всё остальное.",
+      "quick_extra": "Нет Git? Скачайте [ZIP](https://github.com/zarubinvibe/mnemazine/archive/refs/heads/main.zip) или [tar.gz](https://github.com/zarubinvibe/mnemazine/archive/refs/heads/main.tar.gz), распакуйте и запустите внутри те же два скрипта. `setup.sh` спрашивает, где будут входящие, а `MNEMAZINE_SETUP_DRYRUN=1 bash setup.sh` показывает план, ничего не трогая.",
+      "quick_result": "папки готовы, локальные движки честно сообщают, что установлено и что работает урезанно, а `vault/` открывается как база Obsidian.",
+      "compare": [
+        [
+          "**Mnemazine**",
+          "Куча сохранённого уже нечитаема",
+          "Локальное чтение, проверенные заметки, дедупликация, недельная сводка",
+          "Лучший результат требует Mac"
+        ],
+        [
+          "Складывать файлы в Obsidian руками",
+          "Вы сохраняете пару вещей в неделю",
+          "Полный контроль и никакой настройки",
+          "Никто за вас не читает, не проверяет и не сливает дубли"
+        ],
+        [
+          "Облачный AI-блокнот",
+          "Нужен ответ по загруженным документам",
+          "Быстрые вопросы и ответы",
+          "Материал уходит с машины, а заметки остаются внутри сервиса"
+        ],
+        [
+          "Прочитать потом руками",
+          "Куча небольшая",
+          "Ничего не надо ставить",
+          "«Потом» обычно не наступает"
+        ]
+      ],
+      "glossary": [
+        [
+          "Vault",
+          "Папка готовых заметок, которую открывает Obsidian"
+        ],
+        [
+          "OCR",
+          "Превращение картинки с текстом в текст, по которому можно искать"
+        ]
+      ],
+      "safety": [
+        "Локально по умолчанию: распознавание, разбор, расшифровка и хеширование идут на вашей машине.",
+        "Глубокий режим отправляет материал вашему провайдеру модели, только если вы согласились; с выключенным режимом прогон стоит ноль токенов.",
+        "Telegram-бот ваш, а не общий, и без него система работает точно так же.",
+        "Токен бота лежит с закрытыми правами и не попадает в Git.",
+        "Заметки, помеченные как персональные данные, ворота экспорта не выпускают наружу.",
+        "Разбор сайтов и видео трогает только тот адрес, который вы дали сами."
+      ],
+      "safety_tail": "Полная таблица по каналам, с указанием сторожа для каждого, лежит в [полном разборе](docs/DETAILS.ru.md).",
+      "status": "Статус: рабочая локальная система с релизной проверкой и честными кодами возврата.",
+      "limits": [
+        "Распознавание Apple Vision только на macOS; на Linux скриншоты уходят модели или остаются непрочитанными.",
+        "Проверка находит источники и противоречия, но итоговое суждение остаётся за вами.",
+        "Очень большой первый прогон занимает время, а в глубоком режиме ещё и токены.",
+        "База это обычный Markdown: никакой сервис не держит для вас резервную копию."
+      ],
+      "docs": "Глубже: [полный разбор](docs/DETAILS.ru.md) описывает приём сайтов и видео, контракт качества знания, состав агентов, коды возврата и разбор поломок.",
+      "license": "Mnemazine Community License 1.0: бесплатно одному человеку, включая работу на себя. Организации нужно отдельное соглашение. Текст в файле [LICENSE](LICENSE)."
+    },
+    "zh": {
+      "title": "Mnemazine",
+      "name": "Mnemazine",
+      "tagline": "Mnemazine 把截图、PDF、链接和录音变成以后真正用得上的成品笔记。",
+      "hero_alt": "白色大理石的谟涅摩绪涅站在古典石柱旁，把零散的原始碎片提炼成一层层清晰的知识",
+      "what": "Mnemazine 是一座本地的知识精炼厂。原始材料进入收件箱，出来的是 Obsidian 知识库里的成品笔记。阅读、识别和转写都在你自己的电脑上完成，只有带着来源和结论的笔记才会被保存。",
+      "why": "存下来的链接和截图越堆越多，却一直没读。堆子在长，知识没长。Mnemazine 替你把这堆东西读完，留下写给未来的你的笔记，附上来源，重复的内容也已经合并。",
+      "advantage": "重活都在本地完成，所以重复的文件不再花钱。",
+      "better": "Apple Vision 识别、文档解析、语音转写和哈希都在你的机器上跑。已经处理过的文件靠哈希就能认出来，不会再送到付费模型那里。",
+      "how": "一次运行走完整条流水线。每个阶段都留下证据，只要还有文件没有交代清楚，这次运行就不会结束。",
+      "quick_intro": "你需要 Node.js 20 以上、Python 3.11 以上和 Git。建议用 macOS，因为 Apple Vision 识别只在那里可用；在 Linux 上其余部分照常工作。",
+      "quick_extra": "没有 Git？下载 [ZIP](https://github.com/zarubinvibe/mnemazine/archive/refs/heads/main.zip) 或者 [tar.gz](https://github.com/zarubinvibe/mnemazine/archive/refs/heads/main.tar.gz)，解压后在里面执行同样的两个脚本。`setup.sh` 会问收件箱放在哪里；`MNEMAZINE_SETUP_DRYRUN=1 bash setup.sh` 只看计划，不动任何文件。",
+      "quick_result": "目录准备好了，本地引擎如实报告哪些可用、哪些降级，`vault/` 可以直接作为 Obsidian 知识库打开。",
+      "compare": [
+        [
+          "**Mnemazine**",
+          "存下来的材料已经多到读不动",
+          "本地阅读、已核验的笔记、去重、每周简报",
+          "想要最好的效果需要一台 Mac"
+        ],
+        [
+          "自己往 Obsidian 里放文件",
+          "一周只存几条",
+          "完全掌控，不用配置",
+          "没有人替你阅读、核验和合并重复"
+        ],
+        [
+          "云端 AI 笔记本",
+          "想对上传的文档提问",
+          "问答很快",
+          "材料离开你的机器，笔记也留在那个服务里"
+        ],
+        [
+          "以后再手动读",
+          "堆子还很小",
+          "什么都不用装",
+          "“以后”通常不会到来"
+        ]
+      ],
+      "glossary": [
+        [
+          "Vault",
+          "知识库：存放成品笔记的文件夹，用 Obsidian 打开"
+        ],
+        [
+          "OCR",
+          "文字识别：把图片里的文字变成可以搜索的文本"
+        ]
+      ],
+      "safety": [
+        "默认本地：识别、解析、转写和哈希都在你的机器上完成。",
+        "深度模式只有在你同意时才把材料发给你选定的模型服务；关闭时这次运行不花任何 token。",
+        "Telegram 机器人是你自己的，不是共用的，没有它系统照样工作。",
+        "机器人的令牌以受限权限保存，不会进入 Git。",
+        "标记为个人数据的笔记会被导出闸门挡下，不会流出去。",
+        "网站和视频解析只碰你自己给出的那个地址。"
+      ],
+      "safety_tail": "每个通道具体流出什么、由哪个守卫拦住，完整的表格在 [完整参考](docs/DETAILS.md) 里。",
+      "status": "状态：可用的本地系统，带发布检查和诚实的退出码。",
+      "limits": [
+        "Apple Vision 识别只在 macOS 上；在 Linux 上截图要么交给模型，要么留着不读。",
+        "核验能找到来源和矛盾，但最终判断仍然是你的。",
+        "第一次处理很大的一堆材料会花时间，在深度模式下还会花 token。",
+        "知识库就是普通的 Markdown：没有哪个服务替你做备份。"
+      ],
+      "docs": "想看得更深：[完整参考](docs/DETAILS.md) 讲了网站与视频的接入、知识质量契约、智能体名单、退出码和故障排查。",
+      "license": "Mnemazine Community License 1.0：一个人使用免费，包括你自己单干的生意。组织使用需要单独协议。见 [LICENSE](LICENSE)。"
+    }
+  },
+  "stages": {
+    "capture": {
+      "en": {
+        "short": "Screenshots, PDFs, links, notes, audio, video",
+        "body": "You put files into one folder, or send them to your own Telegram bot. Nothing else is required from you.",
+        "result": "one inbox that holds everything waiting to be read.",
+        "alt": "Mnemazine workflow stage 1: Drop material into the inbox, drawn as a wide Pantheon marble scene"
+      },
+      "ru": {
+        "short": "Скриншоты, PDF, ссылки, заметки, аудио, видео",
+        "body": "Вы кладёте файлы в одну папку или отправляете их своему Telegram-боту. Больше от вас ничего не нужно.",
+        "result": "одни входящие, где лежит всё, что ждёт прочтения.",
+        "alt": "Этап 1 такта Mnemazine: Положите материал во входящие, показан широкой мраморной сценой Pantheon"
+      },
+      "zh": {
+        "short": "截图、PDF、链接、笔记、音频、视频",
+        "body": "你把文件放进一个文件夹，或者发给自己的 Telegram 机器人。除此之外不需要你做别的。",
+        "result": "一个收件箱，里面装着所有等着被读的东西。",
+        "alt": "Pantheon 宽幅大理石场景：Mnemazine 工作流程第 1 步，把材料丢进收件箱"
+      }
+    },
+    "census": {
+      "en": {
+        "short": "A hash census, a vault snapshot, and a run lock",
+        "body": "Before anything is read, the guard takes a snapshot of the vault, locks the run, and hashes every incoming file. A hash already in the cache means the file is done.",
+        "result": "a ground-truth list that later stages cannot quietly shorten.",
+        "alt": "Mnemazine workflow stage 2: The guard counts every file, drawn as a wide Pantheon marble scene"
+      },
+      "ru": {
+        "short": "Перепись по хешам, снимок базы и замок на прогон",
+        "body": "До чтения сторож делает снимок базы, ставит замок на прогон и хеширует каждый входящий файл. Хеш уже в кеше означает, что файл обработан.",
+        "result": "список наземной правды, который следующие стадии не сократят молча.",
+        "alt": "Этап 2 такта Mnemazine: Сторож считает каждый файл, показан широкой мраморной сценой Pantheon"
+      },
+      "zh": {
+        "short": "按哈希清点、给知识库做快照、给这次运行上锁",
+        "body": "在读任何东西之前，守卫先给知识库做快照，给这次运行上锁，并为每个进来的文件算哈希。哈希已经在缓存里，说明这个文件处理过了。",
+        "result": "一份地面真相清单，后面的阶段不能悄悄把它变短。",
+        "alt": "Pantheon 宽幅大理石场景：Mnemazine 工作流程第 2 步，守卫清点每一个文件"
+      }
+    },
+    "extract": {
+      "en": {
+        "short": "Apple Vision OCR, document parsing, speech to text",
+        "body": "Screens and photos go through Apple Vision, documents are parsed directly, and audio or video is transcribed locally. Interface noise and social chrome are dropped.",
+        "result": "clean content instead of a screenshot you would have to squint at.",
+        "alt": "Mnemazine workflow stage 3: Local engines read it, drawn as a wide Pantheon marble scene"
+      },
+      "ru": {
+        "short": "Apple Vision OCR, разбор документов, речь в текст",
+        "body": "Экраны и фотографии идут через Apple Vision, документы разбираются напрямую, аудио и видео расшифровываются локально. Интерфейсный шум и соцсетевая шелуха отбрасываются.",
+        "result": "чистое содержание вместо скриншота, в который пришлось бы вглядываться.",
+        "alt": "Этап 3 такта Mnemazine: Локальные движки читают материал, показан широкой мраморной сценой Pantheon"
+      },
+      "zh": {
+        "short": "Apple Vision 识别、文档解析、语音转文字",
+        "body": "截图和照片走 Apple Vision，文档直接解析，音频和视频在本地转写。界面噪音和社交平台的壳子会被丢掉。",
+        "result": "干净的内容，而不是一张还要眯着眼看的截图。",
+        "alt": "Pantheon 宽幅大理石场景：Mnemazine 工作流程第 3 步，本地引擎来读"
+      }
+    },
+    "verify": {
+      "en": {
+        "short": "Primary source found, claims separated from guesses",
+        "body": "The material is treated as a seed, not as truth. The stage looks for the primary source, checks the claims that matter, and marks what could not be confirmed.",
+        "result": "a note you can cite, with its verification status visible.",
+        "alt": "Mnemazine workflow stage 4: Facts get a source, drawn as a wide Pantheon marble scene"
+      },
+      "ru": {
+        "short": "Найден первоисточник, факт отделён от догадки",
+        "body": "Материал считается семенем, а не истиной. Стадия ищет первоисточник, проверяет значимые утверждения и помечает то, что подтвердить не удалось.",
+        "result": "заметка, на которую можно ссылаться, с видимым статусом проверки.",
+        "alt": "Этап 4 такта Mnemazine: Факты получают источник, показан широкой мраморной сценой Pantheon"
+      },
+      "zh": {
+        "short": "找到第一手来源，把事实和猜测分开",
+        "body": "材料被当作种子，而不是结论。这一步去找第一手来源，核对重要的说法，并标出确认不了的部分。",
+        "result": "一条可以被引用的笔记，核验状态一眼可见。",
+        "alt": "Pantheon 宽幅大理石场景：Mnemazine 工作流程第 4 步，事实要有来源"
+      }
+    },
+    "refine": {
+      "en": {
+        "short": "Long material is split into reusable atoms",
+        "body": "A long guide becomes several focused notes, each with a plain title and a short section on how it helps you. Near-duplicates are found by meaning and merged instead of piling up.",
+        "result": "notes short enough that a future prompt pulls only the relevant one.",
+        "alt": "Mnemazine workflow stage 5: One note per idea, drawn as a wide Pantheon marble scene"
+      },
+      "ru": {
+        "short": "Длинный материал режется на переиспользуемые атомы",
+        "body": "Длинный гайд превращается в несколько узких заметок, у каждой понятный заголовок и короткий блок о том, чем она вам поможет. Близкие дубли находятся по смыслу и сливаются, а не копятся.",
+        "result": "заметки такой длины, что будущий запрос тянет только нужную.",
+        "alt": "Этап 5 такта Mnemazine: Одна заметка на одну мысль, показан широкой мраморной сценой Pantheon"
+      },
+      "zh": {
+        "short": "长材料被切成可复用的知识原子",
+        "body": "一份长指南会变成几条聚焦的笔记，每条都有明白的标题，还有一小段说明它对你有什么用。语义上接近的重复会被合并，而不是继续堆着。",
+        "result": "笔记短到以后一次提问只会拉出真正相关的那一条。",
+        "alt": "Pantheon 宽幅大理石场景：Mnemazine 工作流程第 5 步，一条笔记只讲一件事"
+      }
+    },
+    "store": {
+      "en": {
+        "short": "Sections, links, indexes, and a coverage gate",
+        "body": "Each note is filed into a life section, linked to its neighbours, and added to the indexes. Archiving the sources is only allowed after every input file is accounted for.",
+        "result": "an Obsidian vault that stays navigable as it grows.",
+        "alt": "Mnemazine workflow stage 6: The note lands in the vault, drawn as a wide Pantheon marble scene"
+      },
+      "ru": {
+        "short": "Разделы, связи, оглавления и ворота полноты",
+        "body": "Каждая заметка ложится в свой жизненный раздел, связывается с соседями и попадает в оглавления. Архивировать исходники можно только после того, как учтён каждый входящий файл.",
+        "result": "база Obsidian, по которой можно ходить даже когда она разрослась.",
+        "alt": "Этап 6 такта Mnemazine: Заметка ложится в базу, показан широкой мраморной сценой Pantheon"
+      },
+      "zh": {
+        "short": "分区、连接、目录，还有一道覆盖闸门",
+        "body": "每条笔记归入自己的生活分区，和相邻的笔记连起来，并进入目录。只有当每个进来的文件都有交代，才允许归档原始材料。",
+        "result": "一个越长越大仍然走得通的 Obsidian 知识库。",
+        "alt": "Pantheon 宽幅大理石场景：Mnemazine 工作流程第 6 步，笔记落进知识库"
+      }
+    },
+    "retrieve": {
+      "en": {
+        "short": "An HTML brief, a knowledge report, and graph queries",
+        "body": "A weekly HTML brief shows what changed and what deserves action. A graph map lets an agent query the vault instead of loading all of it into context.",
+        "result": "knowledge that comes back to you instead of waiting to be remembered.",
+        "alt": "Mnemazine workflow stage 7: Weekly brief and search, drawn as a wide Pantheon marble scene"
+      },
+      "ru": {
+        "short": "HTML-сводка, отчёт по знанию и запросы к графу",
+        "body": "Недельная HTML-сводка показывает, что изменилось и на что стоит потратить время. Граф позволяет агенту спросить базу, а не загружать её целиком в контекст.",
+        "result": "знание, которое возвращается к вам само, а не ждёт, пока его вспомнят.",
+        "alt": "Этап 7 такта Mnemazine: Недельная сводка и поиск, показан широкой мраморной сценой Pantheon"
+      },
+      "zh": {
+        "short": "HTML 简报、知识报告和对图谱的查询",
+        "body": "每周的 HTML 简报显示有什么变化、什么值得动手。图谱让智能体去查询知识库，而不是把整个库塞进上下文。",
+        "result": "知识会主动回到你面前，而不是等你想起来。",
+        "alt": "Pantheon 宽幅大理石场景：Mnemazine 工作流程第 7 步，每周简报与检索"
+      }
+    }
+  }
+}

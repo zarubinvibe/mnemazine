@@ -33,49 +33,63 @@
         "title_en": "Drop material into the inbox",
         "title_ru": "Положите материал во входящие",
         "diagram_en": "Capture",
-        "diagram_ru": "Захват"
+        "diagram_ru": "Захват",
+        "title_zh": "把材料丢进收件箱",
+        "diagram_zh": "收集"
       },
       {
         "id": "census",
         "title_en": "The guard counts every file",
         "title_ru": "Сторож считает каждый файл",
         "diagram_en": "Census",
-        "diagram_ru": "Перепись"
+        "diagram_ru": "Перепись",
+        "title_zh": "守卫清点每一个文件",
+        "diagram_zh": "清点"
       },
       {
         "id": "extract",
         "title_en": "Local engines read it",
         "title_ru": "Локальные движки читают материал",
         "diagram_en": "Extract",
-        "diagram_ru": "Чтение"
+        "diagram_ru": "Чтение",
+        "title_zh": "本地引擎来读",
+        "diagram_zh": "读取"
       },
       {
         "id": "verify",
         "title_en": "Facts get a source",
         "title_ru": "Факты получают источник",
         "diagram_en": "Verify",
-        "diagram_ru": "Проверка"
+        "diagram_ru": "Проверка",
+        "title_zh": "事实要有来源",
+        "diagram_zh": "核验"
       },
       {
         "id": "refine",
         "title_en": "One note per idea",
         "title_ru": "Одна заметка на одну мысль",
         "diagram_en": "Refine",
-        "diagram_ru": "Огранка"
+        "diagram_ru": "Огранка",
+        "title_zh": "一条笔记只讲一件事",
+        "diagram_zh": "打磨"
       },
       {
         "id": "store",
         "title_en": "The note lands in the vault",
         "title_ru": "Заметка ложится в базу",
         "diagram_en": "Store",
-        "diagram_ru": "Хранение"
+        "diagram_ru": "Хранение",
+        "title_zh": "笔记落进知识库",
+        "diagram_zh": "入库"
       },
       {
         "id": "retrieve",
         "title_en": "Weekly brief and search",
         "title_ru": "Недельная сводка и поиск",
         "diagram_en": "Retrieve",
-        "diagram_ru": "Возврат"
+        "diagram_ru": "Возврат",
+        "title_zh": "每周简报与检索",
+        "diagram_zh": "取回"
       }
     ]
   },

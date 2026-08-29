@@ -2,7 +2,7 @@
 
 Mnemazine превращает скриншоты, PDF, ссылки и записи в готовые заметки, которыми потом реально пользуешься.
 
-[English](README.md)
+[English](README.md) · [中文](README.zh.md)
 
 [![License](https://img.shields.io/badge/license-community%201.0-blue.svg)](LICENSE) [![Stars](https://img.shields.io/github/stars/zarubinvibe/mnemazine?style=flat&color=C9A87A)](https://github.com/zarubinvibe/mnemazine/stargazers) [![Status](https://img.shields.io/badge/status-working-brightgreen.svg)](https://github.com/zarubinvibe/mnemazine) [![Olympuz](https://img.shields.io/badge/olympuz-family-B8D6EA.svg)](https://github.com/zarubinvibe/athena#olympuz-family)
 

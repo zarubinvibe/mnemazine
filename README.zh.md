@@ -1,0 +1,187 @@
+# Mnemazine
+
+Mnemazine 把截图、PDF、链接和录音变成以后真正用得上的成品笔记。
+
+[English](README.md) · [Русский](README.ru.md)
+
+[![License](https://img.shields.io/badge/license-community%201.0-blue.svg)](LICENSE) [![Stars](https://img.shields.io/github/stars/zarubinvibe/mnemazine?style=flat&color=C9A87A)](https://github.com/zarubinvibe/mnemazine/stargazers) [![Status](https://img.shields.io/badge/status-working-brightgreen.svg)](https://github.com/zarubinvibe/mnemazine) [![Olympuz](https://img.shields.io/badge/olympuz-family-B8D6EA.svg)](https://github.com/zarubinvibe/athena#olympuz-family)
+
+<p align="center"><img src="docs/assets/pantheon/hero.png" alt="白色大理石的谟涅摩绪涅站在古典石柱旁，把零散的原始碎片提炼成一层层清晰的知识" width="100%"></p>
+
+## 目录
+
+- [这是什么](#这是什么)
+- [它解决什么问题](#它解决什么问题)
+- [最大的优势](#最大的优势)
+- [工作流程](#工作流程)
+- [快速开始](#快速开始)
+- [简单对比](#简单对比)
+- [简单词汇](#简单词汇)
+- [安全与隐私](#安全与隐私)
+- [局限](#局限)
+- [点亮星标与参与](#点亮星标与参与)
+
+<!-- beginner-readme:start -->
+
+## 这是什么
+
+Mnemazine 是一座本地的知识精炼厂。原始材料进入收件箱，出来的是 Obsidian 知识库里的成品笔记。阅读、识别和转写都在你自己的电脑上完成，只有带着来源和结论的笔记才会被保存。
+
+## 它解决什么问题
+
+存下来的链接和截图越堆越多，却一直没读。堆子在长，知识没长。Mnemazine 替你把这堆东西读完，留下写给未来的你的笔记，附上来源，重复的内容也已经合并。
+
+## 最大的优势
+
+**最大的优势：** 重活都在本地完成，所以重复的文件不再花钱。
+
+**为什么这样更好：** Apple Vision 识别、文档解析、语音转写和哈希都在你的机器上跑。已经处理过的文件靠哈希就能认出来，不会再送到付费模型那里。
+
+## 工作流程
+
+一次运行走完整条流水线。每个阶段都留下证据，只要还有文件没有交代清楚，这次运行就不会结束。
+
+<!-- workflow-diagram:start -->
+
+```text
+  ┌──────┐   ┌──────┐   ┌──────┐
+  │ 收集 │ ▶ │ 清点 │ ▶ │ 读取 │
+  └──────┘   └──────┘   └──────┘
+      ▼
+  ┌──────┐   ┌──────┐   ┌──────┐
+  │ 核验 │ ▶ │ 打磨 │ ▶ │ 入库 │
+  └──────┘   └──────┘   └──────┘
+      ▼
+  ┌──────┐
+  │ 取回 │
+  └──────┘
+```
+
+<!-- workflow-diagram:end -->
+
+| 阶段 | 会发生什么 |
+|---|---|
+| 1. 收集 | 截图、PDF、链接、笔记、音频、视频 |
+| 2. 清点 | 按哈希清点、给知识库做快照、给这次运行上锁 |
+| 3. 读取 | Apple Vision 识别、文档解析、语音转文字 |
+| 4. 核验 | 找到第一手来源，把事实和猜测分开 |
+| 5. 打磨 | 长材料被切成可复用的知识原子 |
+| 6. 入库 | 分区、连接、目录，还有一道覆盖闸门 |
+| 7. 取回 | HTML 简报、知识报告和对图谱的查询 |
+
+### 第 1 步：把材料丢进收件箱
+
+你把文件放进一个文件夹，或者发给自己的 Telegram 机器人。除此之外不需要你做别的。
+
+**你会得到：** 一个收件箱，里面装着所有等着被读的东西。
+
+### 第 2 步：守卫清点每一个文件
+
+在读任何东西之前，守卫先给知识库做快照，给这次运行上锁，并为每个进来的文件算哈希。哈希已经在缓存里，说明这个文件处理过了。
+
+**你会得到：** 一份地面真相清单，后面的阶段不能悄悄把它变短。
+
+### 第 3 步：本地引擎来读
+
+截图和照片走 Apple Vision，文档直接解析，音频和视频在本地转写。界面噪音和社交平台的壳子会被丢掉。
+
+**你会得到：** 干净的内容，而不是一张还要眯着眼看的截图。
+
+### 第 4 步：事实要有来源
+
+材料被当作种子，而不是结论。这一步去找第一手来源，核对重要的说法，并标出确认不了的部分。
+
+**你会得到：** 一条可以被引用的笔记，核验状态一眼可见。
+
+### 第 5 步：一条笔记只讲一件事
+
+一份长指南会变成几条聚焦的笔记，每条都有明白的标题，还有一小段说明它对你有什么用。语义上接近的重复会被合并，而不是继续堆着。
+
+**你会得到：** 笔记短到以后一次提问只会拉出真正相关的那一条。
+
+### 第 6 步：笔记落进知识库
+
+每条笔记归入自己的生活分区，和相邻的笔记连起来，并进入目录。只有当每个进来的文件都有交代，才允许归档原始材料。
+
+**你会得到：** 一个越长越大仍然走得通的 Obsidian 知识库。
+
+### 第 7 步：每周简报与检索
+
+每周的 HTML 简报显示有什么变化、什么值得动手。图谱让智能体去查询知识库，而不是把整个库塞进上下文。
+
+**你会得到：** 知识会主动回到你面前，而不是等你想起来。
+
+## 快速开始
+
+你需要 Node.js 20 以上、Python 3.11 以上和 Git。建议用 macOS，因为 Apple Vision 识别只在那里可用；在 Linux 上其余部分照常工作。
+
+```bash
+git clone https://github.com/zarubinvibe/mnemazine.git "$HOME/Desktop/Mnemazine"
+cd "$HOME/Desktop/Mnemazine"
+bash setup.sh
+bash install.sh
+```
+
+没有 Git？下载 [ZIP](https://github.com/zarubinvibe/mnemazine/archive/refs/heads/main.zip) 或者 [tar.gz](https://github.com/zarubinvibe/mnemazine/archive/refs/heads/main.tar.gz)，解压后在里面执行同样的两个脚本。`setup.sh` 会问收件箱放在哪里；`MNEMAZINE_SETUP_DRYRUN=1 bash setup.sh` 只看计划，不动任何文件。
+
+**你会得到：** 目录准备好了，本地引擎如实报告哪些可用、哪些降级，`vault/` 可以直接作为 Obsidian 知识库打开。
+
+## 简单对比
+
+| 方案 | 适合什么时候 | 你会得到 | 代价 |
+|---|---|---|---|
+| **Mnemazine** | 存下来的材料已经多到读不动 | 本地阅读、已核验的笔记、去重、每周简报 | 想要最好的效果需要一台 Mac |
+| 自己往 Obsidian 里放文件 | 一周只存几条 | 完全掌控，不用配置 | 没有人替你阅读、核验和合并重复 |
+| 云端 AI 笔记本 | 想对上传的文档提问 | 问答很快 | 材料离开你的机器，笔记也留在那个服务里 |
+| 以后再手动读 | 堆子还很小 | 什么都不用装 | “以后”通常不会到来 |
+
+## 简单词汇
+
+| 词 | 简单解释 |
+|---|---|
+| Repository | 仓库：Git 保存并记录版本的项目文件夹 |
+| Terminal | 终端：你输入命令的窗口 |
+| Command | 命令：给电脑的一条指令 |
+| Branch | 分支：不影响 `main` 的另一条修改线 |
+| Pull Request | 合并请求：请别人审阅并接受你的修改 |
+| Vault | 知识库：存放成品笔记的文件夹，用 Obsidian 打开 |
+| OCR | 文字识别：把图片里的文字变成可以搜索的文本 |
+
+## 安全与隐私
+
+- 默认本地：识别、解析、转写和哈希都在你的机器上完成。
+- 深度模式只有在你同意时才把材料发给你选定的模型服务；关闭时这次运行不花任何 token。
+- Telegram 机器人是你自己的，不是共用的，没有它系统照样工作。
+- 机器人的令牌以受限权限保存，不会进入 Git。
+- 标记为个人数据的笔记会被导出闸门挡下，不会流出去。
+- 网站和视频解析只碰你自己给出的那个地址。
+
+每个通道具体流出什么、由哪个守卫拦住，完整的表格在 [完整参考](docs/DETAILS.md) 里。
+
+## 局限
+
+状态：可用的本地系统，带发布检查和诚实的退出码。
+
+- Apple Vision 识别只在 macOS 上；在 Linux 上截图要么交给模型，要么留着不读。
+- 核验能找到来源和矛盾，但最终判断仍然是你的。
+- 第一次处理很大的一堆材料会花时间，在深度模式下还会花 token。
+- 知识库就是普通的 Markdown：没有哪个服务替你做备份。
+
+想看得更深：[完整参考](docs/DETAILS.md) 讲了网站与视频的接入、知识质量契约、智能体名单、退出码和故障排查。
+
+## 点亮星标与参与
+
+觉得有用？给 Mnemazine 点亮星标：[https://github.com/zarubinvibe/mnemazine](https://github.com/zarubinvibe/mnemazine)。这只要一秒，却决定别人能不能找到这个项目。
+
+想改点什么？流程很短：先 fork 仓库，建一个分支 branch，提交 commit，推送 push，然后开一个 Pull Request。请不要直接向 `main` 推送，发布闸门会拒绝。
+
+发现问题？到 [https://github.com/zarubinvibe/mnemazine/issues](https://github.com/zarubinvibe/mnemazine/issues) 开一个 issue，写清楚你运行了什么、发生了什么。
+
+<!-- beginner-readme:end -->
+
+<!-- pantheon-family:start -->
+<!-- pantheon-family:end -->
+
+## 许可证
+
+Mnemazine Community License 1.0：一个人使用免费，包括你自己单干的生意。组织使用需要单独协议。见 [LICENSE](LICENSE)。
