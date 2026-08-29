@@ -22,7 +22,7 @@
       "better": "Apple Vision recognition, parsing, transcription, and hashing run on your machine. A file that was already processed is recognised by its hash and never reaches a paid model again.",
       "how": "One run walks the whole pipeline. Every stage leaves evidence, and the run does not close while a file is still unaccounted for.",
       "quick_intro": "You need Node.js 20 or newer, Python 3.11 or newer, and Git. macOS is recommended, because Apple Vision recognition is macOS only; on Linux everything else still runs.",
-      "quick_extra": "`setup.sh` is the guided path: it checks the prerequisites, asks where the inbox goes, and can deploy the Telegram bot. `MNEMAZINE_SETUP_DRYRUN=1 bash setup.sh` previews it without touching anything, and `bash install.sh` is the non-interactive skeleton if you already know what you want. No Git? Download [the ZIP](https://github.com/zarubinvibe/mnemazine/archive/refs/heads/main.zip) or [the tarball](https://github.com/zarubinvibe/mnemazine/archive/refs/heads/main.tar.gz) and run the same script inside.",
+      "quick_extra": "`setup.sh` is the guided path: it checks the prerequisites, asks where the inbox goes, and can deploy the Telegram bot. `MNEMAZINE_SETUP_DRYRUN=1 bash setup.sh` previews it without touching anything, and `bash install.sh` is the non-interactive skeleton if you already know what you want. No Git? Download [the ZIP](https://github.com/zarubinvibe/mnemazine/archive/refs/heads/main.zip) or [the tarball](https://github.com/zarubinvibe/mnemazine/archive/refs/heads/main.tar.gz) and run the same script inside. First time here? Open the project in Claude Code and run `/mnemazine-setup`: the install goes as a conversation, one question at a time, and nothing is installed without your yes.",
       "quick_result": "the folders are ready, the local engines report what is installed and what is degraded, and `vault/` opens as an Obsidian vault.",
       "compare": [
         [
@@ -77,7 +77,8 @@
         "The vault is plain Markdown: no hosted service keeps a backup for you."
       ],
       "docs": "Deeper reading: [the full reference](docs/DETAILS.md) covers ingestion of sites and video, the knowledge quality contract, the agent roster, exit codes, and troubleshooting.",
-      "license": "Mnemazine Community License 1.0: free for one person, including a solo business. An organisation needs a separate agreement. See [LICENSE](LICENSE)."
+      "license": "Mnemazine Community License 1.0: free for one person, including a solo business. An organisation needs a separate agreement. See [LICENSE](LICENSE).",
+      "welcome": "Hello. I save links and screenshots like everyone else, and like everyone else I never came back to them. The pile grew, the knowledge did not.\n\nMnemazine reads that pile on my own machine and leaves notes written for the me of six months from now. If it does the same for you, take it and make it yours."
     },
     "ru": {
       "title": "Mnemazine",
@@ -90,7 +91,7 @@
       "better": "Распознавание Apple Vision, разбор, расшифровка и хеширование идут на вашей машине. Уже обработанный файл узнаётся по хешу и больше не доходит до платной модели.",
       "how": "Один прогон проходит весь конвейер. Каждая стадия оставляет доказательство, и прогон не закрывается, пока хоть один файл не учтён.",
       "quick_intro": "Нужны Node.js 20 или новее, Python 3.11 или новее и Git. Лучше macOS, потому что распознавание Apple Vision есть только там; на Linux работает всё остальное.",
-      "quick_extra": "`setup.sh` это ведомый путь: он проверяет предпосылки, спрашивает, где будут входящие, и умеет развернуть Telegram-бота. `MNEMAZINE_SETUP_DRYRUN=1 bash setup.sh` показывает план, ничего не трогая, а `bash install.sh` это неинтерактивный скелет, если вы уже знаете, что хотите. Нет Git? Скачайте [ZIP](https://github.com/zarubinvibe/mnemazine/archive/refs/heads/main.zip) или [tar.gz](https://github.com/zarubinvibe/mnemazine/archive/refs/heads/main.tar.gz) и запустите тот же скрипт внутри.",
+      "quick_extra": "`setup.sh` это ведомый путь: он проверяет предпосылки, спрашивает, где будут входящие, и умеет развернуть Telegram-бота. `MNEMAZINE_SETUP_DRYRUN=1 bash setup.sh` показывает план, ничего не трогая, а `bash install.sh` это неинтерактивный скелет, если вы уже знаете, что хотите. Нет Git? Скачайте [ZIP](https://github.com/zarubinvibe/mnemazine/archive/refs/heads/main.zip) или [tar.gz](https://github.com/zarubinvibe/mnemazine/archive/refs/heads/main.tar.gz) и запустите тот же скрипт внутри. Первый раз? Откройте проект в Claude Code и запустите `/mnemazine-setup`: установка пройдёт разговором, по одному вопросу, и ничего не поставится без вашего «да».",
       "quick_result": "папки готовы, локальные движки честно сообщают, что установлено и что работает урезанно, а `vault/` открывается как база Obsidian.",
       "compare": [
         [
@@ -145,7 +146,8 @@
         "База это обычный Markdown: никакой сервис не держит для вас резервную копию."
       ],
       "docs": "Глубже: [полный разбор](docs/DETAILS.ru.md) описывает приём сайтов и видео, контракт качества знания, состав агентов, коды возврата и разбор поломок.",
-      "license": "Mnemazine Community License 1.0: бесплатно одному человеку, включая работу на себя. Организации нужно отдельное соглашение. Текст в файле [LICENSE](LICENSE)."
+      "license": "Mnemazine Community License 1.0: бесплатно одному человеку, включая работу на себя. Организации нужно отдельное соглашение. Текст в файле [LICENSE](LICENSE).",
+      "welcome": "Привет. Я, как и все, сохраняю ссылки и делаю скриншоты, и, как и все, никогда к ним не возвращался. Куча росла, знание нет.\n\nMnemazine читает эту кучу на моей же машине и оставляет заметки, написанные для меня через полгода. Если она сделает то же для вас, забирайте и делайте своей."
     },
     "zh": {
       "title": "Mnemazine",
@@ -158,7 +160,7 @@
       "better": "Apple Vision 识别、文档解析、语音转写和哈希都在你的机器上跑。已经处理过的文件靠哈希就能认出来，不会再送到付费模型那里。",
       "how": "一次运行走完整条流水线。每个阶段都留下证据，只要还有文件没有交代清楚，这次运行就不会结束。",
       "quick_intro": "你需要 Node.js 20 以上、Python 3.11 以上和 Git。建议用 macOS，因为 Apple Vision 识别只在那里可用；在 Linux 上其余部分照常工作。",
-      "quick_extra": "`setup.sh` 是带引导的路径：它检查前置条件，问你收件箱放在哪里，还能部署 Telegram 机器人。`MNEMAZINE_SETUP_DRYRUN=1 bash setup.sh` 只看计划，不动任何文件；`bash install.sh` 是非交互的骨架安装，适合你已经清楚要什么的时候。没有 Git？下载 [ZIP](https://github.com/zarubinvibe/mnemazine/archive/refs/heads/main.zip) 或 [tar.gz](https://github.com/zarubinvibe/mnemazine/archive/refs/heads/main.tar.gz)，在里面跑同样的脚本。",
+      "quick_extra": "`setup.sh` 是带引导的路径：它检查前置条件，问你收件箱放在哪里，还能部署 Telegram 机器人。`MNEMAZINE_SETUP_DRYRUN=1 bash setup.sh` 只看计划，不动任何文件；`bash install.sh` 是非交互的骨架安装，适合你已经清楚要什么的时候。没有 Git？下载 [ZIP](https://github.com/zarubinvibe/mnemazine/archive/refs/heads/main.zip) 或 [tar.gz](https://github.com/zarubinvibe/mnemazine/archive/refs/heads/main.tar.gz)，在里面跑同样的脚本。 第一次用？在 Claude Code 里打开项目并运行 `/mnemazine-setup`：安装以对话方式进行，一次问一个问题，没有你的同意不会装任何东西。",
       "quick_result": "目录准备好了，本地引擎如实报告哪些可用、哪些降级，`vault/` 可以直接作为 Obsidian 知识库打开。",
       "compare": [
         [
@@ -213,7 +215,8 @@
         "知识库就是普通的 Markdown：没有哪个服务替你做备份。"
       ],
       "docs": "想看得更深：[完整参考](docs/DETAILS.md) 讲了网站与视频的接入、知识质量契约、智能体名单、退出码和故障排查。",
-      "license": "Mnemazine Community License 1.0：一个人使用免费，包括你自己单干的生意。组织使用需要单独协议。见 [LICENSE](LICENSE)。"
+      "license": "Mnemazine Community License 1.0：一个人使用免费，包括你自己单干的生意。组织使用需要单独协议。见 [LICENSE](LICENSE)。",
+      "welcome": "你好。我和所有人一样存链接、截图，也和所有人一样从来没有回头去看。堆越来越大，知识没有变多。\n\nMnemazine 在我自己的机器上读完这堆东西，留下写给半年后的我的笔记。如果它对你也一样有用，就拿去，把它变成你自己的。"
     }
   },
   "stages": {
@@ -357,5 +360,10 @@
         "alt": "Pantheon 宽幅大理石场景：Mnemazine 工作流程第 7 步，每周简报与检索"
       }
     }
+  },
+  "owner_display_name": {
+    "en": "Filipp Zarubin",
+    "ru": "Филипп Зарубин",
+    "zh": "Filipp Zarubin"
   }
 }

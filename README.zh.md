@@ -8,6 +8,16 @@ Mnemazine 把截图、PDF、链接和录音变成以后真正用得上的成品�
 
 <p align="center"><img src="docs/assets/pantheon/hero.png" alt="白色大理石的谟涅摩绪涅站在古典石柱旁，把零散的原始碎片提炼成一层层清晰的知识" width="100%"></p>
 
+<!-- owner-welcome:start -->
+
+> 你好。我和所有人一样存链接、截图，也和所有人一样从来没有回头去看。堆越来越大，知识没有变多。
+>
+> Mnemazine 在我自己的机器上读完这堆东西，留下写给半年后的我的笔记。如果它对你也一样有用，就拿去，把它变成你自己的。
+>
+> — Filipp Zarubin
+
+<!-- owner-welcome:end -->
+
 ## 目录
 
 - [这是什么](#这是什么)
@@ -121,7 +131,9 @@ cd "$HOME/Desktop/Mnemazine"
 bash setup.sh
 ```
 
-`setup.sh` 是带引导的路径：它检查前置条件，问你收件箱放在哪里，还能部署 Telegram 机器人。`MNEMAZINE_SETUP_DRYRUN=1 bash setup.sh` 只看计划，不动任何文件；`bash install.sh` 是非交互的骨架安装，适合你已经清楚要什么的时候。没有 Git？下载 [ZIP](https://github.com/zarubinvibe/mnemazine/archive/refs/heads/main.zip) 或 [tar.gz](https://github.com/zarubinvibe/mnemazine/archive/refs/heads/main.tar.gz)，在里面跑同样的脚本。
+`setup.sh` 是带引导的路径：它检查前置条件，问你收件箱放在哪里，还能部署 Telegram 机器人。`MNEMAZINE_SETUP_DRYRUN=1 bash setup.sh` 只看计划，不动任何文件；`bash install.sh` 是非交互的骨架安装，适合你已经清楚要什么的时候。没有 Git？下载 [ZIP](https://github.com/zarubinvibe/mnemazine/archive/refs/heads/main.zip) 或 [tar.gz](https://github.com/zarubinvibe/mnemazine/archive/refs/heads/main.tar.gz)，在里面跑同样的脚本。 第一次用？在 Claude Code 里打开项目并运行 `/mnemazine-setup`：安装以对话方式进行，一次问一个问题，没有你的同意不会装任何东西。
+
+第一次做这件事？[上手引导](docs/ONBOARDING.zh.md) 会一步一步带你走完第一次运行，并写清楚每条命令之后你会看到什么。
 
 **你会得到：** 目录准备好了，本地引擎如实报告哪些可用、哪些降级，`vault/` 可以直接作为 Obsidian 知识库打开。
 

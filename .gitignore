@@ -34,9 +34,9 @@ graphify-out/
 *.log
 
 # Local agent session state; contains handoffs, tool metadata, and private working context.
-# The two settings files stay tracked: they carry the shared agent hook wiring, no session data.
 .claude/*
 !.claude/settings.json
+!.claude/skills/
 .playwright-mcp/
 .entire/*
 !.entire/settings.json

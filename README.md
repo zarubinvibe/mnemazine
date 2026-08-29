@@ -8,6 +8,16 @@ Mnemazine turns screenshots, PDFs, links, and recordings into finished notes you
 
 <p align="center"><img src="docs/assets/pantheon/hero.png" alt="Mnemosyne in white marble beside the classical column, distilling raw fragments into a layered system of knowledge" width="100%"></p>
 
+<!-- owner-welcome:start -->
+
+> Hello. I save links and screenshots like everyone else, and like everyone else I never came back to them. The pile grew, the knowledge did not.
+>
+> Mnemazine reads that pile on my own machine and leaves notes written for the me of six months from now. If it does the same for you, take it and make it yours.
+>
+> — Filipp Zarubin
+
+<!-- owner-welcome:end -->
+
 ## Contents
 
 - [What This Is](#what-this-is)
@@ -121,7 +131,9 @@ cd "$HOME/Desktop/Mnemazine"
 bash setup.sh
 ```
 
-`setup.sh` is the guided path: it checks the prerequisites, asks where the inbox goes, and can deploy the Telegram bot. `MNEMAZINE_SETUP_DRYRUN=1 bash setup.sh` previews it without touching anything, and `bash install.sh` is the non-interactive skeleton if you already know what you want. No Git? Download [the ZIP](https://github.com/zarubinvibe/mnemazine/archive/refs/heads/main.zip) or [the tarball](https://github.com/zarubinvibe/mnemazine/archive/refs/heads/main.tar.gz) and run the same script inside.
+`setup.sh` is the guided path: it checks the prerequisites, asks where the inbox goes, and can deploy the Telegram bot. `MNEMAZINE_SETUP_DRYRUN=1 bash setup.sh` previews it without touching anything, and `bash install.sh` is the non-interactive skeleton if you already know what you want. No Git? Download [the ZIP](https://github.com/zarubinvibe/mnemazine/archive/refs/heads/main.zip) or [the tarball](https://github.com/zarubinvibe/mnemazine/archive/refs/heads/main.tar.gz) and run the same script inside. First time here? Open the project in Claude Code and run `/mnemazine-setup`: the install goes as a conversation, one question at a time, and nothing is installed without your yes.
+
+Never done this before? [The onboarding](docs/ONBOARDING.md) walks the whole first run step by step and says what you see after every command.
 
 **You get:** the folders are ready, the local engines report what is installed and what is degraded, and `vault/` opens as an Obsidian vault.
 

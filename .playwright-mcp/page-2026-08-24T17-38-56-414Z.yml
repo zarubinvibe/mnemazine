@@ -1,8 +1,0 @@
-- generic [ref=f32e2]:
-  - generic [ref=f32e3] [cursor=pointer]
-  - heading "Проверяем, что вы не робот" [level=2] [ref=f32e16]: Проверяем,что вы не робот
-  - button "Продолжить" [ref=f32e17] [cursor=pointer]
-  - paragraph [ref=f32e18]:
-    - link "Условия использования" [ref=f32e19] [cursor=pointer]:
-      - /url: /challenge/privacy_ru.html
-  - paragraph [ref=f32e20]: CauOrNVIZK_zmgLuuVJHYg5o2nbJWA
