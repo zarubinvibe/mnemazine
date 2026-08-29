@@ -64,7 +64,7 @@ Strict runs (`npm start` / `--require-deep`) fail instead of archiving when enri
 
 ### Digest (Russian human-readable summary)
 
-After Graphify, `scripts/mnemazine-digest.mjs` (`npm run digest`) writes a humanizer-style Russian **Справка** into each note — *Что это / О чём / Почему важно мне / Связи* — plus one session summary note mapping all atoms. Connections (*Связи*) are derived directly from note metadata: atoms sharing a `cluster_id` (siblings from one source) and atoms sharing a source-URL host. Deterministic, no model key needed. (`graphify update` builds only the intra-note structural code-graph; richer note-to-note semantic links would need the separate `graphify --update` pass and are not relied upon here.) This is the reuse surface: open one note, understand the knowledge and how it connects. Idempotent (skips notes that already have a Справка unless `--force`).
+After Graphify, `scripts/mnemazine-digest.mjs` (`npm run digest`) writes a humanizer-style Russian **Справка** into each note — *Что это / О чем / Почему важно мне / Связи* — plus one session summary note mapping all atoms. Connections (*Связи*) are derived directly from note metadata: atoms sharing a `cluster_id` (siblings from one source) and atoms sharing a source-URL host. Deterministic, no model key needed. (`graphify update` builds only the intra-note structural code-graph; richer note-to-note semantic links would need the separate `graphify --update` pass and are not relied upon here.) This is the reuse surface: open one note, understand the knowledge and how it connects. Idempotent (skips notes that already have a Справка unless `--force`).
 
 ### Humanize preservation gate (П13)
 

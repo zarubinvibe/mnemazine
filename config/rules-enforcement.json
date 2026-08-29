@@ -23,7 +23,7 @@
       "line": 33,
       "quote": "It must not process inbox files",
       "enforced_by": "scripts/mnemazine-doctor.mjs:10",
-      "note": "doctor и update — только чтение состояния; INBOX читается счётчиком, не обрабатывается (тот же инвариант у scripts/mnemazine-update.sh)."
+      "note": "doctor и update — только чтение состояния; INBOX читается счетчиком, не обрабатывается (тот же инвариант у scripts/mnemazine-update.sh)."
     },
     {
       "id": "failure-does-not-destroy",
@@ -39,7 +39,7 @@
       "line": 41,
       "quote": "Do not leave it as a passive note",
       "enforced_by": "scripts/mnemazine-tool-decision-queue.mjs:167",
-      "note": "Очередь разбора инструментов выносит кандидата в активное решение (берём/откладываем/забываем), а не пассивную заметку."
+      "note": "Очередь разбора инструментов выносит кандидата в активное решение (берем/откладываем/забываем), а не пассивную заметку."
     },
     {
       "id": "never-pipe-remote-install",
@@ -63,7 +63,7 @@
       "line": 48,
       "quote": "Do not leave synthesis-* as the only record",
       "enforced_by": "scripts/mnemazine-tool-decision-queue.mjs:167",
-      "note": "synthesis-нота инструмента выносится в очередь как отдельная запись, а не остаётся единственным следом."
+      "note": "synthesis-нота инструмента выносится в очередь как отдельная запись, а не остается единственным следом."
     },
     {
       "id": "subject-required",
@@ -72,7 +72,7 @@
       "quote": "subject обязателен, закрытый список self | world | mixed",
       "enforced_by": "scripts/mnemazine-vault-quality-gate.mjs:263",
       "pending_until": "П06",
-      "note": "Мастер §18. Гейт спеки требует subject у новой/изменённой ноты и режет значение вне self|world|mixed; self при source_type video|article|repo — провал (§18.4). Маркер П06 на диске — прибор обязан быть живым."
+      "note": "Мастер §18. Гейт спеки требует subject у новой/измененной ноты и режет значение вне self|world|mixed; self при source_type video|article|repo — провал (§18.4). Маркер П06 на диске — прибор обязан быть живым."
     },
     {
       "id": "data-class-max-order-no-pd-to-vps",
@@ -81,15 +81,15 @@
       "quote": "класс данных = максимум по order; явное поле поднимает и не опускает; партия с pd или personal не уходит на VPS",
       "enforced_by": "scripts/mnemazine-machine-class-gate.mjs:1",
       "pending_until": "П24",
-      "note": "Мастер §17.8. Прибор строит П24 (классовый барьер машин). Пока П24.done.json нет — запись дормантна, мёртвый enforced_by не краснит; с маркером — краснит."
+      "note": "Мастер §17.8. Прибор строит П24 (классовый барьер машин). Пока П24.done.json нет — запись дормантна, мертвый enforced_by не краснит; с маркером — краснит."
     },
     {
       "id": "pipeline-stepwise-attestation",
       "file": "docs/PLAN-ночь-2026-08-22-03-волна2-правила.md",
       "line": 605,
-      "quote": "пошаговая аттестация конвейера остаётся за П03",
+      "quote": "пошаговая аттестация конвейера остается за П03",
       "enforced_by": "scripts/mnemazine-complete-check.mjs:231",
-      "note": "Приём 15 стека §2.1. Аттестацию конвейера держит П03 (уже закрыт): fail-closed завершение прогона — complete-check роняет процесс при !ok. Здесь только якорь на его гейт (план П11 шаг 9)."
+      "note": "Прием 15 стека §2.1. Аттестацию конвейера держит П03 (уже закрыт): fail-closed завершение прогона — complete-check роняет процесс при !ok. Здесь только якорь на его гейт (план П11 шаг 9)."
     }
   ]
 }

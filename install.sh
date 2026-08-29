@@ -95,8 +95,8 @@ smeta() {
   b "$(L 'Mnemazine — установка каркаса.' 'Mnemazine — skeleton install.')"
   note "$(L "Python-зависимости: $n пакетов из requirements.lock, ~1.1 ГБ (замер на macOS 22.08.2026)." "Python deps: $n packages from requirements.lock, ~1.1 GB (measured on macOS 2026-08-22).")"
   note "$(L 'markitdown — разбор PDF/DOCX/PPTX/XLSX/HTML; openai-whisper — транскрипт речи; onnxruntime/torch/fastembed — локальные эмбеддинги поиска.' 'markitdown — PDF/DOCX/PPTX/XLSX/HTML parsing; openai-whisper — speech transcript; onnxruntime/torch/fastembed — local search embeddings.')"
-  note "$(L 'Тяжёлые: torch, onnxruntime, openai-whisper.' 'Heavy: torch, onnxruntime, openai-whisper.')"
-  note "$(L 'Всё ставится локально, наружу ничего не уходит.' 'Everything installs locally; nothing leaves your machine.')"
+  note "$(L 'Тяжелые: torch, onnxruntime, openai-whisper.' 'Heavy: torch, onnxruntime, openai-whisper.')"
+  note "$(L 'Все ставится локально, наружу ничего не уходит.' 'Everything installs locally; nothing leaves your machine.')"
   note "$(L "Пишем в: $INBOX, $VAULT, $ROOT/.venv, $USER_BIN, $HOME/.claude/skills, $HOME/.codex/skills." "Writes to: $INBOX, $VAULT, $ROOT/.venv, $USER_BIN, $HOME/.claude/skills, $HOME/.codex/skills.")"
 }
 
@@ -282,7 +282,7 @@ install_pre_commit() {
   if [ -e "$target" ] && ! grep -q 'check-public-release.sh' "$target" 2>/dev/null; then
     local bak="$target.bak-$(date +%Y%m%d)"
     cp "$target" "$bak"
-    note "$(L "Существующий pre-commit сохранён: $bak" "Existing pre-commit backed up: $bak")"
+    note "$(L "Существующий pre-commit сохранен: $bak" "Existing pre-commit backed up: $bak")"
   fi
   cat > "$target" <<EOF
 #!/usr/bin/env bash

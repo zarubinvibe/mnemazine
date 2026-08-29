@@ -14,7 +14,7 @@ python3 -m pip install graphifyy
 graphify update $HOME/Desktop/Mnemazine/vault
 ```
 
-Защищённое обновление для ночных/ремонтных прогонов Mnemazine:
+Защищенное обновление для ночных/ремонтных прогонов Mnemazine:
 
 ```bash
 export MNEMAZINE_VAULT="/path/to/your/vault"
@@ -32,8 +32,8 @@ npm run doctor:watch
 ```
 
 Status включает `progress`: completed jobs, active shard, failed logs и ETA.
-`status:pretty` даёт короткий человекочитаемый вид с PID и elapsed time.
-`doctor:watch` ждёт остановки фоновой задачи.
+`status:pretty` дает короткий человекочитаемый вид с PID и elapsed time.
+`doctor:watch` ждет остановки фоновой задачи.
 Shard-прогоны по умолчанию resume-able: успешные shard outputs получают
 `.done.json` markers, а per-file semantic cache лежит в `.mnemazine/semantic-cache`.
 `graph:semantic:monitor` продолжает pending/failed/dead задачи или старые
@@ -41,7 +41,7 @@ Shard-прогоны по умолчанию resume-able: успешные shard
 `npm run graph:semantic:async -- --fresh`, `--no-resume` или `--no-cache`
 нужны только для намеренно чистого перезапуска.
 
-По умолчанию async semantic refresh идёт через локальные shards/swarm. Так
+По умолчанию async semantic refresh идет через локальные shards/swarm. Так
 Mnemazine не гонит один огромный Ollama extract на 1160 заметок и не упирается
 в timeout. Старый single-run путь можно включить явно:
 
@@ -49,24 +49,24 @@ Mnemazine не гонит один огромный Ollama extract на 1160 з�
 MNEMAZINE_SEMANTIC_TASK_STRATEGY=full npm run graph:semantic:async
 ```
 
-Что делает обёртка:
+Что делает обертка:
 
 - запускает code-safe `graphify update`;
 - определяет, осталась ли семантическая свежесть в ожидании;
 - по умолчанию запускает локальные semantic shards, затем merge и re-cluster;
-- продолжает завершённые shards и переиспользует per-file semantic cache;
+- продолжает завершенные shards и переиспользует per-file semantic cache;
 - для локального Ollama нормализует базовый URL до `/v1` перед OpenAI-совместимыми вызовами;
-- смоук-тестит кандидатные модели и chat-JSON, и мини `graphify extract` до тяжёлой семантической экстракции;
+- смоук-тестит кандидатные модели и chat-JSON, и мини `graphify extract` до тяжелой семантической экстракции;
 - проходит лестницу моделей из `--models` / `MNEMAZINE_GRAPHIFY_MODELS`;
 - делает бэкап `graphify-out/`;
 - восстанавливает бэкап и пишет `graphify-out/needs_update`, если семантическое обновление выглядит небезопасным;
-- перекластеризует отчёт, чтобы `graph.json` и `GRAPH_REPORT.md` оставались честными.
+- перекластеризует отчет, чтобы `graph.json` и `GRAPH_REPORT.md` оставались честными.
 
 Коды выхода:
 
 - `0` = граф свежий;
-- `2` = частичный успех, семантическое обновление ещё в ожидании;
-- `1` = жёсткий сбой.
+- `2` = частичный успех, семантическое обновление еще в ожидании;
+- `1` = жесткий сбой.
 
 Дефолты лежат в `config/graphify-refresh.json`.
 
@@ -93,4 +93,4 @@ Graphify помогает Mnemazine:
 - находить связанные заметки;
 - выявлять кластеры;
 - избегать дублирующихся концепций;
-- строить граф-осведомлённый контекст для агентов.
+- строить граф-осведомленный контекст для агентов.

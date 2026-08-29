@@ -5,7 +5,7 @@
     "olympuz: ЗАРЕГИСТРИРОВАН 2026-07-25 в catalog/mcp.json + список hostReadServers.",
     "ВНИМАНИЕ (замер 2026-07-25): под seatbelt olympuz этот сервер НЕ работает — он дочерний процесс бога и наследует (deny file-read* $HOME), graph.json открыть не может. Выдавать только claude-богам; kimi/codex/openai получают отказ до диспатча. Seatbelt под это НЕ пробивать.",
     "Инструменты сервера: query_graph, get_node, get_neighbors, shortest_path, graph_stats.",
-    "Граф отстаёт от vault — это чинит обязательный graphify --update в хвосте каждого прогона /kb."
+    "Граф отстает от vault — это чинит обязательный graphify --update в хвосте каждого прогона /kb."
   ],
   "mcpServers": {
     "vault-graph": {

@@ -66,7 +66,7 @@ keychain_store_token() {
     halt
   fi
   run security add-generic-password -U -s mnemazine-telegram -a "$account" -w "$token"
-  ok "$(L "Токен сохранён в Keychain: service=mnemazine-telegram account=$account." "Token stored in Keychain: service=mnemazine-telegram account=$account.")"
+  ok "$(L "Токен сохранен в Keychain: service=mnemazine-telegram account=$account." "Token stored in Keychain: service=mnemazine-telegram account=$account.")"
 }
 
 keychain_read_token() {
@@ -86,7 +86,7 @@ note "$(L 'куда класть входящие, чем разбирать м�
 note "$(L 'Ничего необратимого: прервать можно в любой момент через Ctrl+C.' 'Nothing is irreversible: stop at any moment with Ctrl+C.')"
 note "$(L 'Посмотреть весь путь, ничего не устанавливая: MNEMAZINE_SETUP_DRYRUN=1 bash setup.sh' 'Preview the whole path without installing: MNEMAZINE_SETUP_DRYRUN=1 bash setup.sh')"
 note ""
-note "$(L 'Каждый этап завершается прежде чем начнётся следующий.' 'Each stage finishes before the next begins.')"
+note "$(L 'Каждый этап завершается прежде чем начнется следующий.' 'Each stage finishes before the next begins.')"
 [ "$DRY" = "1" ] && note "$(L 'DRY RUN — ничего не ставится и не деплоится.' 'DRY RUN — nothing is installed or deployed.')"
 
 # ---- Stage 1: base environment (hard gate) ---------------------------------
@@ -117,7 +117,7 @@ note "$(L 'Это не блокеры. Каркас поставится и бе
 
 # ---- Stage 3: inbox location (required question) ---------------------------
 stage "3/7" "$(L 'Куда класть inbox?' 'Where does the inbox go?')"
-note "$(L 'Зачем: это единственная папка, куда вы бросаете материал. Всё остальное система делает сама.' 'Why: this is the one folder you drop material into. The system handles everything after that.')"
+note "$(L 'Зачем: это единственная папка, куда вы бросаете материал. Все остальное система делает сама.' 'Why: this is the one folder you drop material into. The system handles everything after that.')"
 ask_choice "$(L 'Входящие материалы будут падать сюда:' 'Incoming material lands here:')" \
   "$(L 'На рабочий стол' 'On the Desktop') — $HOME/Desktop/Mnemazine Inbox" \
   "$(L 'Внутри репозитория' 'Inside the repo') — $ROOT/inbox"
@@ -144,10 +144,10 @@ else
 fi
 
 # ---- Stage 5: Telegram bot --------------------------------------------------
-stage "5/7" "$(L 'Telegram-бот для приёма входящих' 'Telegram bot for intake')"
+stage "5/7" "$(L 'Telegram-бот для приема входящих' 'Telegram bot for intake')"
 note "$(L 'Зачем: увидели что-то с телефона — отправили боту, и материал уже в инбоксе. Шаг необязательный.' 'Why: spot something on your phone, send it to the bot, and it is already in the inbox. Optional step.')"
 BOT_TOKEN=""; BOT_MODE="none"
-ask_choice "$(L 'Подключить Telegram-бота? (шлёшь боту — падает в inbox)' 'Connect a Telegram bot? (send it a file — it lands in the inbox)')" "$(L 'Да' 'Yes')" "$(L 'Нет' 'No')"
+ask_choice "$(L 'Подключить Telegram-бота? (шлешь боту — падает в inbox)' 'Connect a Telegram bot? (send it a file — it lands in the inbox)')" "$(L 'Да' 'Yes')" "$(L 'Нет' 'No')"
 if [ "$REPLY_IDX" = "1" ]; then
   ask_text "$(L 'Вставь токен бота от @BotFather' 'Paste the bot token from @BotFather')" secret; BOT_TOKEN="$REPLY_TXT"
   if [ -z "$BOT_TOKEN" ]; then
@@ -157,7 +157,7 @@ if [ "$REPLY_IDX" = "1" ]; then
     ok "$(L 'Токен принят (в git не пишем).' 'Token accepted (never written to git).')"
     keychain_store_token "$BOT_TOKEN"
     BOT_TOKEN=""
-    b "$(L 'Бот должен идти через VPS (всегда-онлайн, принимает пока твоё устройство спит).' 'The bot needs a VPS (always-on, receives while your device sleeps).')"
+    b "$(L 'Бот должен идти через VPS (всегда-онлайн, принимает пока твое устройство спит).' 'The bot needs a VPS (always-on, receives while your device sleeps).')"
     ask_choice "$(L 'Есть VPS для бота?' 'Do you have a VPS for the bot?')" "$(L 'Да, есть VPS' 'Yes, I have a VPS')" "$(L 'Нет VPS' 'No VPS')"
     if [ "$REPLY_IDX" = "1" ]; then
       ask_text "$(L 'VPS (user@host)' 'VPS (user@host)')"; BOT_VPS="$REPLY_TXT"
@@ -175,7 +175,7 @@ if [ "$REPLY_IDX" = "1" ]; then
       fi
       BOT_MODE="vps"; ok "$(L 'VPS на связи (node+pm2 есть).' 'VPS reachable (node+pm2 present).')"
     else
-      miss "$(L 'бота через VPS не оставим:' 'no bot over a VPS:')" "$(L 'Без VPS постоянного приёма нет. Можешь запускать бота локально, пока устройство включено.' 'Without a VPS there is no round-the-clock intake. You can run the bot locally while your device is on.')"
+      miss "$(L 'бота через VPS не оставим:' 'no bot over a VPS:')" "$(L 'Без VPS постоянного приема нет. Можешь запускать бота локально, пока устройство включено.' 'Without a VPS there is no round-the-clock intake. You can run the bot locally while your device is on.')"
       note "$(L 'Как жить без VPS — docs/telegram-intake.md.' 'Living without a VPS — docs/telegram-intake.md.')"
       BOT_MODE="manual"
     fi
@@ -262,7 +262,7 @@ if [ "$DRY" != "1" ] && [ -f "$ROOT/demo/inbox/example-guide.md" ]; then
     demo_dir="$(mktemp -d "${TMPDIR:-/tmp}/mnemazine-first-run.XXXXXX")"
     mkdir -p "$demo_dir/inbox" "$demo_dir/vault"
     cp "$ROOT/demo/inbox/example-guide.md" "$demo_dir/inbox/"
-    note "$(L 'Прогон идёт в отдельной песочнице — ваша база знаний не тронута.' 'The run happens in a sandbox — your own knowledge base is untouched.')"
+    note "$(L 'Прогон идет в отдельной песочнице — ваша база знаний не тронута.' 'The run happens in a sandbox — your own knowledge base is untouched.')"
     if MNEMAZINE_INBOX="$demo_dir/inbox" MNEMAZINE_VAULT="$demo_dir/vault" \
        MNEMAZINE_REPORTS="$demo_dir/reports" MNEMAZINE_STATE="$demo_dir/state" \
        MNEMAZINE_CACHE="$demo_dir/cache.json" MNEMAZINE_EXTRACTS="$demo_dir/extracts" \
@@ -272,9 +272,9 @@ if [ "$DRY" != "1" ] && [ -f "$ROOT/demo/inbox/example-guide.md" ]; then
       if [ -n "$first_note" ]; then
         ok "$(L 'Готовая заметка:' 'Here is the finished note:')"
         printf '\n'; sed -n '1,24p' "$first_note"; printf '\n'
-        note "$(L 'Так же будет с вашими файлами — только с проверкой источников, если включён deep-режим.' 'Your own files go the same way — with source checks too, when deep mode is on.')"
+        note "$(L 'Так же будет с вашими файлами — только с проверкой источников, если включен deep-режим.' 'Your own files go the same way — with source checks too, when deep mode is on.')"
       else
-        note "$(L 'Демо-прогон прошёл, но заметки не видно — напишите нам, это баг.' 'The demo ran but produced no note — tell us, that is a bug.')"
+        note "$(L 'Демо-прогон прошел, но заметки не видно — напишите нам, это баг.' 'The demo ran but produced no note — tell us, that is a bug.')"
       fi
     else
       note "$(L 'Демо-прогон не завершился. Установка в порядке: проверьте npm run doctor.' 'The demo run did not finish. The install is fine: check npm run doctor.')"
@@ -283,7 +283,7 @@ if [ "$DRY" != "1" ] && [ -f "$ROOT/demo/inbox/example-guide.md" ]; then
   fi
 fi
 [ "$BOT_MODE" = "vps" ] && note "$(L 'Mini App + ежедневный pull: см. docs/telegram-intake.md (этапы 2-3).' 'Mini App + daily pull: see docs/telegram-intake.md (stages 2-3).')"
-b "$(L 'Всё. Пользуйся.' 'All set. Enjoy.')"
+b "$(L 'Все. Пользуйся.' 'All set. Enjoy.')"
 
 # Author greeting last, so it is what the user sees at the end (not buried
 # mid-flow inside install.sh, which stays silent under MNEMAZINE_FROM_SETUP).

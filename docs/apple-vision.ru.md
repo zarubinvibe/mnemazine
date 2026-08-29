@@ -16,4 +16,4 @@ swiftc -O skills/mnemazine/vision-ocr.swift -o .mnemazine/bin/vision-ocr
 .mnemazine/bin/vision-ocr path/to/image.png
 ```
 
-Вывод OCR — сырьё. Его нужно огранить до попадания в vault.
+Вывод OCR — сырье. Его нужно огранить до попадания в vault.

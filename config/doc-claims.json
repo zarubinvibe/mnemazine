@@ -1,5 +1,5 @@
 {
-  "_doc": "Утверждение документации → исполняемая команда → ожидаемый код. Проверяет scripts/mnemazine-doc-contract-check.mjs. enforcement: block роняет приёмку, warn только предупреждает (закрывается в своём плане). execute:false — команда задекларирована, но в приёмке не гоняется (рекурсия или известный долг). lesson_schema_since читает scripts/mnemazine-lesson-gate.mjs. new_gate_enforcement читает release-check для пяти новых гейтов (перевод в warn — одна строка, путь отката П11).",
+  "_doc": "Утверждение документации → исполняемая команда → ожидаемый код. Проверяет scripts/mnemazine-doc-contract-check.mjs. enforcement: block роняет приемку, warn только предупреждает (закрывается в своем плане). execute:false — команда задекларирована, но в приемке не гоняется (рекурсия или известный долг). lesson_schema_since читает scripts/mnemazine-lesson-gate.mjs. new_gate_enforcement читает release-check для пяти новых гейтов (перевод в warn — одна строка, путь отката П11).",
   "lesson_schema_since": "2026-08-22",
   "new_gate_enforcement": "blocking",
   "claims": [
@@ -24,11 +24,11 @@
       "expect_exit": 0,
       "enforcement": "block",
       "execute": true,
-      "reason": "красное 23.08.2026: приватный путь в migration-contract (утечка П16). Закрыто fixup 3c99ff1 — путь заменён плейсхолдером; enforcement поднят в block."
+      "reason": "красное 23.08.2026: приватный путь в migration-contract (утечка П16). Закрыто fixup 3c99ff1 — путь заменен плейсхолдером; enforcement поднят в block."
     },
     {
       "id": "doctor-healthy",
-      "claim": "npm run doctor зелёный",
+      "claim": "npm run doctor зеленый",
       "command": [
         "npm",
         "run",
@@ -37,14 +37,14 @@
       "expect_exit": 0,
       "enforcement": "warn",
       "execute": false,
-      "reason": "не исполняется в приёмке: doctor сам гоняет release-check (рекурсия через doc-contract-check внутри release-check); плюс красное на упавшем last-run."
+      "reason": "не исполняется в приемке: doctor сам гоняет release-check (рекурсия через doc-contract-check внутри release-check); плюс красное на упавшем last-run."
     }
   ],
   "obligations": [
     {
       "id": "prompt-or-model-change-reruns-baseline",
       "rule": "смена промпта или модели = перепрогон эталона до применения",
-      "appears_in": "расширенный стек §2.2 приём 31",
+      "appears_in": "расширенный стек §2.2 прием 31",
       "pending_until": "П20",
       "status": "declared",
       "note": "Обязательство задекларировано, чтобы не потеряться между волнами; исполняемый прибор — за П20/будущим."
@@ -52,7 +52,7 @@
     {
       "id": "double-run-semantic-diff",
       "rule": "два прогона одного входа сверяются семантическим диффом",
-      "appears_in": "расширенный стек §2.2 приём 33",
+      "appears_in": "расширенный стек §2.2 прием 33",
       "pending_until": "П20",
       "status": "declared",
       "note": "Обязательство задекларировано; исполняемый прибор — за П20/будущим."

@@ -22,7 +22,7 @@ bash setup.sh
 MNEMAZINE_SETUP_DRYRUN=1 bash setup.sh
 ```
 
-Установщик создаёт:
+Установщик создает:
 
 - `inbox/`;
 - `vault/`;

@@ -3,7 +3,7 @@
   "contract_version": 1,
   "spec_ref": "docs/NOTE-SPEC.md",
   "spec_version": "NOTE-SPEC 2026-07-25 + subject §18 (2026-08-22)",
-  "schema_ref": "scripts/mnemazine-note-spec.mjs (единая правда П05; config/note.schema.json П06 — когда появится, ссылаться на неё, не дублировать)",
+  "schema_ref": "scripts/mnemazine-note-spec.mjs (единая правда П05; config/note.schema.json П06 — когда появится, ссылаться на нее, не дублировать)",
   "generated_by": "scripts/mnemazine-migration-check.mjs --emit",
   "generated_at": "2026-08-23T00:02:21.799Z",
   "vault": "<MNEMAZINE_VAULT>",
@@ -78,10 +78,10 @@
       "new_field": "verified",
       "notes": 1512,
       "distinct_values": 5,
-      "rule": "mapVerified: значение→SPEC_VERIFIED (ё/е равны); аннотация через пробел/скобку → enum + оригинал в verified_legacy; true/да/подтвержд* и expanded with public sources → подтверждён; пусто/false → не-проверялось; свободный текст → не-проверялось + verified_legacy",
+      "rule": "mapVerified: значение→SPEC_VERIFIED (е/е равны); аннотация через пробел/скобку → enum + оригинал в verified_legacy; true/да/подтвержд* и expanded with public sources → подтвержден; пусто/false → не-проверялось; свободный текст → не-проверялось + verified_legacy",
       "implemented_by": "scripts/mnemazine-normalize-old-frontmatter.mjs (mapVerified)",
       "new_enum": [
-        "подтверждён",
+        "подтвержден",
         "источник-не-найден",
         "непроверяемо-методом",
         "облако-недоступно",
@@ -97,10 +97,10 @@
           "maps_to": "не-проверялось"
         },
         {
-          "value": "подтверждён",
+          "value": "подтвержден",
           "notes": 243,
           "covered_by": "already-conformant",
-          "maps_to": "подтверждён"
+          "maps_to": "подтвержден"
         },
         {
           "value": "источник-не-найден",
@@ -126,7 +126,7 @@
           "value": "expanded with public sources",
           "notes": 23,
           "covered_by": "rule",
-          "maps_to": "подтверждён",
+          "maps_to": "подтвержден",
           "reason": "repo-local fixture/default selftest; публичные источники уже добавлены"
         },
         {
@@ -144,10 +144,10 @@
       "new_field": "verified",
       "notes": 598,
       "distinct_values": 15,
-      "rule": "mapVerificationStatus: поле схлопывается в verified: и после миграции удаляется. Частичная проверка → не-проверялось + legacy; verified/подтвержд*/verified-with-public-sources → подтверждён; unknown/assumed/false/пусто → не-проверялось; источник-не-найден и непроверяемо-методом сохраняют одноимённые значения. Правило 8 мастера: два поля одной семантики = дубль правды.",
+      "rule": "mapVerificationStatus: поле схлопывается в verified: и после миграции удаляется. Частичная проверка → не-проверялось + legacy; verified/подтвержд*/verified-with-public-sources → подтвержден; unknown/assumed/false/пусто → не-проверялось; источник-не-найден и непроверяемо-методом сохраняют одноименные значения. Правило 8 мастера: два поля одной семантики = дубль правды.",
       "implemented_by": "scripts/mnemazine-migration-check.mjs (mapVerificationStatus; контракт П16)",
       "new_enum": [
-        "подтверждён",
+        "подтвержден",
         "источник-не-найден",
         "непроверяемо-методом",
         "облако-недоступно",
@@ -167,14 +167,14 @@
           "value": "verified",
           "notes": 197,
           "covered_by": "rule",
-          "maps_to": "подтверждён",
+          "maps_to": "подтвержден",
           "remove_field_after_migration": true
         },
         {
-          "value": "подтверждён",
+          "value": "подтвержден",
           "notes": 101,
           "covered_by": "rule",
-          "maps_to": "подтверждён",
+          "maps_to": "подтвержден",
           "remove_field_after_migration": true
         },
         {
@@ -188,18 +188,18 @@
           "value": "verified-with-public-sources",
           "notes": 28,
           "covered_by": "rule",
-          "maps_to": "подтверждён",
+          "maps_to": "подтвержден",
           "remove_field_after_migration": true
         },
         {
-          "value": "подтверждён-частично",
+          "value": "подтвержден-частично",
           "notes": 11,
           "covered_by": "rule",
           "maps_to": "не-проверялось",
           "remove_field_after_migration": true
         },
         {
-          "value": "частично-подтверждён",
+          "value": "частично-подтвержден",
           "notes": 5,
           "covered_by": "rule",
           "maps_to": "не-проверялось",
@@ -213,17 +213,17 @@
           "remove_field_after_migration": true
         },
         {
-          "value": "частично подтверждён",
+          "value": "частично подтвержден",
           "notes": 1,
           "covered_by": "rule",
           "maps_to": "не-проверялось",
           "remove_field_after_migration": true
         },
         {
-          "value": "подтверждён-с-поправкой",
+          "value": "подтвержден-с-поправкой",
           "notes": 1,
           "covered_by": "rule",
-          "maps_to": "подтверждён",
+          "maps_to": "подтвержден",
           "remove_field_after_migration": true
         },
         {
@@ -234,10 +234,10 @@
           "remove_field_after_migration": true
         },
         {
-          "value": "подтверждён-с-оговоркой",
+          "value": "подтвержден-с-оговоркой",
           "notes": 1,
           "covered_by": "rule",
-          "maps_to": "подтверждён",
+          "maps_to": "подтвержден",
           "remove_field_after_migration": true
         },
         {
@@ -248,7 +248,7 @@
           "remove_field_after_migration": true
         },
         {
-          "value": "частично-подтверждён — реальные инструменты верны, часть демо-скриншотов сфабрикована; финальные слайды (34-36) — методология без проверяемых внешних claims",
+          "value": "частично-подтвержден — реальные инструменты верны, часть демо-скриншотов сфабрикована; финальные слайды (34-36) — методология без проверяемых внешних claims",
           "notes": 1,
           "covered_by": "rule",
           "maps_to": "не-проверялось",
@@ -258,7 +258,7 @@
           "value": "подтвержден (продакшн-инцидент пользователя) + контекстная сверка Supabase docs",
           "notes": 1,
           "covered_by": "rule",
-          "maps_to": "подтверждён",
+          "maps_to": "подтвержден",
           "remove_field_after_migration": true
         }
       ],
@@ -1194,7 +1194,7 @@
       "new_field": "source: / sources:",
       "notes": 558,
       "distinct_values": null,
-      "rule": "Перенос в source:/sources: ТОЛЬКО если провенанс виден в самой ноте (basename интейк-файла, local-media:<hash>, URL → в sources:). Не виден — поле остаётся пустым, нота уходит в список следующей волны. source: НЕ ВЫДУМЫВАТЬ (kimi-master.md, кампания 2).",
+      "rule": "Перенос в source:/sources: ТОЛЬКО если провенанс виден в самой ноте (basename интейк-файла, local-media:<hash>, URL → в sources:). Не виден — поле остается пустым, нота уходит в список следующей волны. source: НЕ ВЫДУМЫВАТЬ (kimi-master.md, кампания 2).",
       "implemented_by": "кампания 3 (переогранка головой) + scripts/mnemazine-normalize-old-frontmatter.mjs (перенос sources→source)",
       "new_enum": null,
       "decision": null,

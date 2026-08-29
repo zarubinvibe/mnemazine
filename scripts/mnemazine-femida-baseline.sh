@@ -322,11 +322,11 @@ write_markdown() {
 - ${THEMIS_ROOT}/install.sh:488 — промежуточный шаг `[6.5]` явно назван.
 - ${THEMIS_ROOT}/install.sh:498 — промежуточный шаг `[6.6]` явно назван.
 - ${THEMIS_ROOT}/install.sh:521 — финальная проверка `[7/7]`.
-- ${THEMIS_ROOT}/install.sh:445 — предупреждение даёт копируемую команду `xcode-select --install` / `swiftc ...`.
-- ${THEMIS_ROOT}/install.sh:455 — предупреждение даёт копируемую команду `brew install ffmpeg`.
-- ${THEMIS_ROOT}/install.sh:507 — предупреждение даёт копируемую команду `launchctl load ...`.
+- ${THEMIS_ROOT}/install.sh:445 — предупреждение дает копируемую команду `xcode-select --install` / `swiftc ...`.
+- ${THEMIS_ROOT}/install.sh:455 — предупреждение дает копируемую команду `brew install ffmpeg`.
+- ${THEMIS_ROOT}/install.sh:507 — предупреждение дает копируемую команду `launchctl load ...`.
 - ${THEMIS_ROOT}/install.sh:540 — доктор вызывается последним проверочным шагом.
-- ${THEMIS_ROOT}/scripts/setup_doctor.py:30-31 — контракт трёх кодов возврата.
+- ${THEMIS_ROOT}/scripts/setup_doctor.py:30-31 — контракт трех кодов возврата.
 - ${THEMIS_ROOT}/scripts/setup_doctor.py:486 — selftest доктора есть отдельным режимом.
 - ${THEMIS_ROOT}/scripts/setup_doctor.py:446-450 — чужая платформа подставляется флагом `--platform`.
 - ${THEMIS_ROOT}/scripts/update.sh:29-30 — обновление перечисляет только системные пути, `cases/` и `knowledge/` не трогает.
@@ -341,8 +341,8 @@ write_markdown() {
 - ${THEMIS_ROOT}/scripts/pd_guard.py:581-592 — git-хуки перезаписываются без бэкапа.
 - ${THEMIS_ROOT}/install.sh:8-11 — RU/EN выбирается по локали, но паритет текстов ничем не проверяется.
 - ${THEMIS_ROOT}/scripts/setup_doctor.py:474 — число проверок печатается из фактического списка, но заявленное «118 проверок» нигде не считается и отдельным инвариантом не держится.
-- ${THEMIS_ROOT}/install.sh:540 — приёмка числа проверок доктора не подключена к установке.
-- ${THEMIS_ROOT}/scripts/pd_guard.py:627 — приёмка числа проверок доктора не подключена к git-хукам.
+- ${THEMIS_ROOT}/install.sh:540 — приемка числа проверок доктора не подключена к установке.
+- ${THEMIS_ROOT}/scripts/pd_guard.py:627 — приемка числа проверок доктора не подключена к git-хукам.
 MD
 }
 
