@@ -196,7 +196,7 @@ bash setup.sh
 
 ## Звезда и вклад
 
-Пригодилось? Поставьте Mnemazine звезду: [https://github.com/zarubinvibe/mnemazine](https://github.com/zarubinvibe/mnemazine). Это секунда, а от неё зависит, найдут ли проект другие люди.
+Пригодилось? Поставьте Mnemazine звезду: [https://github.com/zarubinvibe/mnemazine](https://github.com/zarubinvibe/mnemazine). Это секунда, а от нее зависит, найдут ли проект другие люди.
 
 Хотите что-то поправить? Путь короткий: сделайте fork, заведите ветку, оформите commit, отправьте push и откройте Pull Request. Не отправляйте push прямо в `main`: релизный gate его отклонит.
 
