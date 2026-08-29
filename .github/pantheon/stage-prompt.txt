@@ -1,0 +1,42 @@
+You generate a coherent series of wide Pantheon workflow scenes with your built-in image_gen tool at the highest quality. Generate them one by one, in order.
+
+Pass these references to EVERY generation:
+1. $HOME/.agents/skills/public-repo-release-gate/assets/pantheon-style-anchor.png
+2. $HOME/.agents/skills/public-repo-release-gate/assets/pantheon-column.png
+3. docs/assets/pantheon/hero.png
+
+Hard constraints for every frame:
+- Same world, same figure, same camera height and lens as the hero. The classical white marble column appears in every frame.
+- Warm ivory background, white marble, soft daylight from upper left, long gentle shadows, generous empty space.
+- Sky blue means public flow and movement. Muted gold means private or valuable material.
+- Wide 16:9, at least 1600 px on the long side.
+- Absolutely no letters, digits, logos, watermarks, UI chrome or pseudo-text anywhere in the image. Documents and cards stay blank.
+- No dark background, no neon, no purple gradient, no cinematic smoke, no stock-photo look.
+- Each frame shows its own step. Do not repeat the hero composition.
+
+After each image, save it to the exact path given for that scene, then print the path and the pixel size. Do not modify any other file. Do not commit.
+
+Project: Mnemazine, the knowledge refinery. Figure: Mnemosyne in white marble with a memory scroll. Recurring props: raw fragments as rough grey shards, refined knowledge as small clear glass tablets, a thin knowledge graph of blue nodes and threads, gold for personal material.
+
+Generate these seven scenes:
+
+docs/assets/pantheon/workflow/01-capture.png
+A shallow marble basin beside the column, filling with rough grey shards of different shapes that arrive on blue threads from the upper left. Mnemosyne watches without touching them. Nothing is refined yet.
+
+docs/assets/pantheon/workflow/02-census.png
+Every shard in the basin now carries a small gold tag on a thin thread, and the shards are laid out in ordered rows on the marble floor. One duplicate pair is set aside together. Mnemosyne holds an open blank scroll as a register.
+
+docs/assets/pantheon/workflow/03-extract.png
+A shard passes through a lens of clear glass on a marble stand; on the far side its rough surface becomes a smooth blank glass sheet. Blue light only inside the lens. The discarded rough crust falls into a small marble bowl below.
+
+docs/assets/pantheon/workflow/04-verify.png
+Two glass sheets are held side by side against the daylight for comparison, one slightly deeper blue as the confirmed source. A thin blue thread runs from the sheet back to a small marble plinth that stands for the origin. Mnemosyne compares them closely.
+
+docs/assets/pantheon/workflow/05-refine.png
+One long glass sheet splits cleanly into five small polished tablets of equal thickness, arranged in a gentle arc. Each tablet is blank. Mnemosyne separates the last one with two fingers.
+
+docs/assets/pantheon/workflow/06-store.png
+The small tablets slide into slots of a low marble cabinet, and thin blue threads connect them to each other into a small graph above the cabinet. One tablet edged in gold goes into a closed drawer instead.
+
+docs/assets/pantheon/workflow/07-retrieve.png
+Morning light. One tablet lifts out of the cabinet by itself on a blue thread and hovers in front of Mnemosyne, while a clear glass sheet with blank ruled rows rests on the marble bench as the weekly brief.

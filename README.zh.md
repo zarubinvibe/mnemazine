@@ -83,11 +83,15 @@ Mnemazine 是一座本地的知识精炼厂。原始材料进入收件箱，出�
 
 你把文件放进一个文件夹，或者发给自己的 Telegram 机器人。除此之外不需要你做别的。
 
+<p align="center"><img src="docs/assets/pantheon/workflow/01-capture.png" alt="Pantheon 宽幅大理石场景：Mnemazine 工作流程第 1 步，把材料丢进收件箱" width="100%"></p>
+
 **你会得到：** 一个收件箱，里面装着所有等着被读的东西。
 
 ### 第 2 步：守卫清点每一个文件
 
 在读任何东西之前，守卫先给知识库做快照，给这次运行上锁，并为每个进来的文件算哈希。哈希已经在缓存里，说明这个文件处理过了。
+
+<p align="center"><img src="docs/assets/pantheon/workflow/02-census.png" alt="Pantheon 宽幅大理石场景：Mnemazine 工作流程第 2 步，守卫清点每一个文件" width="100%"></p>
 
 **你会得到：** 一份地面真相清单，后面的阶段不能悄悄把它变短。
 
@@ -95,11 +99,15 @@ Mnemazine 是一座本地的知识精炼厂。原始材料进入收件箱，出�
 
 截图和照片走 Apple Vision，文档直接解析，音频和视频在本地转写。界面噪音和社交平台的壳子会被丢掉。
 
+<p align="center"><img src="docs/assets/pantheon/workflow/03-extract.png" alt="Pantheon 宽幅大理石场景：Mnemazine 工作流程第 3 步，本地引擎来读" width="100%"></p>
+
 **你会得到：** 干净的内容，而不是一张还要眯着眼看的截图。
 
 ### 第 4 步：事实要有来源
 
 材料被当作种子，而不是结论。这一步去找第一手来源，核对重要的说法，并标出确认不了的部分。
+
+<p align="center"><img src="docs/assets/pantheon/workflow/04-verify.png" alt="Pantheon 宽幅大理石场景：Mnemazine 工作流程第 4 步，事实要有来源" width="100%"></p>
 
 **你会得到：** 一条可以被引用的笔记，核验状态一眼可见。
 
@@ -107,17 +115,23 @@ Mnemazine 是一座本地的知识精炼厂。原始材料进入收件箱，出�
 
 一份长指南会变成几条聚焦的笔记，每条都有明白的标题，还有一小段说明它对你有什么用。语义上接近的重复会被合并，而不是继续堆着。
 
+<p align="center"><img src="docs/assets/pantheon/workflow/05-refine.png" alt="Pantheon 宽幅大理石场景：Mnemazine 工作流程第 5 步，一条笔记只讲一件事" width="100%"></p>
+
 **你会得到：** 笔记短到以后一次提问只会拉出真正相关的那一条。
 
 ### 第 6 步：笔记落进知识库
 
 每条笔记归入自己的生活分区，和相邻的笔记连起来，并进入目录。只有当每个进来的文件都有交代，才允许归档原始材料。
 
+<p align="center"><img src="docs/assets/pantheon/workflow/06-store.png" alt="Pantheon 宽幅大理石场景：Mnemazine 工作流程第 6 步，笔记落进知识库" width="100%"></p>
+
 **你会得到：** 一个越长越大仍然走得通的 Obsidian 知识库。
 
 ### 第 7 步：每周简报与检索
 
 每周的 HTML 简报显示有什么变化、什么值得动手。图谱让智能体去查询知识库，而不是把整个库塞进上下文。
+
+<p align="center"><img src="docs/assets/pantheon/workflow/07-retrieve.png" alt="Pantheon 宽幅大理石场景：Mnemazine 工作流程第 7 步，每周简报与检索" width="100%"></p>
 
 **你会得到：** 知识会主动回到你面前，而不是等你想起来。
 

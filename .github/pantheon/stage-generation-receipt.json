@@ -1,0 +1,97 @@
+{
+  "schema_version": 1,
+  "kind": "pantheon-generation",
+  "selection_mode": "managed-frontier",
+  "runtime": "codex",
+  "tool": "image_gen",
+  "route_id": "codex:image_gen:managed-frontier",
+  "model": {
+    "id": "provider-managed",
+    "revision": "provider-managed",
+    "tier": "frontier"
+  },
+  "quality": "highest",
+  "generation_id": "pantheon-stage-series-mnemazine-2026-08-29",
+  "generated_at": "2026-08-29T18:09:59Z",
+  "capability_snapshot": {
+    "checked_at": "2026-08-29T18:09:59Z",
+    "routes": [
+      {
+        "id": "codex:image_gen:managed-frontier",
+        "rank": 1,
+        "available": true,
+        "tier": "frontier",
+        "quality": "highest",
+        "model": {
+          "id": "provider-managed",
+          "revision": "provider-managed",
+          "tier": "frontier"
+        }
+      }
+    ]
+  },
+  "prompt": {
+    "path": ".github/pantheon/stage-prompt.txt",
+    "sha256": "523c051f6a15568dd65cb8c4a00c0fd2393dcb15e9e1c72b04c37deb425aec15"
+  },
+  "references": [
+    {
+      "role": "style-anchor",
+      "sha256": "ce524f9d22cb0092cb17aa280832e1b2ab2a77a0e01602065ec502232a3bb2d2"
+    },
+    {
+      "role": "column-reference",
+      "sha256": "9d32edd56ac55c4dd6d0425a28a2ac35035e9ab09073fc8ce0c1414b2edfb1bd"
+    }
+  ],
+  "candidates": [
+    {
+      "id": "codex-managed-stage-series",
+      "route_id": "codex:image_gen:managed-frontier",
+      "generation_id": "pantheon-stage-series-mnemazine-2026-08-29",
+      "prompt_sha256": "523c051f6a15568dd65cb8c4a00c0fd2393dcb15e9e1c72b04c37deb425aec15",
+      "reference_sha256": [
+        "ce524f9d22cb0092cb17aa280832e1b2ab2a77a0e01602065ec502232a3bb2d2",
+        "9d32edd56ac55c4dd6d0425a28a2ac35035e9ab09073fc8ce0c1414b2edfb1bd"
+      ],
+      "outputs": [
+        {
+          "role": "stage-01-capture",
+          "source_sha256": "4e7b1d84303b81ed5fa0c04ea6d674f1e182c46de9a3f2b5b923940e0947f2a2",
+          "published_sha256": "4e7b1d84303b81ed5fa0c04ea6d674f1e182c46de9a3f2b5b923940e0947f2a2"
+        },
+        {
+          "role": "stage-02-census",
+          "source_sha256": "f361035499e64e99c9b6c295a5742946e893eac5501bb1b185fcd38200415e16",
+          "published_sha256": "f361035499e64e99c9b6c295a5742946e893eac5501bb1b185fcd38200415e16"
+        },
+        {
+          "role": "stage-03-extract",
+          "source_sha256": "18c9c4839733a0ff961285cf28cb6b379a86eec4942b86e4b7859de448b80f42",
+          "published_sha256": "18c9c4839733a0ff961285cf28cb6b379a86eec4942b86e4b7859de448b80f42"
+        },
+        {
+          "role": "stage-04-verify",
+          "source_sha256": "f487d0084f7ad36a63a2d97f472ed124c0831877d08b872442fef2e9cbfa5c11",
+          "published_sha256": "f487d0084f7ad36a63a2d97f472ed124c0831877d08b872442fef2e9cbfa5c11"
+        },
+        {
+          "role": "stage-05-refine",
+          "source_sha256": "49dd83b5991f3d70b71a49cd8f4110963c674d41e6229d254a1ed07f2e9955f0",
+          "published_sha256": "49dd83b5991f3d70b71a49cd8f4110963c674d41e6229d254a1ed07f2e9955f0"
+        },
+        {
+          "role": "stage-06-store",
+          "source_sha256": "cbdbfe4a8901d8f9836ec29930ce077864121e3badf3eb06f53a650877218177",
+          "published_sha256": "cbdbfe4a8901d8f9836ec29930ce077864121e3badf3eb06f53a650877218177"
+        },
+        {
+          "role": "stage-07-retrieve",
+          "source_sha256": "2978d58c41a392405e03899602c4b1f41af001dda6b932378a75902f2f5123aa",
+          "published_sha256": "2978d58c41a392405e03899602c4b1f41af001dda6b932378a75902f2f5123aa"
+        }
+      ]
+    }
+  ],
+  "winner_id": "codex-managed-stage-series"
+}

@@ -83,11 +83,15 @@ One run walks the whole pipeline. Every stage leaves evidence, and the run does 
 
 You put files into one folder, or send them to your own Telegram bot. Nothing else is required from you.
 
+<p align="center"><img src="docs/assets/pantheon/workflow/01-capture.png" alt="Mnemazine workflow stage 1: Drop material into the inbox, drawn as a wide Pantheon marble scene" width="100%"></p>
+
 **You get:** one inbox that holds everything waiting to be read.
 
 ### Step 2: The guard counts every file
 
 Before anything is read, the guard takes a snapshot of the vault, locks the run, and hashes every incoming file. A hash already in the cache means the file is done.
+
+<p align="center"><img src="docs/assets/pantheon/workflow/02-census.png" alt="Mnemazine workflow stage 2: The guard counts every file, drawn as a wide Pantheon marble scene" width="100%"></p>
 
 **You get:** a ground-truth list that later stages cannot quietly shorten.
 
@@ -95,11 +99,15 @@ Before anything is read, the guard takes a snapshot of the vault, locks the run,
 
 Screens and photos go through Apple Vision, documents are parsed directly, and audio or video is transcribed locally. Interface noise and social chrome are dropped.
 
+<p align="center"><img src="docs/assets/pantheon/workflow/03-extract.png" alt="Mnemazine workflow stage 3: Local engines read it, drawn as a wide Pantheon marble scene" width="100%"></p>
+
 **You get:** clean content instead of a screenshot you would have to squint at.
 
 ### Step 4: Facts get a source
 
 The material is treated as a seed, not as truth. The stage looks for the primary source, checks the claims that matter, and marks what could not be confirmed.
+
+<p align="center"><img src="docs/assets/pantheon/workflow/04-verify.png" alt="Mnemazine workflow stage 4: Facts get a source, drawn as a wide Pantheon marble scene" width="100%"></p>
 
 **You get:** a note you can cite, with its verification status visible.
 
@@ -107,17 +115,23 @@ The material is treated as a seed, not as truth. The stage looks for the primary
 
 A long guide becomes several focused notes, each with a plain title and a short section on how it helps you. Near-duplicates are found by meaning and merged instead of piling up.
 
+<p align="center"><img src="docs/assets/pantheon/workflow/05-refine.png" alt="Mnemazine workflow stage 5: One note per idea, drawn as a wide Pantheon marble scene" width="100%"></p>
+
 **You get:** notes short enough that a future prompt pulls only the relevant one.
 
 ### Step 6: The note lands in the vault
 
 Each note is filed into a life section, linked to its neighbours, and added to the indexes. Archiving the sources is only allowed after every input file is accounted for.
 
+<p align="center"><img src="docs/assets/pantheon/workflow/06-store.png" alt="Mnemazine workflow stage 6: The note lands in the vault, drawn as a wide Pantheon marble scene" width="100%"></p>
+
 **You get:** an Obsidian vault that stays navigable as it grows.
 
 ### Step 7: Weekly brief and search
 
 A weekly HTML brief shows what changed and what deserves action. A graph map lets an agent query the vault instead of loading all of it into context.
+
+<p align="center"><img src="docs/assets/pantheon/workflow/07-retrieve.png" alt="Mnemazine workflow stage 7: Weekly brief and search, drawn as a wide Pantheon marble scene" width="100%"></p>
 
 **You get:** knowledge that comes back to you instead of waiting to be remembered.
 

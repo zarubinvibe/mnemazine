@@ -35,7 +35,11 @@
         "diagram_en": "Capture",
         "diagram_ru": "Захват",
         "title_zh": "把材料丢进收件箱",
-        "diagram_zh": "收集"
+        "diagram_zh": "收集",
+        "source_path": "docs/assets/pantheon/workflow/01-capture.png",
+        "source_sha256": "4e7b1d84303b81ed5fa0c04ea6d674f1e182c46de9a3f2b5b923940e0947f2a2",
+        "published_path": "docs/assets/pantheon/workflow/01-capture.png",
+        "published_sha256": "4e7b1d84303b81ed5fa0c04ea6d674f1e182c46de9a3f2b5b923940e0947f2a2"
       },
       {
         "id": "census",
@@ -44,7 +48,11 @@
         "diagram_en": "Census",
         "diagram_ru": "Перепись",
         "title_zh": "守卫清点每一个文件",
-        "diagram_zh": "清点"
+        "diagram_zh": "清点",
+        "source_path": "docs/assets/pantheon/workflow/02-census.png",
+        "source_sha256": "f361035499e64e99c9b6c295a5742946e893eac5501bb1b185fcd38200415e16",
+        "published_path": "docs/assets/pantheon/workflow/02-census.png",
+        "published_sha256": "f361035499e64e99c9b6c295a5742946e893eac5501bb1b185fcd38200415e16"
       },
       {
         "id": "extract",
@@ -53,7 +61,11 @@
         "diagram_en": "Extract",
         "diagram_ru": "Чтение",
         "title_zh": "本地引擎来读",
-        "diagram_zh": "读取"
+        "diagram_zh": "读取",
+        "source_path": "docs/assets/pantheon/workflow/03-extract.png",
+        "source_sha256": "18c9c4839733a0ff961285cf28cb6b379a86eec4942b86e4b7859de448b80f42",
+        "published_path": "docs/assets/pantheon/workflow/03-extract.png",
+        "published_sha256": "18c9c4839733a0ff961285cf28cb6b379a86eec4942b86e4b7859de448b80f42"
       },
       {
         "id": "verify",
@@ -62,7 +74,11 @@
         "diagram_en": "Verify",
         "diagram_ru": "Проверка",
         "title_zh": "事实要有来源",
-        "diagram_zh": "核验"
+        "diagram_zh": "核验",
+        "source_path": "docs/assets/pantheon/workflow/04-verify.png",
+        "source_sha256": "f487d0084f7ad36a63a2d97f472ed124c0831877d08b872442fef2e9cbfa5c11",
+        "published_path": "docs/assets/pantheon/workflow/04-verify.png",
+        "published_sha256": "f487d0084f7ad36a63a2d97f472ed124c0831877d08b872442fef2e9cbfa5c11"
       },
       {
         "id": "refine",
@@ -71,7 +87,11 @@
         "diagram_en": "Refine",
         "diagram_ru": "Огранка",
         "title_zh": "一条笔记只讲一件事",
-        "diagram_zh": "打磨"
+        "diagram_zh": "打磨",
+        "source_path": "docs/assets/pantheon/workflow/05-refine.png",
+        "source_sha256": "49dd83b5991f3d70b71a49cd8f4110963c674d41e6229d254a1ed07f2e9955f0",
+        "published_path": "docs/assets/pantheon/workflow/05-refine.png",
+        "published_sha256": "49dd83b5991f3d70b71a49cd8f4110963c674d41e6229d254a1ed07f2e9955f0"
       },
       {
         "id": "store",
@@ -80,7 +100,11 @@
         "diagram_en": "Store",
         "diagram_ru": "Хранение",
         "title_zh": "笔记落进知识库",
-        "diagram_zh": "入库"
+        "diagram_zh": "入库",
+        "source_path": "docs/assets/pantheon/workflow/06-store.png",
+        "source_sha256": "cbdbfe4a8901d8f9836ec29930ce077864121e3badf3eb06f53a650877218177",
+        "published_path": "docs/assets/pantheon/workflow/06-store.png",
+        "published_sha256": "cbdbfe4a8901d8f9836ec29930ce077864121e3badf3eb06f53a650877218177"
       },
       {
         "id": "retrieve",
@@ -89,12 +113,18 @@
         "diagram_en": "Retrieve",
         "diagram_ru": "Возврат",
         "title_zh": "每周简报与检索",
-        "diagram_zh": "取回"
+        "diagram_zh": "取回",
+        "source_path": "docs/assets/pantheon/workflow/07-retrieve.png",
+        "source_sha256": "2978d58c41a392405e03899602c4b1f41af001dda6b932378a75902f2f5123aa",
+        "published_path": "docs/assets/pantheon/workflow/07-retrieve.png",
+        "published_sha256": "2978d58c41a392405e03899602c4b1f41af001dda6b932378a75902f2f5123aa"
       }
     ]
   },
   "receipts": {
     "generation_path": ".github/pantheon/generation-receipt.json",
-    "visual_judge_path": ".github/pantheon/visual-judge-receipt.json"
+    "visual_judge_path": ".github/pantheon/visual-judge-receipt.json",
+    "stage_generation_path": ".github/pantheon/stage-generation-receipt.json",
+    "stage_visual_judge_path": ".github/pantheon/stage-visual-judge-receipt.json"
   }
 }
