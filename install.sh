@@ -149,11 +149,46 @@ elif [ "$DRY" = "1" ]; then
   note "[dry] python3 -m venv .venv && pip install -r requirements.lock"
 elif command -v python3 >/dev/null 2>&1; then
   req="$SRC/requirements.lock"; [ -f "$req" ] || req="$SRC/requirements.txt"
+  media="$SRC/requirements-media.lock"
   if python3 -m venv "$ROOT/.venv"; then
-    if ! "$ROOT/.venv/bin/python" -m pip install --upgrade pip >/dev/null || ! "$ROOT/.venv/bin/python" -m pip install -r "$req"; then
-      degrade "$(L "Python-зависимости не встали из $req; локальные движки документов недоступны." "Python deps failed from $req; local document engines unavailable.")" "$ROOT/.venv/bin/python -m pip install -r $req"
-      [ "${MNEMAZINE_REQUIRE_PYTHON_DEPS:-0}" = "1" ] && { fatal "$(L 'Python-зависимости обязательны и не встали.' 'Required Python deps failed.')"; }
-    else ok "$(L 'Python-зависимости готовы.' 'Python deps ready.')"; fi
+    PY="$ROOT/.venv/bin/python"
+    "$PY" -m pip install --upgrade pip >/dev/null 2>&1 || true
+    # Проба деградации: подсовываем заведомо неразрешимый пин, чтобы ветка «часть не встала» гонялась
+    # в CI, а не только на чужом Intel-маке. Без неё issue #6 п.1 никто бы не поймал до пользователя.
+    force_pin=""
+    [ "${MNEMAZINE_PIP_FORCE_FAIL:-0}" = "1" ] && force_pin="mnemazine-no-such-package==9.9.9"
+    # shellcheck disable=SC2086
+    if "$PY" -m pip install -r "$req" $force_pin >/dev/null 2>&1; then
+      ok "$(L 'Python-зависимости готовы.' 'Python deps ready.')"
+    else
+      # pip разрешает список ЦЕЛИКОМ: один пин без колеса под платформу рушит весь заход, и .venv
+      # остаётся с одним pip. Поэтому второй заход идёт по одному пакету - остальное встаёт, а
+      # непоставленное называется поимённо, а не прячется за общим словом DEGRADED (issue #6, п.1).
+      warn "$(L 'Пакетная установка не прошла — ставлю по одному, чтобы встало всё, что может.' 'Bulk install failed — installing one by one so everything installable lands.')"
+      failed=""
+      while IFS= read -r pin || [ -n "$pin" ]; do
+        case "$pin" in ''|'#'*) continue ;; esac
+        "$PY" -m pip install "$pin" >/dev/null 2>&1 || failed="$failed $pin"
+      done < "$req"
+      # Подставной пин обязан доехать и до второго захода: иначе проба «сломанный пин» доказывает ноль -
+      # весь лок встаёт, failed пуст, и install.sh рапортует 0 там, где обязан отдать 2.
+      [ -n "$force_pin" ] && { "$PY" -m pip install "$force_pin" >/dev/null 2>&1 || failed="$failed $force_pin"; }
+      if [ -n "$failed" ]; then
+        degrade "$(L "Не встали пакеты:$failed" "Packages that failed:$failed")" "$PY -m pip install$failed"
+        [ "${MNEMAZINE_REQUIRE_PYTHON_DEPS:-0}" = "1" ] && { fatal "$(L 'Python-зависимости обязательны и не встали.' 'Required Python deps failed.')"; }
+      else
+        ok "$(L 'Python-зависимости готовы (вторым заходом, по одному).' 'Python deps ready (second pass, one by one).')"
+      fi
+    fi
+    # Тяжёлое медиа - осознанный второй шаг, а не часть ядра: ~1.1 ГБ, и на Intel-маках колёс нет.
+    if [ -f "$media" ]; then
+      if [ "${MNEMAZINE_WITH_MEDIA:-0}" = "1" ]; then
+        if "$PY" -m pip install -r "$media" >/dev/null 2>&1; then ok "$(L 'Локальная расшифровка речи готова.' 'Local speech transcription ready.')"
+        else degrade "$(L 'Локальная расшифровка речи не встала; видео читается по субтитрам или через LLM.' 'Local speech transcription failed; video falls back to subtitles or the LLM.')" "$PY -m pip install -r $media"; fi
+      else
+        note "$(L 'Локальная расшифровка речи не ставилась (~1.1 ГБ): MNEMAZINE_WITH_MEDIA=1 bash install.sh' 'Local speech transcription not installed (~1.1 GB): MNEMAZINE_WITH_MEDIA=1 bash install.sh')"
+      fi
+    fi
   else
     degrade "$(L 'Не удалось создать .venv; локальные движки документов недоступны.' 'Could not create .venv; local document engines unavailable.')" "python3 -m venv $ROOT/.venv"
     [ "${MNEMAZINE_REQUIRE_PYTHON_DEPS:-0}" = "1" ] && fatal "$(L '.venv обязателен.' '.venv is required.')"

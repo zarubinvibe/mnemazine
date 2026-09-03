@@ -1,6 +1,12 @@
 name: release-check
 
 on:
+  schedule:
+    # Weekly. A pin does not have to change to stop installing: a wheel gets
+    # yanked, a runner image moves on. Nobody edits the lock on that day, so
+    # only a clock finds it. Off the hour on purpose - GitHub drops scheduled
+    # runs queued at :00 under load.
+    - cron: '17 6 * * 1'
   workflow_dispatch:
   push:
     branches: [main]
@@ -115,3 +121,82 @@ jobs:
           fi
       - name: Doctor still wired
         run: npm run doctor:selftest
+
+  lock-installs:
+    # The job above runs install.sh with MNEMAZINE_SKIP_DEPS=1, so until now no
+    # CI run had ever installed requirements.lock. That is the hole issue #6
+    # came through: onnxruntime 1.19.2 had no macosx_x86_64 wheel, pip resolves
+    # the list whole, and the first person to find out was a stranger on an
+    # Intel Mac. This job installs the lock for real on every architecture we
+    # claim to support. macos-15-intel is the x86_64 runner (macos-13 was
+    # retired 2025-12-04; the intel image is available until August 2027).
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-15-intel, macos-15, ubuntu-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '20'
+          cache: npm
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.11'
+          cache: pip
+          cache-dependency-path: |
+            requirements.lock
+            requirements-media.lock
+      - name: Install npm dependencies
+        run: npm ci
+
+      - name: Install the real lock
+        # MNEMAZINE_REQUIRE_PYTHON_DEPS=1 turns a failed pin into exit 1, and
+        # that is the only thing in install.sh that calls fatal - so rc 1 here
+        # means the lock, and nothing else. rc 2 stays allowed because a runner
+        # without swiftc degrades Apple Vision OCR honestly, which is not a
+        # lock failure.
+        run: |
+          MNEMAZINE_YES=1 MNEMAZINE_REQUIRE_PYTHON_DEPS=1 bash install.sh; rc=$?
+          if [ "$rc" = 1 ]; then
+            echo "requirements.lock does not install on ${{ matrix.os }}" >&2
+            exit 1
+          fi
+          [ "$rc" = 0 ] || [ "$rc" = 2 ] || { echo "install.sh rc=$rc" >&2; exit 1; }
+
+      - name: The console scripts the lock promises actually answer
+        run: |
+          ./.venv/bin/graphify --version
+          ./.venv/bin/markitdown --help >/dev/null
+
+      - name: graphify resolves with .venv absent from PATH
+        # Issue #6 point 2: the binaries live in .venv/bin and nothing puts that
+        # on PATH. runCommand prepends it. Strip the venv from PATH, then refuse
+        # to run unless graphify really is unreachable - otherwise this step
+        # passes on a PATH that already had it and proves nothing.
+        run: |
+          PATH="$(printf '%s' "$PATH" | tr ':' '\n' | grep -v '\.venv/bin$' | paste -sd: -)"
+          export PATH
+          if command -v graphify >/dev/null 2>&1; then
+            echo "graphify is on PATH without the injection - this step would prove nothing" >&2
+            exit 1
+          fi
+          npm run graph:smoke
+
+      - name: A pin with no wheel degrades, it does not empty the venv
+        # The regression for issue #6 point 1, run on every machine instead of
+        # waiting for an Intel Mac: a deliberately unresolvable pin must give
+        # exit 2, name itself in the output, and leave a venv that still works.
+        run: |
+          set +e
+          MNEMAZINE_YES=1 MNEMAZINE_PIP_FORCE_FAIL=1 bash install.sh 2>&1 | tee "$RUNNER_TEMP/degraded.log"
+          rc=${PIPESTATUS[0]}
+          set -e
+          [ "$rc" = 2 ] || { echo "forced pin failure must exit 2, got $rc" >&2; exit 1; }
+          grep -q 'mnemazine-no-such-package==9.9.9' "$RUNNER_TEMP/degraded.log" || {
+            echo "the package that failed must be named, not folded into one DEGRADED line" >&2
+            exit 1
+          }
+          ./.venv/bin/graphify --version

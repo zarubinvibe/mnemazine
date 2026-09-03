@@ -10,9 +10,11 @@ while IFS= read -r -d '' file; do node --check "$file"; done < <(find scripts te
 npm run selftest:security
 npm audit --audit-level=moderate
 if [ "${MNEMAZINE_AUDIT_SKIP_PUBLIC_RELEASE:-0}" = "1" ]; then
-  echo "audit:local public-release scan skipped; run npm run public-check before public release"
+  echo "audit:local public-release scan skipped; run bash scripts/check-public-release.sh before public release"
 else
-  npm run public-check
+  # Прямой вызов, а не npm-скрипт: гейт приватности со списком PRIVATE_MARKERS в публичную сборку не
+  # уходит (public-release.json:exclude), и публичный package.json на него ссылаться не может - issue #6, п.4.
+  bash "$(dirname "$0")/check-public-release.sh"
 fi
 
 # Pick a scanner. Prefer ripgrep; fall back to POSIX grep -E so the scan still

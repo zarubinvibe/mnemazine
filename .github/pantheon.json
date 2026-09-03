@@ -1,7 +1,7 @@
 {
   "schema_version": 3,
   "family_id": "zarubinvibe-pantheon",
-  "catalog_version": "2026-08-26",
+  "catalog_version": "2026-09-03",
   "project": {
     "slug": "mnemazine",
     "deity": "Mnemosyne",
@@ -120,6 +120,65 @@
         "source_sha256": "2978d58c41a392405e03899602c4b1f41af001dda6b932378a75902f2f5123aa",
         "published_path": "docs/assets/pantheon/workflow/07-retrieve.png",
         "published_sha256": "2978d58c41a392405e03899602c4b1f41af001dda6b932378a75902f2f5123aa"
+      }
+    ],
+    "bible": {
+      "character_sheet": {
+        "published_path": "docs/assets/pantheon/bible-character.png",
+        "published_sha256": "0a4fcf857882d2d7c18c8548d8b0cc52f0e1a87c30726760b1d1b87686b24a39",
+        "alt": "Карта персонажа: Мнемозина из белого мрамора в четырех видах у классической колонны, со свитком памяти, рядом этюды свитка и графа знаний голубой нитью"
+      },
+      "prop_sheet": {
+        "published_path": "docs/assets/pantheon/bible-props.png",
+        "published_sha256": "9468b43cc98aaf8bcecab4850b9eee755c10b8d0e19ac15f7c351372fdbd7fe3",
+        "alt": "Карта реквизита: мраморный свиток, лоток входящих, стопка готовых табличек, стеклянная пластина проверки, золотая печать личного и созвездие графа знаний на слоновой кости"
+      }
+    },
+    "takt": {
+      "source_path": "docs/assets/pantheon/takt.png",
+      "source_sha256": "5cef0c4c78f9a9c2ce6cdccb9b06a58dff829c322b5ea36cf04d65d4b58e279a",
+      "languages": {
+        "en": {
+          "published_path": "docs/assets/pantheon/takt-en.png",
+          "published_sha256": "8c0b92287087ae77dee6fc5ee831445eb23386fac79e87f81c3038f2e1030839",
+          "alt": "Seven marble plates in two rows, each engraved with one stage of the run, linked by a blue thread from the inbox tray to the finished tablets"
+        },
+        "ru": {
+          "published_path": "docs/assets/pantheon/takt-ru.png",
+          "published_sha256": "4c9f14807c6ca0133dafab195587b0862bfd1a7f6a4b20eac34660fc9451cc0b",
+          "alt": "Семь мраморных плит в двух рядах, на каждой высечена одна стадия прогона, их связывает голубая нить от лотка входящих до готовых табличек"
+        },
+        "zh": {
+          "published_path": "docs/assets/pantheon/takt-zh.png",
+          "published_sha256": "5e37ade61aff65c83cfbd94272e86c1907eafadd12350cc54170d2ab586848ef",
+          "alt": "两排共七块大理石板，每块刻着一个处理阶段，一条蓝线把收件托盘和完成的石板串起来"
+        }
+      }
+    },
+    "doc_frames": {
+      "security": {
+        "published_path": "docs/assets/pantheon/doc-security.png",
+        "published_sha256": "54c87a19ff519397441c190486677b1f7975dba3348c8d4269ed9ea06362dfb9",
+        "alt": "Закрытый мраморный ларец под золотой печатью на столе, голубые нити от лотка входящих возвращаются в стопку готовых табличек, одна нить упирается в мраморную плиту границы",
+        "pages": {
+          "en": "SECURITY.md",
+          "ru": "SECURITY.ru.md",
+          "zh": "SECURITY.zh.md"
+        }
+      }
+    },
+    "doc_pages": [
+      {
+        "path": "docs/deep-mode.md",
+        "frames": [
+          "../docs/assets/pantheon/doc-deep-mode.png"
+        ]
+      },
+      {
+        "path": "docs/deep-mode.ru.md",
+        "frames": [
+          "../docs/assets/pantheon/doc-deep-mode.png"
+        ]
       }
     ]
   },

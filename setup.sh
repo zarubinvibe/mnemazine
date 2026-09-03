@@ -105,7 +105,20 @@ stage "2/7" "$(L 'Локальные движки распознавания (п
 note "$(L 'Зачем: текст со скриншотов и речь из видео читаются на вашем компьютере, без облака и без токенов.' 'Why: text on screenshots and speech in video are read on your machine — no cloud, no tokens.')"
 note "$(L 'Чего нет — подскажу команду установки; можно поставить позже, система будет работать и без них.' 'Anything missing gets an exact install command; you can add it later — the system works without it.')"
 have_py=0; have_ff=0; have_whisper=0; have_swift=0
-command -v python3 >/dev/null 2>&1 && { ok "python3 (markitdown: PDF/DOCX/PPTX/XLSX/HTML)"; have_py=1; } || miss "$(L 'Разбор офис-файлов локально не оставим:' 'No local office-file parsing:')" "$(L 'поставь python3 — иначе их распознает LLM в deep-режиме.' 'install python3 — otherwise the LLM reads them in deep mode.')"
+if command -v python3 >/dev/null 2>&1; then
+  # Версия, а не факт наличия: на 3.13 нет колёс у numba/llvmlite ни под какую архитектуру, и молчаливая
+  # установка кончается пустой .venv. Ядро при этом встаёт везде - продолжаем, но говорим вслух.
+  PY_VER="$(python3 -c 'import sys; print("%d.%d" % sys.version_info[:2])' 2>/dev/null || echo '?')"
+  case "$PY_VER" in
+    3.11|3.12) ok "python3 $PY_VER (markitdown: PDF/DOCX/PPTX/XLSX/HTML)"; have_py=1 ;;
+    3.13|3.14) ok "python3 $PY_VER (markitdown: PDF/DOCX/PPTX/XLSX/HTML)"; have_py=1
+      warn "$(L 'Python 3.13: локальный whisper недоступен, ставь 3.11/3.12' 'Python 3.13: local whisper unavailable, install 3.11/3.12')" ;;
+    *) ok "python3 $PY_VER (markitdown: PDF/DOCX/PPTX/XLSX/HTML)"; have_py=1
+      warn "$(L "Проверено на 3.11 и 3.12; на $PY_VER возможны пакеты без колёс." "Tested on 3.11 and 3.12; on $PY_VER some packages may have no wheels.")" ;;
+  esac
+else
+  miss "$(L 'Разбор офис-файлов локально не оставим:' 'No local office-file parsing:')" "$(L 'поставь python3 — иначе их распознает LLM в deep-режиме.' 'install python3 — otherwise the LLM reads them in deep mode.')"
+fi
 command -v ffmpeg  >/dev/null 2>&1 && { ok "ffmpeg $(L '(видео-кадры/аудио)' '(video frames/audio)')"; have_ff=1; } || miss "$(L 'Локальную обработку видео/аудио не оставим:' 'No local video/audio processing:')" "brew install ffmpeg · apt install ffmpeg."
 command -v whisper >/dev/null 2>&1 && { ok "whisper $(L '(транскрипт речи)' '(speech transcript)')"; have_whisper=1; } || miss "$(L 'Локальный транскрипт речи не оставим:' 'No local speech transcript:')" "$(L 'pip install openai-whisper — иначе только субтитры/LLM.' 'pip install openai-whisper — otherwise only subtitles/LLM.')"
 if [ "$(uname)" = "Darwin" ]; then
@@ -189,9 +202,22 @@ fi
 stage "6/7" "$(L 'Ставлю каркас Mnemazine' 'Building the Mnemazine skeleton')"
 note "$(L 'Зачем: создаю папки базы знаний и служебные файлы. Ничего за пределами проекта без спроса не трогаю.' 'Why: creating the knowledge-base folders and service files. Nothing outside the project is touched without asking.')"
 ok "$(L 'Запускаю install.sh (vault, папки, venv, OCR-сборка)…' 'Running install.sh (vault, folders, venv, OCR build)…')"
-if ! MNEMAZINE_FROM_SETUP=1 MNEMAZINE_YES=1 MNEMAZINE_ROOT="$ROOT" MNEMAZINE_INBOX="$INBOX" run bash "$ROOT/install.sh"; then
-  no "$(L 'install.sh завершился с ошибкой — каркас не собран.' 'install.sh failed — skeleton not built.')"
+# install.sh сам объявляет свои коды: 0 готов · 2 готов с урезанными возможностями · 1 не доделал.
+# Раньше здесь стояло `if ! ...`, и код 2 читался как провал: пользователь видел «✓ Готово. Часть
+# возможностей недоступна» от install.sh и тут же «✗ каркас не собран» от setup.sh, хотя vault, .venv
+# и папки были на месте (issue #6, п.3). Код 2 - это предупреждение, а не отказ.
+INSTALL_RC=0
+MNEMAZINE_FROM_SETUP=1 MNEMAZINE_YES=1 MNEMAZINE_ROOT="$ROOT" MNEMAZINE_INBOX="$INBOX" run bash "$ROOT/install.sh" || INSTALL_RC=$?
+if [ "$INSTALL_RC" -eq 1 ] || [ "$INSTALL_RC" -gt 2 ]; then
+  no "$(L "install.sh завершился с ошибкой (код $INSTALL_RC) — каркас не собран." "install.sh failed (exit $INSTALL_RC) — skeleton not built.")"
   halt
+elif [ "$INSTALL_RC" -eq 2 ]; then
+  # «Урезано» нельзя объявлять на слово: проверяем сами, что именно живо. Иначе тихий приём кода 2
+  # прячет пустую .venv за словом DEGRADED - установка выглядит успешной, а движков нет.
+  warn "$(L 'Каркас собран, часть возможностей недоступна — проверяю, что именно живо.' 'Skeleton built, some capabilities are degraded — checking what actually works.')"
+  VENV_BIN="$ROOT/.venv/bin"
+  if "$VENV_BIN/graphify" --version >/dev/null 2>&1; then ok "graphify"; else no "graphify $(L '(граф знаний недоступен)' '(knowledge graph unavailable)')"; fi
+  if "$VENV_BIN/markitdown" --help >/dev/null 2>&1; then ok "markitdown"; else no "markitdown $(L '(PDF/DOCX читает LLM)' '(PDF/DOCX read by the LLM)')"; fi
 fi
 
 # deploy bot if VPS path chosen

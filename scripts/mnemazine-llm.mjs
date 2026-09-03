@@ -39,18 +39,35 @@ function progress(label, message) {
 function runProc(bin, args, { input, timeoutMs, cwd, label } = {}) {
   return new Promise(resolve => {
     let child
-    try { child = spawn(bin, args, { cwd, stdio: ['pipe', 'pipe', 'pipe'] }) }
+    // detached: ребенок становится лидером СВОЕЙ группы процессов, и по потолку времени
+    // убивается вся группа. Без этого потолок был декоративным: прямой потомок здесь часто
+    // обертка npm (`#!/usr/bin/env node` + spawn внутри), она запускает нативный бинарь
+    // ОТДЕЛЬНЫМ процессом. Убитая обертка оставляет сироту, сирота держит унаследованные
+    // трубы stdout/stderr открытыми, событие close не наступает НИКОГДА - и промис не
+    // разрешается. Наблюдалось живьем: провайдер крутился 26 минут при потолке 7 и был
+    // убит руками. Родитель по-прежнему дожидается ребенка: unref не зовется.
+    try { child = spawn(bin, args, { cwd, stdio: ['pipe', 'pipe', 'pipe'], detached: true }) }
     catch (e) { return resolve({ status: 1, stdout: '', stderr: String(e.message) }) }
-    let out = '', err = '', killed = false
+    let out = '', err = '', killed = false, grace = null
     const started = Date.now()
     progress(label, `start timeout=${timeoutMs || 0}ms`)
-    const t = timeoutMs ? setTimeout(() => { killed = true; child.kill('SIGKILL') }, timeoutMs) : null
+    // Сколько ждать честного close ПОСЛЕ убийства группы, прежде чем разрешить промис самим.
+    // Потолок обязан быть настоящим: если close не пришел, ждать его вечно - это тот же
+    // бесконечный вис, только с погашенным ребенком.
+    const GRACE_MS = 2000
+    const t = timeoutMs ? setTimeout(() => {
+      killed = true
+      try { process.kill(-child.pid, 'SIGKILL') } catch { try { child.kill('SIGKILL') } catch { /* уже мертв */ } }
+      grace = setTimeout(() => done(124, out, err), GRACE_MS)
+      if (grace.unref) grace.unref()
+    }, timeoutMs) : null
     const heartbeat = PROGRESS && label && PROGRESS_EVERY_MS > 0
       ? setInterval(() => progress(label, `running ${Math.round((Date.now() - started) / 1000)}s`), PROGRESS_EVERY_MS)
       : null
     if (heartbeat) heartbeat.unref()
     function done(status, stdout, stderr) {
       if (t) clearTimeout(t)
+      if (grace) clearTimeout(grace)
       if (heartbeat) clearInterval(heartbeat)
       progress(label, `done status=${status} elapsed=${Math.round((Date.now() - started) / 1000)}s`)
       resolve({ status, stdout, stderr })

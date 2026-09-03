@@ -54,7 +54,6 @@
     "complete": "node scripts/mnemazine-complete-check.mjs",
     "archive:covered": "node scripts/mnemazine-archive-covered.mjs",
     "reattribute:refs": "node scripts/mnemazine-reattribute-source-refs.mjs",
-    "public-check": "bash scripts/check-public-release.sh",
     "graph:semantic": "node scripts/mnemazine-refresh-graphify.mjs --mode semantic --json",
     "graph:semantic:async": "node scripts/mnemazine-semantic-graph-task.mjs --start",
     "graph:semantic:monitor": "node scripts/mnemazine-semantic-graph-task.mjs --monitor",

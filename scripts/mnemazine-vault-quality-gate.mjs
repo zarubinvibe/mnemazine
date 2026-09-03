@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import { promises as fs } from 'node:fs'
 import path from 'node:path'
-import { MIN_CYR_SHARE, SPEC_TYPES, SPEC_SUBJECTS, SPEC_DATA_CLASSES, SPEC_VERIFIED, SPEC_VERIFIED_NORM, TYPE_REQUIRED_FIELDS, normSpecValue } from './mnemazine-note-spec.mjs'
+import { MIN_CYR_SHARE, SPEC_TYPES, SPEC_SUBJECTS, SPEC_DATA_CLASSES, SPEC_VERIFIED, SPEC_VERIFIED_NORM, TYPE_REQUIRED_FIELDS, normSpecValue, projectSlugs } from './mnemazine-note-spec.mjs'
 import { resolveVault } from './mnemazine-paths.mjs'
 
 const argv = process.argv.slice(2)
@@ -214,23 +214,8 @@ function hasStructuredSource(text) {
   return heading !== null && heading.trim().length > 0
 }
 
-// Слаги проектов — только грепом ## заголовков _ПРОЕКТЫ.md, не хардкод.
-// Однословные имена проектов покрыты полным заголовком;
-// из многословных дополнительно берутся «кавычечные» имена и латинские токены
-// ≥5 символов — кириллические токены («Просто»,
-// «партнеры») дают ложные совпадения с обычной прозой, поэтому исключены.
-function projectSlugs(text) {
-  const slugs = new Set()
-  for (const [, h] of text.matchAll(/^##\s+(.+?)\s*$/gm)) {
-    slugs.add(norm(h))
-    for (const [, q] of h.matchAll(/«([^»]+)»/g)) slugs.add(norm(q))
-    for (const t of h.split(/\s+/)) {
-      const tok = t.replace(/[«»()"'.,:;]/g, '')
-      if (tok.length >= 5 && /[A-Za-z]/.test(tok)) slugs.add(norm(tok))
-    }
-  }
-  return [...slugs]
-}
+// Слаги проектов и их падежные основы живут в mnemazine-note-spec.mjs — одна правда
+// на гейт и на тесты (см. projectSlugs/ruStem там же).
 
 function checkSpec(text, slugs, changedSince = false) {
   const reasons = []

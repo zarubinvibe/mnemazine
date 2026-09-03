@@ -646,7 +646,7 @@ For an offline local audit during development:
 npm run audit:local
 ```
 
-It runs syntax checks, security selftests, `npm audit`, `public-check`, and static scans for dangerous agent/SSH flags and credential-in-URL patterns.
+It runs syntax checks, security selftests, `npm audit`, the private-release gate (source-repo only), and static scans for dangerous agent/SSH flags and credential-in-URL patterns.
 
 ## A Word From Mnemazine
 

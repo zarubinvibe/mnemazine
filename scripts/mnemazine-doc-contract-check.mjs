@@ -23,13 +23,13 @@ import { fileURLToPath } from 'node:url'
 import { spawnSync } from 'node:child_process'
 import { DEFAULT_VAULT } from './mnemazine-paths.mjs'
 
+import { listTreeFiles } from './mnemazine-tracked-files.mjs'
+
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const CLAIMS = path.join(ROOT, 'config', 'doc-claims.json')
 
 function gitTracked() {
-  const r = spawnSync('git', ['ls-files'], { cwd: ROOT, encoding: 'utf8' })
-  if (r.status !== 0) throw new Error(`git ls-files failed: ${r.stderr}`)
-  return new Set(r.stdout.split(/\r?\n/).map(s => s.trim()).filter(Boolean))
+  return new Set(listTreeFiles(ROOT).files)
 }
 
 function docSources() {
@@ -38,13 +38,13 @@ function docSources() {
     const p = path.join(ROOT, rel)
     if (existsSync(p)) files.push({ name: rel, text: readFileSync(p, 'utf8') })
   }
-  // Только отслеживаемые docs/*.md (git ls-files исключает игнорируемые PLAN-*.md).
-  const r = spawnSync('git', ['ls-files', 'docs/*.md'], { cwd: ROOT, encoding: 'utf8' })
-  if (r.status === 0) {
-    for (const rel of r.stdout.split(/\r?\n/).map(s => s.trim()).filter(Boolean)) {
-      const p = path.join(ROOT, rel)
-      if (existsSync(p)) files.push({ name: rel, text: readFileSync(p, 'utf8') })
-    }
+  // Только docs/*.md верхнего уровня. В репозитории git сам прячет игнорируемые
+  // PLAN-*.md; в распакованном релизе списка git нет, поэтому тот же фильтр
+  // приходится держать руками, иначе черновики волн попали бы в проверку.
+  const { files: tree } = listTreeFiles(ROOT)
+  for (const rel of tree.filter(f => /^docs\/[^/]+\.md$/.test(f) && !/^docs\/PLAN-/.test(f))) {
+    const p = path.join(ROOT, rel)
+    if (existsSync(p)) files.push({ name: rel, text: readFileSync(p, 'utf8') })
   }
   return files
 }
@@ -120,6 +120,11 @@ function runClaims(claimsCfg) {
   let checked = 0
   for (const c of claims) {
     if (c.execute === false) continue
+    // Утверждение про прибор, который намеренно не публикуется. Признак источника -
+    // сам контракт публикации: он в сборку не входит никогда, поэтому в публичном
+    // дереве его нет. Так проверка не превращается в «нет файла - значит сойдет»:
+    // молча пропускается ровно один заявленный случай, и только вне источника.
+    if (c.source_repo_only && !existsSync(path.join(ROOT, '.github', 'public-release.json'))) continue
     checked++
     const [cmd, ...args] = c.command
     const r = spawnSync(cmd, args, { cwd: ROOT, encoding: 'utf8' })

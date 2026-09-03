@@ -53,19 +53,7 @@ Mnemazine 是一座知识精炼厂。收件箱里你随便放：截图、PDF、�
 
 <!-- workflow-diagram:start -->
 
-```text
-  ┌──────┐   ┌──────┐   ┌──────┐
-  │ 收集 │ ▶ │ 清点 │ ▶ │ 读取 │
-  └──────┘   └──────┘   └──────┘
-      ▼
-  ┌──────┐   ┌──────┐   ┌──────┐
-  │ 核验 │ ▶ │ 打磨 │ ▶ │ 入库 │
-  └──────┘   └──────┘   └──────┘
-      ▼
-  ┌──────┐
-  │ 取回 │
-  └──────┘
-```
+<p align="center"><img src="docs/assets/pantheon/takt-zh.png" alt="两排共七块大理石板，每块刻着一个处理阶段，一条蓝线把收件托盘和完成的石板串起来" width="100%"></p>
 
 <!-- workflow-diagram:end -->
 
@@ -142,7 +130,13 @@ Mnemazine 是一座知识精炼厂。收件箱里你随便放：截图、PDF、�
 ```bash
 git clone https://github.com/zarubinvibe/mnemazine.git "$HOME/Desktop/Mnemazine"
 cd "$HOME/Desktop/Mnemazine"
-bash setup.sh
+bash setup.sh          # guided install, asks before it writes anything
+
+# then open it the way you already work:
+claude                 # Claude Code
+codex                  # Codex CLI
+code .                 # an editor, no agent at all
+npm run doctor         # plain terminal: is it alive?
 ```
 
 `setup.sh` 是带引导的路径：它检查前置条件，问你收件箱放在哪里，还能部署 Telegram 机器人。`MNEMAZINE_SETUP_DRYRUN=1 bash setup.sh` 只看计划，不动任何文件；`bash install.sh` 是非交互的骨架安装，适合你已经清楚要什么的时候。没有 Git？下载 [ZIP](https://github.com/zarubinvibe/mnemazine/archive/refs/heads/main.zip) 或 [tar.gz](https://github.com/zarubinvibe/mnemazine/archive/refs/heads/main.tar.gz)，在里面跑同样的脚本。 第一次用？在 Claude Code 里打开项目并运行 `/mnemazine-setup`：安装以对话方式进行，一次问一个问题，没有你的同意不会装任何东西。
@@ -153,12 +147,14 @@ bash setup.sh
 
 ## 简单对比
 
-| 方案 | 适合什么时候 | 你会得到 | 代价 |
-|---|---|---|---|
-| **Mnemazine** | 存下来的材料已经多到读不动 | 本地阅读、已核验的笔记、去重、每周简报 | 想要最好的效果需要一台 Mac |
-| 自己往 Obsidian 里放文件 | 一周只存几条 | 完全掌控，不用配置 | 没有人替你阅读、核验和合并重复 |
-| 云端 AI 笔记本 | 想对上传的文档提问 | 问答很快 | 材料离开你的机器，笔记也留在那个服务里 |
-| 以后再手动读 | 堆子还很小 | 什么都不用装 | “以后”通常不会到来 |
+| 方案 | 是什么 | 工作在哪里进行 | 读你的文件 | 你会得到 | 代价 |
+|---|---|---|---|---|---|
+| **Mnemazine** | 本地的知识精炼厂 | 你自己的机器 | 是，这正是它的目的 | 经过核验的笔记、去重、每周简报 | 最佳效果需要 Mac，安装要花几分钟 |
+| 手动整理 Obsidian | 由你自己填充的笔记应用 | 你自己的机器 | 不，阅读由你来做 | 对结构的完全掌控 | 没有人替你阅读、核验或去重 |
+| NotebookLM | 把文档上传上去的云端笔记本 | Google 的服务器 | 是，上传之后 | 对已上传内容的快速问答 | 材料离开你的机器，笔记留在那个服务里 |
+| Notion AI | 带助手的工作空间 | Notion 的服务器 | 是，在工作空间内 | 跨页面的搜索与起草 | 你的资料库住在别人的产品里 |
+| Readwise Reader | 带高亮的稍后读应用 | Readwise 的服务器 | 链接和文章，而不是你的文件夹 | 会同步进笔记的高亮 | 它负责保存与再次呈现，不负责核验 |
+| 以后再手动读 | 大多数积压其实就是这个计划 | 哪里都不在 | 否 | 没有东西要安装 | 「以后」很少真的到来 |
 
 ## 简单词汇
 
@@ -214,8 +210,9 @@ bash setup.sh
 | 项目 | Athena | 可携带的智能体操作系统：在新的 Mac 上重建 Claude 与 Codex 的工作环境。 | [仓库](https://github.com/zarubinvibe/athena) · [ZIP](https://github.com/zarubinvibe/athena/archive/refs/heads/main.zip) |
 | 项目 | Helioz | 全天候的智能体工作传送带，带可验证的完成标记和按目标做出的夜间决策。 | [仓库](https://github.com/zarubinvibe/helioz) · [ZIP](https://github.com/zarubinvibe/helioz/archive/refs/heads/main.zip) |
 | 项目 | Mnemazine | 本地优先的记忆系统：把原始材料变成可复用的、已核验的知识。 | [仓库](https://github.com/zarubinvibe/mnemazine) · [ZIP](https://github.com/zarubinvibe/mnemazine/archive/refs/heads/main.zip) |
-| 项目 | Themis | 面向俄罗斯诉讼的多智能体助手，本地识别扫描件，五位法学家组成合议审阅。 | [仓库](https://github.com/zarubinvibe/themis) · [ZIP](https://github.com/zarubinvibe/themis/archive/refs/heads/main.zip) |
+| 项目 | Themiz | 面向俄罗斯诉讼的多智能体助手，本地识别扫描件，五位法学家组成合议审阅。 | [仓库](https://github.com/zarubinvibe/themiz) · [ZIP](https://github.com/zarubinvibe/themiz/archive/refs/heads/main.zip) |
 | 项目 | Zeuz | 工作流工厂：把一个想法变成带规则、闸门、可观测性和回放的多智能体系统。 | [仓库](https://github.com/zarubinvibe/zeuz) · [ZIP](https://github.com/zarubinvibe/zeuz/archive/refs/heads/main.zip) |
+| 项目 | Lynceuz | 以零成本收集公开网页证据；安全路径走完时，它会给出诚实的理由并停下。 | [仓库](https://github.com/zarubinvibe/lynceuz) · [ZIP](https://github.com/zarubinvibe/lynceuz/archive/refs/heads/main.zip) |
 <!-- pantheon-family:end -->
 
 ## 许可证

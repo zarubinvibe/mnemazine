@@ -635,7 +635,7 @@ npm run release-check
 npm run audit:local
 ```
 
-Он запускает syntax-check, security selftests, `npm audit`, `public-check` и static scan на опасные agent/SSH flags и credential-in-URL.
+Он запускает syntax-check, security selftests, `npm audit`, гейт приватности (только в репозитории-источнике) и static scan на опасные agent/SSH flags и credential-in-URL.
 
 ## Слово от Мнемозины
 

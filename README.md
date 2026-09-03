@@ -53,19 +53,7 @@ One run walks the whole path. Every stage leaves evidence, and the run does not 
 
 <!-- workflow-diagram:start -->
 
-```text
-  ┌──────────┐   ┌──────────┐   ┌──────────┐
-  │ Capture  │ ▶ │ Census   │ ▶ │ Extract  │
-  └──────────┘   └──────────┘   └──────────┘
-        ▼
-  ┌──────────┐   ┌──────────┐   ┌──────────┐
-  │ Verify   │ ▶ │ Refine   │ ▶ │ Store    │
-  └──────────┘   └──────────┘   └──────────┘
-        ▼
-  ┌──────────┐
-  │ Retrieve │
-  └──────────┘
-```
+<p align="center"><img src="docs/assets/pantheon/takt-en.png" alt="Seven marble plates in two rows, each engraved with one stage of the run, linked by a blue thread from the inbox tray to the finished tablets" width="100%"></p>
 
 <!-- workflow-diagram:end -->
 
@@ -142,7 +130,13 @@ You need Node.js 20 or newer, Python 3.11 or newer, and git. A Mac is better: im
 ```bash
 git clone https://github.com/zarubinvibe/mnemazine.git "$HOME/Desktop/Mnemazine"
 cd "$HOME/Desktop/Mnemazine"
-bash setup.sh
+bash setup.sh          # guided install, asks before it writes anything
+
+# then open it the way you already work:
+claude                 # Claude Code
+codex                  # Codex CLI
+code .                 # an editor, no agent at all
+npm run doctor         # plain terminal: is it alive?
 ```
 
 `setup.sh` is the guided path: it checks the prerequisites, asks where the inbox goes, and can deploy the Telegram bot. `MNEMAZINE_SETUP_DRYRUN=1 bash setup.sh` previews it without touching anything, and `bash install.sh` is the non-interactive skeleton if you already know what you want. No Git? Download [the ZIP](https://github.com/zarubinvibe/mnemazine/archive/refs/heads/main.zip) or [the tarball](https://github.com/zarubinvibe/mnemazine/archive/refs/heads/main.tar.gz) and run the same script inside. First time here? Open the project in Claude Code and run `/mnemazine-setup`: the install goes as a conversation, one question at a time, and nothing is installed without your yes.
@@ -153,12 +147,14 @@ Never done this before? [The onboarding](docs/ONBOARDING.md) walks the whole fir
 
 ## Simple Comparison
 
-| Choice | Best when | What you get | Trade-off |
-|---|---|---|---|
-| **Mnemazine** | The pile of saved material is already unreadable | Local reading, verified notes, deduplication, weekly brief | Best results need a Mac |
-| Saving files into Obsidian yourself | You save a few items a week | Full control and no setup | Nothing is read, verified, or deduplicated for you |
-| A cloud AI notebook | You want an answer about documents you upload | Fast questions and answers | Material leaves your machine and the notes stay inside that service |
-| Reading it later by hand | The pile is small | Nothing to install | "Later" rarely arrives |
+| Option | What it is | Where the work happens | Reads your files | What you get | What it costs you |
+|---|---|---|---|---|---|
+| **Mnemazine** | A local knowledge refinery | Your own machine | Yes, that is the point | Verified notes, deduplication, a weekly brief | Best results need a Mac, and setup takes a few minutes |
+| Obsidian, filed by hand | A notes app you fill yourself | Your own machine | No, you do the reading | Full control over structure | Nothing is read, verified or deduplicated for you |
+| NotebookLM | A cloud notebook you upload documents to | Google servers | Yes, after upload | Fast answers about what you uploaded | Material leaves your machine and the notes stay in that service |
+| Notion AI | A workspace with an assistant | Notion servers | Yes, inside the workspace | Search and drafting across your pages | Your corpus lives inside someone else product |
+| Readwise Reader | A read-later app with highlights | Readwise servers | Links and articles, not your folders | Highlights that sync into notes | It saves and resurfaces, it does not verify |
+| Reading it later by hand | The plan most piles actually have | Nowhere | No | Nothing to install | "Later" rarely arrives |
 
 ## Simple Words
 
@@ -214,8 +210,9 @@ This is one of the public [Olympuz projects](https://github.com/zarubinvibe/athe
 | project | Athena | Portable agent OS that restores a complete Claude and Codex setup on a new Mac. | [Repository](https://github.com/zarubinvibe/athena) · [ZIP](https://github.com/zarubinvibe/athena/archive/refs/heads/main.zip) |
 | project | Helioz | 24/7 agent work conveyor with verified completion markers and goal-based overnight decisions. | [Repository](https://github.com/zarubinvibe/helioz) · [ZIP](https://github.com/zarubinvibe/helioz/archive/refs/heads/main.zip) |
 | project | Mnemazine | Local-first memory system that turns raw inputs into verified reusable knowledge. | [Repository](https://github.com/zarubinvibe/mnemazine) · [ZIP](https://github.com/zarubinvibe/mnemazine/archive/refs/heads/main.zip) |
-| project | Themis | Multi-agent assistant for Russian litigation with local OCR and review by a five-jurist council. | [Repository](https://github.com/zarubinvibe/themis) · [ZIP](https://github.com/zarubinvibe/themis/archive/refs/heads/main.zip) |
+| project | Themiz | Multi-agent assistant for Russian litigation with local OCR and review by a five-jurist council. | [Repository](https://github.com/zarubinvibe/themiz) · [ZIP](https://github.com/zarubinvibe/themiz/archive/refs/heads/main.zip) |
 | project | Zeuz | Factory that turns an idea into a governed multi-agent workflow with gates, observability, and replay. | [Repository](https://github.com/zarubinvibe/zeuz) · [ZIP](https://github.com/zarubinvibe/zeuz/archive/refs/heads/main.zip) |
+| project | Lynceuz | Collects public web evidence at zero cost and stops with an honest reason when the safe routes end. | [Repository](https://github.com/zarubinvibe/lynceuz) · [ZIP](https://github.com/zarubinvibe/lynceuz/archive/refs/heads/main.zip) |
 <!-- pantheon-family:end -->
 
 ## License

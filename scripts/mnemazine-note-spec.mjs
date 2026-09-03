@@ -22,11 +22,57 @@ export const TYPE_REQUIRED_FIELDS = {
   'agent-research': ['project', 'agent', 'claim_status']
 }
 
+// Буква с точками пишется код-пойнтом: дом-стиль «без нее» уже съел литерал, и замена стала «е → е» -
+// нормализация enum была пустой, «подтвержден» и «подтвержден с точками» сходились только благодаря регистру
+// (найдено при ревью схемы планов Гелиоза 2026-09-02, вопрос В14).
 export function normSpecValue(value) {
-  return String(value ?? '').replace(/е/g, 'е').replace(/Е/g, 'Е').toLowerCase()
+  return String(value ?? '').replace(/\u0451/g, '\u0435').replace(/\u0401/g, '\u0415').toLowerCase()
 }
 
 export const SPEC_VERIFIED_NORM = new Set(SPEC_VERIFIED.map(v => normSpecValue(v)))
+
+// Русский склоняет имя проекта («для Мнемозины», «в Фемиде»), а слаг берётся из
+// заголовка «99 Система/_ПРОЕКТЫ.md» в именительном («Мнемозина») — подстрочный
+// поиск их не связывал, и живой блок «Как это поможет мне» проваливал гейт из-за
+// падежа, а не из-за отсутствия проекта. Отрезаем ОДНО падежное окончание с конца.
+// Порядок важен: длинные окончания идут первыми, иначе «-ами» съедается как «-и».
+const RU_ENDINGS = ['ами', 'ями', 'ов', 'ев', 'ах', 'ях', 'ам', 'ям', 'ой', 'ей', 'ою', 'ею', 'ом', 'ем', 'а', 'я', 'ы', 'и', 'у', 'ю', 'е', 'ь']
+const STEM_MIN = 5 // короче — уже не имя проекта, а обычное слово
+
+export function ruStem(word) {
+  for (const end of RU_ENDINGS) {
+    if (word.endsWith(end) && word.length - end.length >= STEM_MIN) return word.slice(0, -end.length)
+  }
+  return word
+}
+
+const isCyrillicWord = s => /^[а-яё]+$/.test(s)
+
+// Слаги проектов — только грепом ## заголовков _ПРОЕКТЫ.md, не хардкод.
+// Однословные имена покрыты полным заголовком; из многословных дополнительно
+// берутся «кавычечные» имена и латинские токены ≥5 символов — кириллические
+// токены многословного заголовка («Просто», «партнеры») дают ложные совпадения
+// с обычной прозой, поэтому исключены.
+// Однословное кириллическое имя дополнительно кладётся основой (ruStem), чтобы
+// «Мнемозины» и «Фемиде» засчитывались наравне с именительным падежом.
+export function projectSlugs(text) {
+  const slugs = new Set()
+  const add = value => {
+    const v = normSpecValue(value)
+    if (!v) return
+    slugs.add(v)
+    if (isCyrillicWord(v)) slugs.add(ruStem(v))
+  }
+  for (const [, h] of String(text || '').matchAll(/^##\s+(.+?)\s*$/gm)) {
+    add(h)
+    for (const [, q] of h.matchAll(/«([^»]+)»/g)) add(q)
+    for (const t of h.split(/\s+/)) {
+      const tok = t.replace(/[«»()"'.,:;]/g, '')
+      if (tok.length >= 5 && /[A-Za-z]/.test(tok)) slugs.add(normSpecValue(tok))
+    }
+  }
+  return [...slugs]
+}
 
 // Единая правда о составе тела ноты (docs/NOTE-SPEC.md:63-83). Приборы, которым
 // нужен список блоков, читают ЭТОТ массив, а не заводят свою копию (план П13, шаг 7).

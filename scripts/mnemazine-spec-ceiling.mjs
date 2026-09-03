@@ -34,6 +34,9 @@ async function runGate() {
   // сразу за ним обрывает поток (замерено: ровно 48898 байт). В файл stderr синхронен —
   // поэтому пишем во временный файл редиректом, а не читаем pipe.
   const tmp = path.join(ROOT, '.mnemazine', 'state', '.spec-ceiling-gate.json')
+  // .mnemazine/state/ не отслеживается и не публикуется, так что на свежем клоне
+  // каталога нет: редирект bash падает молча, а читать становится нечего.
+  await fs.mkdir(path.dirname(tmp), { recursive: true })
   execFileSync('bash', ['-c', `node "$1" --spec --json --max-failures=0 > "$2" 2>&1 || true`, '_', GATE, tmp], {
     env: { ...process.env, MNEMAZINE_VAULT: VAULT, LC_ALL: 'C' },
     stdio: ['ignore', 'pipe', 'pipe'],

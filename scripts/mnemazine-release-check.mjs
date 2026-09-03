@@ -7,6 +7,8 @@ import crypto from 'node:crypto'
 import { spawn } from 'node:child_process'
 import { SPEC_TYPES } from './mnemazine-note-spec.mjs'
 
+import { listTreeFiles } from './mnemazine-tracked-files.mjs'
+
 const ROOT = path.resolve(process.cwd())
 
 function run(command, args, options = {}) {
@@ -79,9 +81,10 @@ function noteType(text) {
 // проверял десять отслеживаемых .mjs (в т.ч. kb-lint.mjs и normalize-old-frontmatter.mjs —
 // оба правят живой vault), ни один .sh и почти все .py.
 async function gitLsFiles() {
-  const result = await run('git', ['ls-files'])
-  if (result.code !== 0) throw new Error(`git ls-files failed\n${result.stdout}\n${result.stderr}`.trim())
-  return result.stdout.split(/\r?\n/).map(line => line.trim()).filter(Boolean)
+  // Распакованный релиз не является репозиторием: там правду говорит диск.
+  // Подмену отслеживаемого файла это уже не ловит, но в архиве и сравнивать
+  // не с чем - именно на этой среде падал изолированный прогон гейта выкладки.
+  return listTreeFiles(ROOT).files
 }
 
 function syntaxTargetsFrom(tracked) {
@@ -192,6 +195,9 @@ async function demoSmoke() {
   await fs.copyFile(path.join(ROOT, 'scripts/mnemazine-note-spec.mjs'), path.join(scripts, 'mnemazine-note-spec.mjs'))
   await fs.copyFile(path.join(ROOT, 'scripts/mnemazine-vault-quality-gate.mjs'), path.join(scripts, 'mnemazine-vault-quality-gate.mjs'))
   await fs.copyFile(path.join(ROOT, 'scripts/mnemazine-synthesize.mjs'), path.join(scripts, 'mnemazine-synthesize.mjs'))
+  // synthesize импортирует metiz: без него песочница падает ERR_MODULE_NOT_FOUND ещё до первой проверки.
+  // Список копирования ручной, и врезка Метиды его не пополнила - гейт краснел на исправном коде.
+  await fs.copyFile(path.join(ROOT, 'scripts/mnemazine-metiz.mjs'), path.join(scripts, 'mnemazine-metiz.mjs'))
   await fs.copyFile(path.join(ROOT, 'scripts/mnemazine-llm.mjs'), path.join(scripts, 'mnemazine-llm.mjs'))
   await fs.copyFile(path.join(ROOT, 'scripts/mnemazine-cli-router.mjs'), path.join(scripts, 'mnemazine-cli-router.mjs'))
   await fs.copyFile(path.join(ROOT, 'scripts/mnemazine-cli-probe.mjs'), path.join(scripts, 'mnemazine-cli-probe.mjs'))
@@ -402,7 +408,9 @@ async function qualityAndPublicChecks() {
   await must('live status selftest', process.execPath, ['scripts/mnemazine-live-status.mjs', '--selftest'])
   await must('doctor selftest', process.execPath, ['scripts/mnemazine-doctor.mjs', '--selftest'])
   await must('semantic graph task selftest', process.execPath, ['scripts/mnemazine-semantic-graph-task.mjs', '--selftest'])
-  await must('semantic monitor dry-run smoke', process.execPath, ['scripts/mnemazine-semantic-graph-task.mjs', '--monitor', '--dry-run', '--stale-hours', '1'])
+  // Явный корпус, а не дефолтный vault/: он не публикуется, а установщик в песочнице
+  // гейта идет сухим и каталога не создает. Смоук не должен требовать живой корпус.
+  await must('semantic monitor dry-run smoke', process.execPath, ['scripts/mnemazine-semantic-graph-task.mjs', '--monitor', '--dry-run', '--stale-hours', '1', '--vault', 'demo/vault'])
   await semanticShardResumeSmoke()
   await must('agent-os mirror selftest', process.execPath, ['scripts/mnemazine-athena-mirror.mjs', '--selftest'])
   await must('agent-os mirror manifest check', process.execPath, ['scripts/mnemazine-athena-mirror.mjs', '--check', '--repo-only'])

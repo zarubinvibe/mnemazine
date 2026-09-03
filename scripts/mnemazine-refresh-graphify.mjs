@@ -143,7 +143,10 @@ function runCommand(cmd, args, { env = {}, cwd = ROOT, timeoutMs = TIMEOUT_MS } 
   return new Promise(resolve => {
     const child = spawn(cmd, args, {
       cwd,
-      env: { ...process.env, ...env },
+      // Двоичные файлы python-зависимостей (graphify, graphify-mcp, markitdown) живут в .venv/bin, и туда
+      // не смотрит ни один PATH: install.sh симлинкует наружу только bin/mnemazine. Без этой строки
+      // `npm run graph:smoke` падал `spawn graphify ENOENT` сразу после чистой установки (issue #6, п.2).
+      env: { ...process.env, PATH: `${path.join(ROOT, '.venv', 'bin')}${path.delimiter}${process.env.PATH || ''}`, ...env },
       stdio: ['ignore', 'pipe', 'pipe']
     })
     let stdout = ''

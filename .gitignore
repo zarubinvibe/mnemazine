@@ -69,3 +69,8 @@ tests/fixtures/retrieval-questions.json
 
 # Browser page snapshots from debugging; transient, never part of the project.
 .playwright-mcp/
+
+# Состояние конвейера Гелиоза в доме миссии: цель, планы, разборы судьи, логи прогонов.
+# Рантайм, не исходник - в git не едет и в публичную сборку тем более (правило дома Гелиоза).
+.helioz/
+queue/

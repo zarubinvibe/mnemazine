@@ -20,6 +20,8 @@ import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { SPEC_TYPES } from './mnemazine-note-spec.mjs'
 
+import { listTreeFiles } from './mnemazine-tracked-files.mjs'
+
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const RUNNERS_WITH_FILE_ARG = new Set(['node', 'bash', 'sh', 'python', 'python3'])
 const REPO_FILE_PREFIXES = ['scripts/', 'tests/', 'workflows/', 'skills/']
@@ -197,7 +199,10 @@ function packageScriptTrackedPathFailures(scripts, tracked, fileExists = rel => 
 }
 
 function gitTrackedFiles() {
-  return new Set(execFileSync('git', ['ls-files', '-z'], { cwd: ROOT, encoding: 'utf8' }).split('\0').filter(Boolean))
+  // Вне репозитория (распакованный релиз) состав дерева говорит диск: см.
+  // mnemazine-tracked-files.mjs. Иначе проверка ссылок package.json падала бы
+  // у каждого, кто скачал архив, а не клонировал.
+  return new Set(listTreeFiles(ROOT).files)
 }
 
 function packageScriptTrackedPathCheck() {

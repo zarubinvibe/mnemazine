@@ -6,6 +6,7 @@ import { activeProvider, llmAvailable, llmJson, fenceUntrusted, providerCostTier
 import { verifyLocal, verifyDeep, isPublicHttpUrl } from './mnemazine-verify.mjs'
 import { SPEC_VERIFIED } from './mnemazine-note-spec.mjs'
 import { resolveVault } from './mnemazine-paths.mjs'
+import { squeezeText as squeezeMetiz } from './mnemazine-metiz.mjs'
 
 const ROOT = process.env.MNEMAZINE_ROOT || path.resolve(process.cwd())
 const argv = process.argv.slice(2)
@@ -16,7 +17,11 @@ function arg(name, fallback = '') {
   return hit.includes('=') ? hit.split('=').slice(1).join('=') : argv[argv.indexOf(hit) + 1] || fallback
 }
 
-const VAULT = resolveVault({ cli: arg('vault') })
+// --selftest проверяет только чистые фильтры строк (looksLikeCode, readmePoints)
+// и в корпус не заглядывает. Резолвить vault здесь значит требовать живой корпус
+// там, где он не нужен: vault/ не публикуется, поэтому на свежем клоне модуль
+// падал на импорте и ронял самопроверку целиком, ещё не дойдя до неё.
+const VAULT = argv.includes('--selftest') ? '' : resolveVault({ cli: arg('vault') })
 const EXTRACTS = path.resolve(arg('extracts', process.env.MNEMAZINE_EXTRACTS || path.join(ROOT, '.mnemazine/cache/extracted')))
 const SESSION = arg('session', new Date().toISOString().slice(0, 10))
 const MIN_CLUSTER_CHARS = Number(arg('min-cluster-chars', '80'))
@@ -761,9 +766,55 @@ function ownerProjects() {
 
 function atomPrompt(cluster, sources, materialOverride) {
   // When enrichment ran, atomize the EXPANDED knowledge; else the raw capture.
+  //
+  // Врезка Метиды стоит ТОЛЬКО на сырой ветке. Числа, по которым так решено, ниже - чтобы
+  // следующая сессия не переоткрывала вопрос гипотезой.
+  //
+  // Прежнее основание "сырая ветка в дефолте недостижима, ее запирает строгий гейт STRICT_ENRICH
+  // в processPart (ищи строку `strict enrichment failed for cluster`)"
+  // проверено и верно лишь для дефолта РЕПОЗИТОРИЯ. Живая раскладка владельца
+  // (.mnemazine/config.local.sh, его читают npm start и scripts/mnemazine-desktop-protocol.sh)
+  // ставит MNEMAZINE_STRICT_ENRICH=0, и тогда [замер] выражение STRICT_ENRICH дает false.
+  // Значит при неудачном обогащении сюда приходит СЫРЬЕ, тот же класс входа, что у enrichCluster,
+  // и режется оно так же вслепую.
+  //
+  // [замер] на живом кеше дома (.mnemazine/cache/extracted, 28 частей кластеров, срез 2026-08-31):
+  // сырой вход медиана 21464 Б, p90 30760 Б, максимум 31994 Б. Порог профиля balanced - 512
+  // символов, вход берет его с запасом. 4 части из 28 перебивают слепой рез MAX_MATERIAL_CHARS и
+  // теряют хвост в 1152, 2542, 3196 и 4223 символа. Свертка на 9 частях из 28 дает выигрыш 50.2-52.8%,
+  // на остальных 19 отказывается и возвращает вход байт в байт (доктрина 4). Метки SOURCE_REF:
+  // свертка не теряет ни одной: 543 из 560 переживают И свертку, И сегодняшний слепой рез, разница
+  // ноль. Выход свертки на всех 9 частях не превышает 11617 символов, поэтому хвостовой .slice(...)
+  // маркер восстановления никогда не разрезает.
+  //
+  // Ветка materialOverride НЕ тронута, и теперь это ЗАМЕР, а не отсутствие замера. Прошлая
+  // сессия числа не получила: вызов не укладывался в собственный потолок ENRICH_TIMEOUT_MS -
+  // SIGKILL бил по обертке npm, внутренний бинарь оставался сиротой с открытыми трубами, и
+  // событие close у runProc не наступало вовсе [замер: 26 минут живого вызова при потолке 7].
+  // Потолок починен, и живой прогон стал возможен.
+  //
+  // [замер, три живых прогона обогащения на кластере agent-systems, маршрут llm] обогащенный
+  // материал выходит 5154, 7056 и 5939 знаков (8348, 11636 и 9766 байт). Свертка на нем дает
+  // РОВНО НОЛЬ: 0.0% и ни одного примененного шага на всех трех профилях (coding, balanced,
+  // aggressive), вход возвращается байт в байт по доктрине 4. Причина видна в самом материале:
+  // это СПЛОШНАЯ ПРОЗА, написанная моделью, - ни таблиц, ни повторяющихся блоков, ни журнальных
+  // строк, то есть ничего, что свертка умеет сложить. Врезка тут была бы мертвым шагом.
+  // Слепой рез при этом не теряет НИЧЕГО: потолок 28000 знаков не достигается ни одним из трех
+  // прогонов (запас втрое), тогда как на сырой ветке рез срезал хвосты у 4 частей из 28.
+  // Переоткрывать только с новым замером на материале другой формы.
+  //
+  // ГРАНИЦА ЗАМЕРА, чтобы его не выдали за большее. Ветка materialOverride достижима ТОЛЬКО
+  // маршрутом llm: при детерминированном обогащении (github, sources) атомы строит
+  // atomsFromDeterministic, и atomPrompt не зовется вовсе. Три точки сняты на одном кластере.
+  //
+  // Откат (обратная замена одной строки):
+  //   : cluster.records.map(r => `SOURCE_REF: ${r.source_ref}\n${compact(r.text, MAX_RECORD_CHARS)}`).join('\n---\n').slice(0, MAX_MATERIAL_CHARS)
   const text = materialOverride
     ? String(materialOverride).slice(0, Math.max(28000, MAX_MATERIAL_CHARS))
-    : cluster.records.map(r => `SOURCE_REF: ${r.source_ref}\n${compact(r.text, MAX_RECORD_CHARS)}`).join('\n---\n').slice(0, MAX_MATERIAL_CHARS)
+    : squeezeMetiz(
+      cluster.records.map(r => `SOURCE_REF: ${r.source_ref}\n${compact(r.text, MAX_RECORD_CHARS)}`).join('\n---\n'),
+      { label: `atomize-raw:${cluster.id}`, budgetChars: MAX_MATERIAL_CHARS }
+    ).text.slice(0, MAX_MATERIAL_CHARS)
   const urls = sources.map(s => s.url).join(', ') || 'none detected'
   const refs = cluster.records.map(r => r.source_ref).filter(Boolean).join(', ')
   return `You are Mnemazine's atomization agent. Split the enriched research material below into FOCUSED, atomic knowledge notes — one idea per atom, up to ${MAX_ATOMS}. Do NOT merge unrelated ideas; do NOT invent facts not present in the material. Each atom: a precise title, a one-paragraph "what", a one-paragraph "why it matters", 2-5 concrete "how to use" bullets, one "next action", the subset of source URLs that support it (from: ${urls}; [] only if truly local/private), and the subset of local source_refs that support this exact atom (from: ${refs}; never include an unrelated source_ref just because it is in the same cluster).
@@ -814,7 +865,16 @@ ${fenceUntrusted('MATERIAL', text)}`
 }
 
 async function enrichCluster(cluster, sources) {
-  const text = cluster.records.map(r => compact(r.text, Math.max(6000, MAX_RECORD_CHARS))).join('\n---\n').slice(0, MAX_MATERIAL_CHARS)
+  // Врезка Метиды (см. scripts/mnemazine-metiz.mjs): раньше материал резался вслепую ДО того, как
+  // уйти в MATERIAL промта (см. комментарий у MAX_RECORD_CHARS выше про "atoms only ever covered
+  // the intro") - теперь Метида видит текст целиком и решает, что оставить в границах того же
+  // потолка символов; budgetChars гарантирует, что примененный результат никогда не превысит
+  // MAX_MATERIAL_CHARS, а внешний .slice(...) остается защитой на случай, если сжать не вышло
+  // (fail-open дома squeezeMetiz - без Метиды текст режется ровно как раньше, той же строкой).
+  const text = squeezeMetiz(
+    cluster.records.map(r => compact(r.text, Math.max(6000, MAX_RECORD_CHARS))).join('\n---\n'),
+    { label: `enrich:${cluster.id}`, budgetChars: MAX_MATERIAL_CHARS }
+  ).text.slice(0, MAX_MATERIAL_CHARS)
   const res = await llmJson(enrichPrompt(text, sources), ENRICH_SCHEMA, {
     provider: VERIFIER_PROVIDER,
     tools: ['WebSearch', 'WebFetch'],

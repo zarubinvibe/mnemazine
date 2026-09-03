@@ -9,7 +9,7 @@
     "ru",
     "zh"
   ],
-  "quick_code": "git clone https://github.com/zarubinvibe/mnemazine.git \"$HOME/Desktop/Mnemazine\"\ncd \"$HOME/Desktop/Mnemazine\"\nbash setup.sh",
+  "quick_code": "git clone https://github.com/zarubinvibe/mnemazine.git \"$HOME/Desktop/Mnemazine\"\ncd \"$HOME/Desktop/Mnemazine\"\nbash setup.sh          # guided install, asks before it writes anything\n\n# then open it the way you already work:\nclaude                 # Claude Code\ncodex                  # Codex CLI\ncode .                 # an editor, no agent at all\nnpm run doctor         # plain terminal: is it alive?",
   "text": {
     "en": {
       "title": "Mnemazine",
@@ -27,25 +27,49 @@
       "compare": [
         [
           "**Mnemazine**",
-          "The pile of saved material is already unreadable",
-          "Local reading, verified notes, deduplication, weekly brief",
-          "Best results need a Mac"
+          "A local knowledge refinery",
+          "Your own machine",
+          "Yes, that is the point",
+          "Verified notes, deduplication, a weekly brief",
+          "Best results need a Mac, and setup takes a few minutes"
         ],
         [
-          "Saving files into Obsidian yourself",
-          "You save a few items a week",
-          "Full control and no setup",
-          "Nothing is read, verified, or deduplicated for you"
+          "Obsidian, filed by hand",
+          "A notes app you fill yourself",
+          "Your own machine",
+          "No, you do the reading",
+          "Full control over structure",
+          "Nothing is read, verified or deduplicated for you"
         ],
         [
-          "A cloud AI notebook",
-          "You want an answer about documents you upload",
-          "Fast questions and answers",
-          "Material leaves your machine and the notes stay inside that service"
+          "NotebookLM",
+          "A cloud notebook you upload documents to",
+          "Google servers",
+          "Yes, after upload",
+          "Fast answers about what you uploaded",
+          "Material leaves your machine and the notes stay in that service"
+        ],
+        [
+          "Notion AI",
+          "A workspace with an assistant",
+          "Notion servers",
+          "Yes, inside the workspace",
+          "Search and drafting across your pages",
+          "Your corpus lives inside someone else product"
+        ],
+        [
+          "Readwise Reader",
+          "A read-later app with highlights",
+          "Readwise servers",
+          "Links and articles, not your folders",
+          "Highlights that sync into notes",
+          "It saves and resurfaces, it does not verify"
         ],
         [
           "Reading it later by hand",
-          "The pile is small",
+          "The plan most piles actually have",
+          "Nowhere",
+          "No",
           "Nothing to install",
           "\"Later\" rarely arrives"
         ]
@@ -78,7 +102,15 @@
       ],
       "docs": "Deeper: [the full reference](docs/DETAILS.md) covers site and video intake, the quality contract, the agent roster, exit codes and troubleshooting.",
       "license": "Mnemazine Community License 1.0: free for one person, including a solo business. An organisation needs a separate agreement. See [LICENSE](LICENSE).",
-      "welcome": "Hello. I save links and screenshots like everyone else, and like everyone else I never came back to them. The pile grew, the knowledge did not.\n\nMnemazine reads that pile on my own machine and leaves notes written for the me of six months from now. If it does the same for you, take it and make it yours."
+      "welcome": "Hello. I save links and screenshots like everyone else, and like everyone else I never came back to them. The pile grew, the knowledge did not.\n\nMnemazine reads that pile on my own machine and leaves notes written for the me of six months from now. If it does the same for you, take it and make it yours.",
+      "compare_header": [
+        "Option",
+        "What it is",
+        "Where the work happens",
+        "Reads your files",
+        "What you get",
+        "What it costs you"
+      ]
     },
     "ru": {
       "title": "Mnemazine",
@@ -96,27 +128,51 @@
       "compare": [
         [
           "**Mnemazine**",
-          "Куча сохраненного уже нечитаема",
-          "Локальное чтение, проверенные заметки, дедупликация, недельная сводка",
-          "Лучший результат требует Mac"
+          "Локальная фабрика знания",
+          "На вашей машине",
+          "Да, ради этого и сделано",
+          "Проверенные заметки, дедуп, недельная сводка",
+          "Лучший результат на Mac, установка занимает несколько минут"
         ],
         [
-          "Складывать файлы в Obsidian руками",
-          "Вы сохраняете пару вещей в неделю",
-          "Полный контроль и никакой настройки",
-          "Никто за вас не читает, не проверяет и не сливает дубли"
+          "Obsidian руками",
+          "Заметочник, который вы наполняете сами",
+          "На вашей машине",
+          "Нет, читаете вы",
+          "Полный контроль над структурой",
+          "За вас никто не читает, не проверяет и не убирает дубли"
         ],
         [
-          "Облачный AI-блокнот",
-          "Нужен ответ по загруженным документам",
-          "Быстрые вопросы и ответы",
-          "Материал уходит с машины, а заметки остаются внутри сервиса"
+          "NotebookLM",
+          "Облачный блокнот, куда вы загружаете документы",
+          "На серверах Google",
+          "Да, после загрузки",
+          "Быстрые ответы по загруженному",
+          "Материал уходит с вашей машины, заметки остаются в сервисе"
         ],
         [
-          "Прочитать потом руками",
-          "Куча небольшая",
-          "Ничего не надо ставить",
-          "«Потом» обычно не наступает"
+          "Notion AI",
+          "Рабочее пространство с помощником",
+          "На серверах Notion",
+          "Да, внутри пространства",
+          "Поиск и черновики по вашим страницам",
+          "Ваш корпус живет внутри чужого продукта"
+        ],
+        [
+          "Readwise Reader",
+          "Читалка отложенного с цитатами",
+          "На серверах Readwise",
+          "Ссылки и статьи, но не ваши папки",
+          "Цитаты, которые уезжают в заметки",
+          "Он сохраняет и напоминает, но не проверяет"
+        ],
+        [
+          "Читать потом руками",
+          "План, который на деле есть у большинства куч",
+          "Нигде",
+          "Нет",
+          "Ставить нечего",
+          "«Потом» почти не наступает"
         ]
       ],
       "glossary": [
@@ -147,7 +203,15 @@
       ],
       "docs": "Глубже: [полный разбор](docs/DETAILS.ru.md) про прием сайтов и видео, контракт качества, состав агентов, коды возврата и разбор поломок.",
       "license": "Mnemazine Community License 1.0: бесплатно одному человеку, включая работу на себя. Организации нужно отдельное соглашение. Текст в файле [LICENSE](LICENSE).",
-      "welcome": "Привет. Я, как и все, сохраняю ссылки и делаю скриншоты, и, как и все, никогда к ним не возвращался. Куча росла, знание нет.\n\nMnemazine читает эту кучу на моей же машине и оставляет заметки, написанные для меня через полгода. Если она сделает то же для вас, забирайте и делайте своей."
+      "welcome": "Привет. Я, как и все, сохраняю ссылки и делаю скриншоты, и, как и все, никогда к ним не возвращался. Куча росла, знание нет.\n\nMnemazine читает эту кучу на моей же машине и оставляет заметки, написанные для меня через полгода. Если она сделает то же для вас, забирайте и делайте своей.",
+      "compare_header": [
+        "Вариант",
+        "Что это",
+        "Где идет работа",
+        "Читает ваши файлы",
+        "Что получаете",
+        "Чем платите"
+      ]
     },
     "zh": {
       "title": "Mnemazine",
@@ -165,27 +229,51 @@
       "compare": [
         [
           "**Mnemazine**",
-          "存下来的材料已经多到读不动",
-          "本地阅读、已核验的笔记、去重、每周简报",
-          "想要最好的效果需要一台 Mac"
+          "本地的知识精炼厂",
+          "你自己的机器",
+          "是，这正是它的目的",
+          "经过核验的笔记、去重、每周简报",
+          "最佳效果需要 Mac，安装要花几分钟"
         ],
         [
-          "自己往 Obsidian 里放文件",
-          "一周只存几条",
-          "完全掌控，不用配置",
-          "没有人替你阅读、核验和合并重复"
+          "手动整理 Obsidian",
+          "由你自己填充的笔记应用",
+          "你自己的机器",
+          "不，阅读由你来做",
+          "对结构的完全掌控",
+          "没有人替你阅读、核验或去重"
         ],
         [
-          "云端 AI 笔记本",
-          "想对上传的文档提问",
-          "问答很快",
-          "材料离开你的机器，笔记也留在那个服务里"
+          "NotebookLM",
+          "把文档上传上去的云端笔记本",
+          "Google 的服务器",
+          "是，上传之后",
+          "对已上传内容的快速问答",
+          "材料离开你的机器，笔记留在那个服务里"
+        ],
+        [
+          "Notion AI",
+          "带助手的工作空间",
+          "Notion 的服务器",
+          "是，在工作空间内",
+          "跨页面的搜索与起草",
+          "你的资料库住在别人的产品里"
+        ],
+        [
+          "Readwise Reader",
+          "带高亮的稍后读应用",
+          "Readwise 的服务器",
+          "链接和文章，而不是你的文件夹",
+          "会同步进笔记的高亮",
+          "它负责保存与再次呈现，不负责核验"
         ],
         [
           "以后再手动读",
-          "堆子还很小",
-          "什么都不用装",
-          "“以后”通常不会到来"
+          "大多数积压其实就是这个计划",
+          "哪里都不在",
+          "否",
+          "没有东西要安装",
+          "「以后」很少真的到来"
         ]
       ],
       "glossary": [
@@ -216,7 +304,15 @@
       ],
       "docs": "想更深：[完整参考](docs/DETAILS.md) 讲网站与视频接入、质量契约、智能体名单、退出码和故障排查。",
       "license": "Mnemazine Community License 1.0：一个人使用免费，包括你自己单干的生意。组织使用需要单独协议。见 [LICENSE](LICENSE)。",
-      "welcome": "你好。我和所有人一样存链接、截图，也和所有人一样从来没有回头去看。堆越来越大，知识没有变多。\n\nMnemazine 在我自己的机器上读完这堆东西，留下写给半年后的我的笔记。如果它对你也一样有用，就拿去，把它变成你自己的。"
+      "welcome": "你好。我和所有人一样存链接、截图，也和所有人一样从来没有回头去看。堆越来越大，知识没有变多。\n\nMnemazine 在我自己的机器上读完这堆东西，留下写给半年后的我的笔记。如果它对你也一样有用，就拿去，把它变成你自己的。",
+      "compare_header": [
+        "方案",
+        "是什么",
+        "工作在哪里进行",
+        "读你的文件",
+        "你会得到",
+        "代价"
+      ]
     }
   },
   "stages": {

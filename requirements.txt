@@ -4,7 +4,7 @@ pymupdf
 pypdf
 reportlab
 pillow
-openai-whisper
 graphifyy
 pymorphy3
 razdel
+# openai-whisper и torch переехали в requirements-media.lock: ставятся вторым шагом.

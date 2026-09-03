@@ -24,6 +24,7 @@
       "expect_exit": 0,
       "enforcement": "block",
       "execute": true,
+      "source_repo_only": true,
       "reason": "красное 23.08.2026: приватный путь в migration-contract (утечка П16). Закрыто fixup 3c99ff1 — путь заменен плейсхолдером; enforcement поднят в block."
     },
     {

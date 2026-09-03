@@ -1,5 +1,7 @@
 # Deep Mode (atomization + verification)
 
+<p align="center"><img src="../docs/assets/pantheon/doc-deep-mode.png" alt="Стеклянная пластина над мраморной табличкой, голубая нить проходит сквозь стекло и выходит ярче: заявление, сверенное с источником, рядом нетронутая золотая печать" width="100%"></p>
+
 Mnemazine has two operating modes:
 
 - **Conservative (default):** local-only. No network, no LLM, no external services. This is what `node scripts/mnemazine-run.mjs` and `npm run synthesize` do by default.
@@ -107,4 +109,4 @@ Deep verification (`--deep`) sends claim text and source URLs to the LLM agent, 
 
 ### Local secret scan
 
-`npm run release-check` (and `npm run public-check`) scan not only what could ship publicly but also the local extraction cache (`.mnemazine/cache/extracted/`) for token-like secrets (API keys, tokens, private keys), because captured screenshots or PDFs can contain credentials that would otherwise flow into synthesized notes. A captured secret fails the gate.
+`npm run release-check` (and the private source repository's own release gate) scan not only what could ship publicly but also the local extraction cache (`.mnemazine/cache/extracted/`) for token-like secrets (API keys, tokens, private keys), because captured screenshots or PDFs can contain credentials that would otherwise flow into synthesized notes. A captured secret fails the gate.
