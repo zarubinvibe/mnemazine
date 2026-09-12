@@ -1,5 +1,9 @@
 # 上手引导
 
+<p align="center">
+  <img src="../docs/assets/pantheon/takt-zh.png" width="100%" alt="Mnemazine 的七步入门节奏图：从收集材料到读取、核验、打磨、入库和再次取回">
+</p>
+
 这份引导假设你从来没有跑过本地的知识系统。每一步都写清楚要做什么，以及之后应该看到什么。
 
 最短的路是对话式的：在 Claude Code 里打开项目并运行 `/mnemazine-setup`。谟涅摩绪涅会自己完成安装，一次问一个问题，没有你的同意不装任何东西。下面是同一条路，靠双脚走。

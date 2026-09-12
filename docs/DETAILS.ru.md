@@ -5,9 +5,11 @@
 🇷🇺 **Русский** · [🇬🇧 English](../README.md)
 
 <p align="center">
-  <img src="../docs/assets/pantheon/hero.png" width="820" alt="Mnemazine — Мнемозина, богиня памяти, у своей мраморной колонны, перегоняет сырые фрагменты в слоистую систему знаний">
+  <img src="../docs/assets/pantheon/hero.png" width="100%" alt="Mnemazine — Мнемозина, богиня памяти, у своей мраморной колонны, перегоняет сырые фрагменты в слоистую систему знаний">
   <br>
-  <img src="../docs/assets/pantheon/emblem.png" width="220" alt="Эмблема Mnemazine — Мнемозина и колонна Pantheon">
+  <img src="../docs/assets/pantheon/emblem.png" width="100%" alt="Эмблема Mnemazine — Мнемозина и колонна Pantheon">
+  <br>
+  <img src="../docs/assets/pantheon/doc-deep-mode.png" width="100%" alt="Кадр deep mode Mnemazine — мраморная мастерская памяти с проверкой источников и табличками знания">
 </p>
 
 **Mnemazine**: локальная персональная система памяти, названная в честь **Мнемозины**, греческой богини памяти и матери муз.

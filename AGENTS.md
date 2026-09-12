@@ -63,6 +63,10 @@ If GitHub API unavailable or repo is private — write vault note from extracted
 
 - `README.md` and `README.ru.md` follow the shared family anatomy: promise, badges, wide hero, table of
   contents, and the ten beginner headings with the ASCII workflow diagram inside `How It Works`.
+- First-run agents must use the chat onboarding: `docs/ONBOARDING-CHAT.md`,
+  `docs/ONBOARDING-CHAT.ru.md`, and `docs/ONBOARDING-CHAT.zh.md`.
+- Before broad code navigation, use the tracked knowledge graph at `graphify-out/graph.json` and
+  `graphify-out/GRAPH_REPORT.md`; refresh it with `graphify update .` after structural changes.
 - Workflow stages live in `.github/pantheon.json`. Change the stages there first, then the two READMEs.
 - `AGENTS.md` holds the rules; `CLAUDE.md`, `GEMINI.md`, `.github/copilot-instructions.md`, and
   `.cursor/rules/*.mdc` only point here.

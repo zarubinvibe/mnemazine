@@ -1,7 +1,7 @@
 {
   "schema_version": 3,
   "family_id": "zarubinvibe-pantheon",
-  "catalog_version": "2026-09-03",
+  "catalog_version": "2026-09-06",
   "project": {
     "slug": "mnemazine",
     "deity": "Mnemosyne",
@@ -168,6 +168,58 @@
       }
     },
     "doc_pages": [
+      {
+        "path": "docs/DETAILS.md",
+        "frames": [
+          "../docs/assets/pantheon/hero.png",
+          "../docs/assets/pantheon/emblem.png",
+          "../docs/assets/pantheon/doc-deep-mode.png"
+        ]
+      },
+      {
+        "path": "docs/DETAILS.ru.md",
+        "frames": [
+          "../docs/assets/pantheon/hero.png",
+          "../docs/assets/pantheon/emblem.png",
+          "../docs/assets/pantheon/doc-deep-mode.png"
+        ]
+      },
+      {
+        "path": "docs/ONBOARDING.md",
+        "frames": [
+          "../docs/assets/pantheon/takt-en.png"
+        ]
+      },
+      {
+        "path": "docs/ONBOARDING.ru.md",
+        "frames": [
+          "../docs/assets/pantheon/takt-ru.png"
+        ]
+      },
+      {
+        "path": "docs/ONBOARDING.zh.md",
+        "frames": [
+          "../docs/assets/pantheon/takt-zh.png"
+        ]
+      },
+      {
+        "path": "docs/ONBOARDING-CHAT.md",
+        "frames": [
+          "../docs/assets/pantheon/takt-en.png"
+        ]
+      },
+      {
+        "path": "docs/ONBOARDING-CHAT.ru.md",
+        "frames": [
+          "../docs/assets/pantheon/takt-ru.png"
+        ]
+      },
+      {
+        "path": "docs/ONBOARDING-CHAT.zh.md",
+        "frames": [
+          "../docs/assets/pantheon/takt-zh.png"
+        ]
+      },
       {
         "path": "docs/deep-mode.md",
         "frames": [

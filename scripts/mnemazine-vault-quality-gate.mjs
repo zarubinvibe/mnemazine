@@ -2,6 +2,7 @@
 import { promises as fs } from 'node:fs'
 import path from 'node:path'
 import { MIN_CYR_SHARE, SPEC_TYPES, SPEC_SUBJECTS, SPEC_DATA_CLASSES, SPEC_VERIFIED, SPEC_VERIFIED_NORM, TYPE_REQUIRED_FIELDS, normSpecValue, projectSlugs } from './mnemazine-note-spec.mjs'
+import { unknownProjectCategories } from './mnemazine-project-categories.mjs'
 import { resolveVault } from './mnemazine-paths.mjs'
 
 const argv = process.argv.slice(2)
@@ -178,6 +179,7 @@ function parseFrontmatter(text) {
 }
 
 const scalar = v => (Array.isArray(v) ? '' : String(v ?? '').trim())
+const values = v => Array.isArray(v) ? v.map(item => String(item).trim()).filter(Boolean) : (scalar(v) ? [scalar(v)] : [])
 
 function cyrillicShare(body) {
   const prose = body
@@ -252,6 +254,18 @@ function checkSpec(text, slugs, changedSince = false) {
       reasons.push('subject: отсутствует (обязателен для новой/измененной ноты)')
     }
 
+    // project_categories: future-routing layer. New notes must say not only
+    // which live project they help, but what category of future project should
+    // rediscover this atom during bootstrap.
+    const projectCategories = values(data.project_categories)
+    if (changedSince && !projectCategories.length) {
+      reasons.push('project_categories: отсутствует или пуст (обязателен для новой/измененной ноты)')
+    }
+    const unknownCategories = unknownProjectCategories(projectCategories)
+    if (unknownCategories.length) {
+      reasons.push(`project_categories: неизвестные категории (${unknownCategories.join(' | ')}) — добавьте их в config/project-categories.json или повторите канон`)
+    }
+
     // data_class (§17.8, П24): необязательное; если есть — из закрытого списка
     // config/data-classes.json. Отсутствие дефектом НЕ считается — класс тогда
     // берут правила по разделу и наследование от источника (machine-class-gate).
@@ -268,6 +282,10 @@ function checkSpec(text, slugs, changedSince = false) {
   else {
     const normHelp = norm(help)
     if (!slugs.some(s => normHelp.includes(s))) reasons.push('блок «Как это поможет мне» не упоминает ни один проект из «99 Система/_ПРОЕКТЫ.md»')
+    const categories = values(fm.data?.project_categories).map(norm)
+    if (changedSince && categories.length && !categories.some(category => normHelp.includes(category))) {
+      reasons.push('блок «Как это поможет мне» не упоминает ни одну категорию из project_categories')
+    }
   }
   const dost = sectionBody(body, /^##\s+Достоверность\s*$/)
   if (dost === null) reasons.push('нет блока «Достоверность»')

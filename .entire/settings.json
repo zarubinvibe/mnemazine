@@ -6,6 +6,7 @@
       "repo": "zarubinvibe/mnemazine-checkpoints"
     }
   },
+  "telemetry": false,
   "checkpoints": {
     "primary": {
       "type": "git-refs"

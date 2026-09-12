@@ -1,5 +1,9 @@
 # Onboarding
 
+<p align="center">
+  <img src="../docs/assets/pantheon/takt-en.png" width="100%" alt="Mnemazine onboarding takt">
+</p>
+
 This walkthrough assumes you have never run a local knowledge system before. Every step says what to do and what you should see afterwards.
 
 The short path is the guided one: open the project in Claude Code and run `/mnemazine-setup`. Mnemosyne installs herself as a conversation, one question at a time, and installs nothing without your yes. Below is the same road on foot.

@@ -1,0 +1,28 @@
+{
+  "version": 1,
+  "note": "Canonical project_categories. Add new category once here, then reuse exact label in notes.",
+  "categories": [
+    { "key": "agent-os", "label": "агентная ОС и оркестрация агентов" },
+    { "key": "dev-platform", "label": "developer platform, CI/CD, observability и security" },
+    { "key": "knowledge-rag", "label": "поиск, RAG, база знаний и документный конвейер" },
+    { "key": "data-bi", "label": "данные, базы, аналитика и BI" },
+    { "key": "legal-trust", "label": "legaltech, compliance и trust layer" },
+    { "key": "crm-commerce", "label": "CRM, продажи, маркетинг и e-commerce" },
+    { "key": "fintech-risk", "label": "финтех, крипто, платежи и риск-мониторинг" },
+    { "key": "media-education-games", "label": "мультимедиа, контент, образование и игры" },
+    { "key": "browser-os-automation", "label": "browser automation и desktop/OS automation" },
+    { "key": "workplace-support", "label": "коммуникации, support и workplace productivity" },
+    { "key": "real-world-iot", "label": "доменные операционные системы и IoT/гео/real-world data" },
+    { "key": "universal-mcp", "label": "универсальный MCP-интеграционный слой" },
+    { "key": "agent-capabilities", "label": "Агентные системы и переиспользуемые возможности" },
+    { "key": "knowledge-memory", "label": "Память знаний, vault и циклы синтеза" },
+    { "key": "security-review", "label": "Безопасность, ревью и границы доверия" },
+    { "key": "engineering-ops", "label": "Инженерные операции и воспроизводимая доставка" },
+    { "key": "design-frontend", "label": "Дизайн-системы и качество фронтенда" },
+    { "key": "tool-radar", "label": "Радар инструментов и выбор open-source" },
+    { "key": "startup-strategy", "label": "Стратегия стартапа и founder-led рост" },
+    { "key": "content-growth", "label": "Контентные эксперименты и петли роста" },
+    { "key": "research-workflow", "label": "Исследовательский workflow и проверка источников" },
+    { "key": "misc-knowledge", "label": "Прочие сигналы знаний" }
+  ]
+}

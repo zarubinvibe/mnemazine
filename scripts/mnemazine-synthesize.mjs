@@ -5,6 +5,7 @@ import crypto from 'node:crypto'
 import { activeProvider, llmAvailable, llmJson, fenceUntrusted, providerCostTier } from './mnemazine-llm.mjs'
 import { verifyLocal, verifyDeep, isPublicHttpUrl } from './mnemazine-verify.mjs'
 import { SPEC_VERIFIED } from './mnemazine-note-spec.mjs'
+import { projectCategory } from './mnemazine-project-categories.mjs'
 import { resolveVault } from './mnemazine-paths.mjs'
 import { squeezeText as squeezeMetiz } from './mnemazine-metiz.mjs'
 
@@ -231,6 +232,14 @@ function uniq(values) {
   return [...new Set(values.filter(Boolean))]
 }
 
+function yamlQuote(value) {
+  return `"${String(value || '').replace(/\\/g, '\\\\').replace(/"/g, '\\"')}"`
+}
+
+function yamlList(key, items) {
+  return `${key}:\n${items.length ? items.map(item => `  - ${yamlQuote(item)}`).join('\n') : '  []'}`
+}
+
 // Content fingerprint = stable hash of a cluster's sorted source refs. Same
 // inputs -> same fingerprint -> same filename, so re-runs are idempotent and
 // exact-duplicate clusters are not rewritten (see write loop skip).
@@ -280,16 +289,16 @@ function clusterTitle(id) {
 
 function clusterTitleRu(id) {
   const map = {
-    'agent-systems': 'Агентные системы и переиспользуемые возможности',
-    'knowledge-memory': 'Память знаний, vault и циклы синтеза',
-    'security-review': 'Безопасность, ревью и границы доверия',
-    'engineering-ops': 'Инженерные операции и воспроизводимая доставка',
-    'design-frontend': 'Дизайн-системы и качество фронтенда',
-    'tool-radar': 'Радар инструментов и выбор open-source',
-    'startup-strategy': 'Стратегия стартапа и founder-led рост',
-    'content-growth': 'Контентные эксперименты и петли роста',
-    'research-workflow': 'Исследовательский workflow и проверка источников',
-    misc: 'Прочие сигналы знаний'
+    'agent-systems': projectCategory('agent-capabilities'),
+    'knowledge-memory': projectCategory('knowledge-memory'),
+    'security-review': projectCategory('security-review'),
+    'engineering-ops': projectCategory('engineering-ops'),
+    'design-frontend': projectCategory('design-frontend'),
+    'tool-radar': projectCategory('tool-radar'),
+    'startup-strategy': projectCategory('startup-strategy'),
+    'content-growth': projectCategory('content-growth'),
+    'research-workflow': projectCategory('research-workflow'),
+    misc: projectCategory('misc-knowledge')
   }
   return map[id] || map.misc
 }
@@ -674,6 +683,7 @@ verification: "${sourceStatus}"
 status: "draft"
 cluster_size: ${cluster.records.length}
 cluster_fingerprint: "${fingerprint(cluster)}"
+${yamlList('project_categories', [clusterTitleRu(cluster.id)])}
 ---
 
 # ${title}
@@ -706,6 +716,8 @@ ${sourceLines.join('\n')}
 
 ## 🎯 Как это поможет мне
 
+- Конкретный текущий проект: определить при ревью, если знание уже относится к живой работе.
+- Категория будущих проектов: ${clusterTitleRu(cluster.id)}.
 - ${template.next}
 - Тема: ${clusterTitleRu(cluster.id)} — черновик собран, но требует проверки перед применением.
 
@@ -970,6 +982,7 @@ status: "${isVerified ? 'final' : 'draft'}"
 enrichment: "${cluster.enrichment?.ok ? 'external-research' : 'missing'}"
 cluster_id: "${cluster.id}"
 cluster_fingerprint: "${fp}"
+${yamlList('project_categories', [clusterTitleRu(cluster.id)])}
 ---
 
 # ${compact(atom.title, 120)}
@@ -1001,6 +1014,8 @@ ${addedFacts}
 
 ## 🎯 Как это поможет мне
 
+- Конкретный текущий проект: определить при ревью, если знание уже относится к живой работе.
+- Категория будущих проектов: ${clusterTitleRu(cluster.id)}.
 - ${compact(atom.next, 240) || 'Применить в ближайшей задаче по теме кластера.'}
 - Тема: ${clusterTitleRu(cluster.id)} — смотреть сюда, когда всплывет этот вопрос.
 

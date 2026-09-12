@@ -46,6 +46,7 @@
     "digest": "node scripts/mnemazine-digest.mjs",
     "tool-queue": "node scripts/mnemazine-tool-decision-queue.mjs",
     "quality": "node scripts/mnemazine-vault-quality-gate.mjs",
+    "categories:list": "node scripts/mnemazine-project-categories.mjs --list",
     "audit:vault": "node scripts/mnemazine-vault-final-audit.mjs",
     "wiki:links": "node scripts/mnemazine-wiki-link-cleanup.mjs",
     "lint:kb": "node scripts/mnemazine-kb-lint.mjs",

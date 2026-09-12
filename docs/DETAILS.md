@@ -5,9 +5,11 @@
 🇬🇧 **English** · [🇷🇺 Русский](../README.ru.md)
 
 <p align="center">
-  <img src="../docs/assets/pantheon/hero.png" width="820" alt="Mnemazine — Mnemosyne, goddess of memory, beside her marble column, distilling raw fragments into a layered knowledge system">
+  <img src="../docs/assets/pantheon/hero.png" width="100%" alt="Mnemazine — Mnemosyne, goddess of memory, beside her marble column, distilling raw fragments into a layered knowledge system">
   <br>
-  <img src="../docs/assets/pantheon/emblem.png" width="220" alt="Mnemazine emblem — Mnemosyne and the Pantheon column">
+  <img src="../docs/assets/pantheon/emblem.png" width="100%" alt="Mnemazine emblem — Mnemosyne and the Pantheon column">
+  <br>
+  <img src="../docs/assets/pantheon/doc-deep-mode.png" width="100%" alt="Mnemazine deep mode frame — a marble memory workshop with source checks and knowledge tablets">
 </p>
 
 **Mnemazine** is a source-available personal memory system, named after **Mnemosyne**, the Greek goddess of memory and mother of the Muses.

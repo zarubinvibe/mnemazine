@@ -66,6 +66,14 @@
       "note": "synthesis-нота инструмента выносится в очередь как отдельная запись, а не остается единственным следом."
     },
     {
+      "id": "first-run-chat-onboarding",
+      "file": "AGENTS.md",
+      "line": 67,
+      "quote": "First-run agents must use the chat onboarding",
+      "enforced_by": "docs/ONBOARDING-CHAT.md:1",
+      "note": "Форма и наличие трех chat onboarding файлов машинно проверяются внешним public-repo-gate перед публичным push; локальный реестр держит правило видимым."
+    },
+    {
       "id": "subject-required",
       "file": "docs/PLAN-ночь-2026-08-22-00-МАСТЕР.md",
       "line": 878,

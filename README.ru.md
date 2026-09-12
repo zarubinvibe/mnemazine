@@ -141,7 +141,7 @@ npm run doctor         # plain terminal: is it alive?
 
 `setup.sh` это ведомый путь: он проверяет предпосылки, спрашивает, где будут входящие, и умеет развернуть Telegram-бота. `MNEMAZINE_SETUP_DRYRUN=1 bash setup.sh` показывает план, ничего не трогая, а `bash install.sh` это неинтерактивный скелет, если вы уже знаете, что хотите. Нет Git? Скачайте [ZIP](https://github.com/zarubinvibe/mnemazine/archive/refs/heads/main.zip) или [tar.gz](https://github.com/zarubinvibe/mnemazine/archive/refs/heads/main.tar.gz) и запустите тот же скрипт внутри. Первый раз? Откройте проект в Claude Code и запустите `/mnemazine-setup`: установка пройдет разговором, по одному вопросу, и ничего не поставится без вашего «да».
 
-Делаете это впервые? [Онбординг](docs/ONBOARDING.ru.md) проводит весь первый запуск по шагам и говорит, что видно после каждой команды.
+Делаешь это впервые? [Онбординг](docs/ONBOARDING.ru.md) проводит весь первый запуск по шагам и говорит, что видно после каждой команды.
 
 **Что получится:** папки готовы, движки честно говорят, что стоит, а что урезано, и `vault/` открывается как база Obsidian.
 
@@ -161,10 +161,10 @@ npm run doctor         # plain terminal: is it alive?
 | Слово | Простое значение |
 |---|---|
 | Repository | Папка проекта, которую хранит и версионирует Git |
-| Terminal | Окно, куда вы вводите команды |
-| Command | Одна инструкция компьютеру |
+| Terminal | Окно, куда ты вводишь команды |
+| Command | Одна инструкция, которую ты даешь компьютеру |
 | Branch | Отдельная линия изменений, которая не трогает `main` |
-| Pull Request | Просьба проверить ваше изменение и принять его |
+| Pull Request | Просьба проверить твое изменение и принять его |
 | Vault | Папка готовых заметок, которую открывает Obsidian |
 | OCR | Превращение картинки с текстом в текст, по которому можно искать |
 
@@ -192,11 +192,11 @@ npm run doctor         # plain terminal: is it alive?
 
 ## Звезда и вклад
 
-Пригодилось? Поставьте Mnemazine звезду: [https://github.com/zarubinvibe/mnemazine](https://github.com/zarubinvibe/mnemazine). Это секунда, а от нее зависит, найдут ли проект другие люди.
+Пригодилось? Поставь Mnemazine звезду: [https://github.com/zarubinvibe/mnemazine](https://github.com/zarubinvibe/mnemazine). Это секунда, а от нее зависит, найдут ли проект другие люди.
 
-Хотите что-то поправить? Путь короткий: сделайте fork, заведите ветку, оформите commit, отправьте push и откройте Pull Request. Не отправляйте push прямо в `main`: релизный gate его отклонит.
+Хочешь что-то поправить? Путь короткий: сделай fork, заведи ветку, оформи commit, отправь push и открой Pull Request. Не отправляй push прямо в `main`.
 
-Нашли ошибку? Заведите issue на [https://github.com/zarubinvibe/mnemazine/issues](https://github.com/zarubinvibe/mnemazine/issues) и напишите, что запускали и что получилось.
+Нашел ошибку? Заведи issue на [https://github.com/zarubinvibe/mnemazine/issues](https://github.com/zarubinvibe/mnemazine/issues) и напиши, что запускал и что получилось.
 
 <!-- beginner-readme:end -->
 
@@ -205,14 +205,17 @@ npm run doctor         # plain terminal: is it alive?
 
 Это один из публичных [проектов семьи Olympuz](https://github.com/zarubinvibe/athena#olympuz-family). Из таблицы можно открыть репозиторий или сразу скачать исходники в ZIP.
 
-| Тип | Название | Что внутри | Скачать |
-|---|---|---|---|
-| проект | Athena | Переносимая агентная ОС: разворачивает рабочую среду Claude и Codex на новом Mac. | [Репозиторий](https://github.com/zarubinvibe/athena) · [ZIP](https://github.com/zarubinvibe/athena/archive/refs/heads/main.zip) |
-| проект | Helioz | Конвейер работы агентов 24/7 с проверяемыми отметками готовности и ночными решениями по цели владельца. | [Репозиторий](https://github.com/zarubinvibe/helioz) · [ZIP](https://github.com/zarubinvibe/helioz/archive/refs/heads/main.zip) |
-| проект | Mnemazine | Локальная система памяти: превращает сырье в проверенные знания для повторного использования. | [Репозиторий](https://github.com/zarubinvibe/mnemazine) · [ZIP](https://github.com/zarubinvibe/mnemazine/archive/refs/heads/main.zip) |
-| проект | Themiz | Многоагентный помощник по российским судебным делам с локальным OCR и советом из пяти юристов. | [Репозиторий](https://github.com/zarubinvibe/themiz) · [ZIP](https://github.com/zarubinvibe/themiz/archive/refs/heads/main.zip) |
-| проект | Zeuz | Фабрика многоагентных workflow: собирает систему с правилами, гейтами, наблюдаемостью и replay. | [Репозиторий](https://github.com/zarubinvibe/zeuz) · [ZIP](https://github.com/zarubinvibe/zeuz/archive/refs/heads/main.zip) |
-| проект | Lynceuz | Собирает доказательства из открытого веба за ноль рублей и честно останавливается, когда безопасные пути кончились. | [Репозиторий](https://github.com/zarubinvibe/lynceuz) · [ZIP](https://github.com/zarubinvibe/lynceuz/archive/refs/heads/main.zip) |
+| Тип | Название | Что внутри | Чем помогает этому дому | Скачать |
+|---|---|---|---|---|
+| проект | Athena | Переносимая агентная ОС: разворачивает рабочую среду Claude и Codex на новом Mac. | Разворачивает рабочую среду агента на новой машине: правила, скиллы, хуки — за один прогон. | [Репозиторий](https://github.com/zarubinvibe/athena) · [ZIP](https://github.com/zarubinvibe/athena/archive/refs/heads/main.zip) |
+| проект | Helioz | Конвейер работы агентов 24/7 с проверяемыми отметками готовности и ночными решениями по цели владельца. | Гоняет работу агентов круглосуточно и закрывает каждую задачу проверяемой отметкой. | [Репозиторий](https://github.com/zarubinvibe/helioz) · [ZIP](https://github.com/zarubinvibe/helioz/archive/refs/heads/main.zip) |
+| проект | Mnemazine | Локальная система памяти: превращает сырье в проверенные знания для повторного использования. | Превращает сырье — скриншоты, PDF, ссылки — в проверенные заметки базы знаний. | [Репозиторий](https://github.com/zarubinvibe/mnemazine) · [ZIP](https://github.com/zarubinvibe/mnemazine/archive/refs/heads/main.zip) |
+| проект | Themiz | Многоагентный помощник по российским судебным делам с локальным OCR и советом из пяти юристов. | Ведет российские судебные дела многоагентно, с локальным хранением материалов. | [Репозиторий](https://github.com/zarubinvibe/themiz) · [ZIP](https://github.com/zarubinvibe/themiz/archive/refs/heads/main.zip) |
+| проект | Zeuz | Фабрика многоагентных workflow: собирает систему с правилами, гейтами, наблюдаемостью и replay. | Собирает многоагентный workflow с правилами, воротами, наблюдаемостью и повтором прогона. | [Репозиторий](https://github.com/zarubinvibe/zeuz) · [ZIP](https://github.com/zarubinvibe/zeuz/archive/refs/heads/main.zip) |
+| проект | Lynceuz | Собирает доказательства из открытого веба за ноль рублей и честно останавливается, когда безопасные пути кончились. | Собирает доказательства из открытого веба бесплатно и честно останавливается на границе. | [Репозиторий](https://github.com/zarubinvibe/lynceuz) · [ZIP](https://github.com/zarubinvibe/lynceuz/archive/refs/heads/main.zip) |
+| проект | Iriz | Диктовка в строке меню macOS: речь разбирается на твоем Маке, раскладка чинится сама, надиктовка превращается в готовое задание для агента. | Диктовка в строке меню macOS: речь разбирается на твоем Маке, раскладка чинится сама. | [Репозиторий](https://github.com/zarubinvibe/iriz) · [ZIP](https://github.com/zarubinvibe/iriz/archive/refs/heads/main.zip) |
+| проект | Mantoz | Ставит идею перед пятьюстами людьми, которых не существует, и показывает, как ответила каждая группа. | Ставит идею перед сотнями сгенерированных людей до того, как ее увидят живые. | [Репозиторий](https://github.com/zarubinvibe/mantoz) · [ZIP](https://github.com/zarubinvibe/mantoz/archive/refs/heads/main.zip) |
+| проект | Koiz | Одна база уроков на все проекты. Каждый провал доводится до причины, и причина висит открытой, пока ее не закроет хук, ворота или тест. | Держит одну базу уроков на все проекты и требует механизм, а не обещание. | [Репозиторий](https://github.com/zarubinvibe/koiz) · [ZIP](https://github.com/zarubinvibe/koiz/archive/refs/heads/main.zip) |
 <!-- pantheon-family:end -->
 
 ## Лицензия

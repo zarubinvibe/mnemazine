@@ -193,6 +193,7 @@ async function demoSmoke() {
   await fs.writeFile(path.join(inbox, 'empty-source.bin'), '')
   await fs.copyFile(path.join(ROOT, 'scripts/mnemazine-paths.mjs'), path.join(scripts, 'mnemazine-paths.mjs'))
   await fs.copyFile(path.join(ROOT, 'scripts/mnemazine-note-spec.mjs'), path.join(scripts, 'mnemazine-note-spec.mjs'))
+  await fs.copyFile(path.join(ROOT, 'scripts/mnemazine-project-categories.mjs'), path.join(scripts, 'mnemazine-project-categories.mjs'))
   await fs.copyFile(path.join(ROOT, 'scripts/mnemazine-vault-quality-gate.mjs'), path.join(scripts, 'mnemazine-vault-quality-gate.mjs'))
   await fs.copyFile(path.join(ROOT, 'scripts/mnemazine-synthesize.mjs'), path.join(scripts, 'mnemazine-synthesize.mjs'))
   // synthesize импортирует metiz: без него песочница падает ERR_MODULE_NOT_FOUND ещё до первой проверки.
@@ -204,6 +205,7 @@ async function demoSmoke() {
   await fs.copyFile(path.join(ROOT, 'scripts/mnemazine-codex.mjs'), path.join(scripts, 'mnemazine-codex.mjs'))
   await fs.copyFile(path.join(ROOT, 'scripts/mnemazine-verify.mjs'), path.join(scripts, 'mnemazine-verify.mjs'))
   await fs.copyFile(path.join(ROOT, 'config/cli-registry.json'), path.join(config, 'cli-registry.json'))
+  await fs.copyFile(path.join(ROOT, 'config/project-categories.json'), path.join(config, 'project-categories.json'))
   await fs.writeFile(path.join(config, 'cli-registry.local.json'), '{}\n', 'utf8')
 
   await must('demo intake smoke', process.execPath, ['scripts/mnemazine-run.mjs'], {
@@ -278,6 +280,7 @@ async function strictArchiveGateSmoke() {
     await fs.mkdir(extracts, { recursive: true })
     await fs.copyFile(path.join(ROOT, 'scripts/mnemazine-paths.mjs'), path.join(scripts, 'mnemazine-paths.mjs'))
     await fs.copyFile(path.join(ROOT, 'scripts/mnemazine-note-spec.mjs'), path.join(scripts, 'mnemazine-note-spec.mjs'))
+    await fs.copyFile(path.join(ROOT, 'scripts/mnemazine-project-categories.mjs'), path.join(scripts, 'mnemazine-project-categories.mjs'))
     await fs.copyFile(path.join(ROOT, 'scripts/mnemazine-vault-quality-gate.mjs'), path.join(scripts, 'mnemazine-vault-quality-gate.mjs'))
     await fs.copyFile(path.join(ROOT, 'scripts/mnemazine-digest.mjs'), path.join(scripts, 'mnemazine-digest.mjs'))
     await fs.copyFile(path.join(ROOT, 'scripts/mnemazine-humanize-gate.mjs'), path.join(scripts, 'mnemazine-humanize-gate.mjs'))
@@ -287,6 +290,7 @@ async function strictArchiveGateSmoke() {
     await fs.copyFile(path.join(ROOT, 'scripts/mnemazine-cli-probe.mjs'), path.join(scripts, 'mnemazine-cli-probe.mjs'))
     await fs.copyFile(path.join(ROOT, 'scripts/mnemazine-codex.mjs'), path.join(scripts, 'mnemazine-codex.mjs'))
     await fs.copyFile(path.join(ROOT, 'config/cli-registry.json'), path.join(config, 'cli-registry.json'))
+    await fs.copyFile(path.join(ROOT, 'config/project-categories.json'), path.join(config, 'project-categories.json'))
     await fs.writeFile(path.join(config, 'cli-registry.local.json'), '{}\n', 'utf8')
 
     const source = 'MarkItDown converts Office/PDF/image inputs into Markdown for LLM pipelines. This cached source has enough text for synthesis.'
