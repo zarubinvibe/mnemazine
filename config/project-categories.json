@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "note": "Canonical project_categories. Add new category once here, then reuse exact label in notes.",
+  "note": "Canonical project_categories for every knowledge note, not only tools. Add new category once here, then reuse exact label in any note/atom.",
   "categories": [
     { "key": "agent-os", "label": "агентная ОС и оркестрация агентов" },
     { "key": "dev-platform", "label": "developer platform, CI/CD, observability и security" },
@@ -13,7 +13,7 @@
     { "key": "browser-os-automation", "label": "browser automation и desktop/OS automation" },
     { "key": "workplace-support", "label": "коммуникации, support и workplace productivity" },
     { "key": "real-world-iot", "label": "доменные операционные системы и IoT/гео/real-world data" },
-    { "key": "universal-mcp", "label": "универсальный MCP-интеграционный слой" },
+    { "key": "universal-integration", "label": "универсальный интеграционный слой и внешние системы" },
     { "key": "agent-capabilities", "label": "Агентные системы и переиспользуемые возможности" },
     { "key": "knowledge-memory", "label": "Память знаний, vault и циклы синтеза" },
     { "key": "security-review", "label": "Безопасность, ревью и границы доверия" },

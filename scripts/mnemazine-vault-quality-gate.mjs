@@ -254,12 +254,12 @@ function checkSpec(text, slugs, changedSince = false) {
       reasons.push('subject: отсутствует (обязателен для новой/измененной ноты)')
     }
 
-    // project_categories: future-routing layer. New notes must say not only
-    // which live project they help, but what category of future project should
-    // rediscover this atom during bootstrap.
+    // project_categories: future-routing layer for every knowledge note. New
+    // notes must say not only which live project they help, but what category
+    // of future project should rediscover this knowledge during bootstrap.
     const projectCategories = values(data.project_categories)
     if (changedSince && !projectCategories.length) {
-      reasons.push('project_categories: отсутствует или пуст (обязателен для новой/измененной ноты)')
+      reasons.push('project_categories: отсутствует или пуст (обязателен для любой новой/измененной ноты)')
     }
     const unknownCategories = unknownProjectCategories(projectCategories)
     if (unknownCategories.length) {

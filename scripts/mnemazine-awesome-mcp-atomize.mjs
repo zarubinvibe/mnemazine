@@ -209,7 +209,7 @@ function projectCategoryFit(server) {
   const categories = []
   for (const rule of categoryFits) if (rule.re.test(server.category)) categories.push(...rule.categories)
   for (const rule of keywordCategories) if (rule.re.test(text)) categories.push(...rule.categories)
-  if (!categories.length) categories.push(projectCategory('universal-mcp'))
+  if (!categories.length) categories.push(projectCategory('universal-integration'))
   return uniq(categories).slice(0, 6)
 }
 
