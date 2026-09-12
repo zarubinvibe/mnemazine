@@ -1,16 +1,16 @@
 # Graph Report - zarubinvibe__mnemazine  (2026-09-12)
 
 ## Corpus Check
-- 196 files · ~1,726,571 words
+- 197 files · ~1,727,264 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 2722 nodes · 4121 edges · 195 communities (152 shown, 43 thin omitted)
+- 2741 nodes · 4147 edges · 198 communities (155 shown, 43 thin omitted)
 - Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 30 edges (avg confidence: 0.76)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `436c08e5`
+- Built from commit: `c3658f50`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -170,9 +170,9 @@
 - [[_COMMUNITY_Community 152|Community 152]]
 - [[_COMMUNITY_Community 153|Community 153]]
 - [[_COMMUNITY_Community 154|Community 154]]
+- [[_COMMUNITY_Community 155|Community 155]]
+- [[_COMMUNITY_Community 156|Community 156]]
 - [[_COMMUNITY_Community 157|Community 157]]
-- [[_COMMUNITY_Community 158|Community 158]]
-- [[_COMMUNITY_Community 159|Community 159]]
 - [[_COMMUNITY_Community 160|Community 160]]
 - [[_COMMUNITY_Community 161|Community 161]]
 - [[_COMMUNITY_Community 162|Community 162]]
@@ -206,80 +206,83 @@
 - [[_COMMUNITY_Community 190|Community 190]]
 - [[_COMMUNITY_Community 191|Community 191]]
 - [[_COMMUNITY_Community 192|Community 192]]
+- [[_COMMUNITY_Community 193|Community 193]]
+- [[_COMMUNITY_Community 194|Community 194]]
+- [[_COMMUNITY_Community 195|Community 195]]
 
 ## God Nodes (most connected - your core abstractions)
-1. `resolveVault()` - 47 edges
+1. `resolveVault()` - 48 edges
 2. `Mnemazine` - 28 edges
 3. `Mnemazine` - 28 edges
 4. `main()` - 26 edges
-5. `llmAvailable()` - 21 edges
-6. `must()` - 20 edges
+5. `must()` - 21 edges
+6. `llmAvailable()` - 21 edges
 7. `llmJson()` - 19 edges
 8. `preservationCheck()` - 17 edges
 9. `semanticRefresh()` - 17 edges
 10. `processPart()` - 15 edges
 
 ## Surprising Connections (you probably didn't know these)
-- `main()` --calls--> `llmAvailable()`  [INFERRED]
-  tests/search-eval.mjs → scripts/mnemazine-llm.mjs
-- `main()` --calls--> `llmJson()`  [INFERRED]
-  tests/search-eval.mjs → scripts/mnemazine-llm.mjs
 - `main()` --calls--> `fenceUntrusted()`  [INFERRED]
   tests/search-eval.mjs → scripts/mnemazine-llm.mjs
 - `main()` --calls--> `parseArgs()`  [INFERRED]
-  scripts/mnemazine-machine-class-gate.mjs → tests/retrieval-eval.mjs
-- `main()` --calls--> `parseArgs()`  [INFERRED]
   scripts/mnemazine-rebuild-gate.mjs → tests/retrieval-eval.mjs
+- `main()` --calls--> `parseArgs()`  [INFERRED]
+  scripts/mnemazine-cli-router.mjs → tests/retrieval-eval.mjs
+- `main()` --calls--> `parseArgs()`  [INFERRED]
+  scripts/mnemazine-cli-probe.mjs → tests/retrieval-eval.mjs
+- `has()` --calls--> `sourceBasenames()`  [EXTRACTED]
+  tests/test-archive-basename-coverage.mjs → scripts/mnemazine-archive-covered.mjs
 
-## Communities (195 total, 43 thin omitted)
+## Communities (198 total, 43 thin omitted)
 
 ### Community 0 - "Community 0"
-Cohesion: 0.05
-Nodes (66): channelProof(), CONFIG_TEMPLATE, expandPath(), fixConfig(), HOME, main(), mcpProbe(), newestNoteMtime() (+58 more)
-
-### Community 1 - "Community 1"
 Cohesion: 0.07
 Nodes (61): ENGINES, engineStatus(), main(), onPath(), report(), requireEngines(), selftest(), appendRunObservation() (+53 more)
 
-### Community 2 - "Community 2"
+### Community 1 - "Community 1"
 Cohesion: 0.07
 Nodes (51): ANALYSIS_PATH, API_KEY_ENV_BY_BACKEND, apiKeyStatus(), argv, BACKEND, clearNeedsUpdate(), CONFIG_PATH, copyDir() (+43 more)
+
+### Community 2 - "Community 2"
+Cohesion: 0.04
+Nodes (53): ABTOP, accountedNew, AGENT_HOME, agentTrace, allCensus, ARGS_OBJ, cachedFiles, classifiedForReconcile (+45 more)
 
 ### Community 3 - "Community 3"
 Cohesion: 0.06
 Nodes (45): argv, brief(), buildRecords(), CHANGED_SINCE, clean(), clusterOf(), DEFAULT_LOGS, esc() (+37 more)
 
 ### Community 4 - "Community 4"
-Cohesion: 0.04
-Nodes (53): ABTOP, accountedNew, AGENT_HOME, agentTrace, allCensus, ARGS_OBJ, cachedFiles, classifiedForReconcile (+45 more)
+Cohesion: 0.06
+Nodes (48): channelProof(), CONFIG_TEMPLATE, expandPath(), fixConfig(), HOME, main(), mcpProbe(), newestNoteMtime() (+40 more)
 
 ### Community 5 - "Community 5"
-Cohesion: 0.05
-Nodes (39): assert(), codeJson, HELPER, ROOT, unsupportedJson, vault, ALLOWED, api() (+31 more)
-
-### Community 6 - "Community 6"
 Cohesion: 0.06
 Nodes (40): argv, checkIndexes(), counts, cyrillicShare(), fmDate(), fmValue(), isService(), limit (+32 more)
 
-### Community 7 - "Community 7"
+### Community 6 - "Community 6"
 Cohesion: 0.09
-Nodes (44): checksInventoryGate(), checkSyntax(), completeGateSmoke(), demoSmoke(), desktopDryRunSmoke(), digestAliasSmoke(), docContractGate(), doctorThreeCodesCheck() (+36 more)
+Nodes (45): checksInventoryGate(), checkSyntax(), completeGateSmoke(), demoSmoke(), desktopDryRunSmoke(), digestAliasSmoke(), docContractGate(), doctorThreeCodesCheck() (+37 more)
 
-### Community 8 - "Community 8"
-Cohesion: 0.07
-Nodes (43): argv, assignFacet(), CONCURRENCY, extractShard(), FINDINGS_SCHEMA, frontmatterSubject(), isServicePath(), JSON_OUT (+35 more)
-
-### Community 9 - "Community 9"
+### Community 7 - "Community 7"
 Cohesion: 0.09
 Nodes (44): checkOutput(), checkVaultPath(), CLAIMS, docSources(), gitTracked(), lineOf(), loadClaims(), main() (+36 more)
 
-### Community 10 - "Community 10"
+### Community 8 - "Community 8"
 Cohesion: 0.07
 Nodes (34): Ритм и типографика: то, что скилл велит мерить дисперсией, а не на глаз.  Закрыв, rhythm(), rhythm_verdict(), RhythmStats, _word_count(), analyze(), humanizer_metrics — детерминированные метрики живости текста.  Это грепабельная, Полный детерминированный прогон текста. (+26 more)
 
-### Community 11 - "Community 11"
+### Community 9 - "Community 9"
+Cohesion: 0.07
+Nodes (40): argv, CANON_VERIFIED_NORM, classify(), EMIT, mapVerificationStatus(), norm(), renderMarkdown(), REPORT (+32 more)
+
+### Community 10 - "Community 10"
 Cohesion: 0.11
 Nodes (40): arg(), collectInvariants(), CORPUS_SCANNER, countMap(), DAN, deslop(), fences(), FIX (+32 more)
+
+### Community 11 - "Community 11"
+Cohesion: 0.06
+Nodes (32): argv, ATOM_SCHEMA, atomizeCluster(), atomPrompt(), CLUSTER_CHUNK_SIZE, clusterRules, clusters, CONCURRENCY (+24 more)
 
 ### Community 12 - "Community 12"
 Cohesion: 0.09
@@ -295,27 +298,27 @@ Nodes (36): addDefault(), ageHoursFromIso(), arg(), argv, DEFAULT_STALE_HOURS, e
 
 ### Community 15 - "Community 15"
 Cohesion: 0.07
-Nodes (31): ALLOW_EMPTY, argv, atomized, badMarkers, CHANGED_SINCE, CHANGED_SINCE_MS, checkSpec(), cyrillicShare() (+23 more)
+Nodes (32): unknownProjectCategories(), ALLOW_EMPTY, argv, atomized, badMarkers, CHANGED_SINCE, CHANGED_SINCE_MS, checkSpec() (+24 more)
 
 ### Community 16 - "Community 16"
+Cohesion: 0.15
+Nodes (34): pickSchemaAdapter(), ARG_MAX, assertSchema(), _binCache, binExists(), defaultProvider(), deliverPrompt(), ensureWebCapable() (+26 more)
+
+### Community 17 - "Community 17"
 Cohesion: 0.06
 Nodes (26): argv, atomize, base, bySection, CANON_SECTIONS, canonFlags(), dirty, EXCLUDED_PARTS (+18 more)
 
-### Community 17 - "Community 17"
+### Community 18 - "Community 18"
 Cohesion: 0.13
 Nodes (31): addIndex(), applyCleanup(), argv, bridgeNote(), bridgeTitle(), buildIndex(), classifyTarget(), collectBrokenLinks() (+23 more)
 
-### Community 18 - "Community 18"
-Cohesion: 0.06
-Nodes (27): argv, ATOM_SCHEMA, CLUSTER_CHUNK_SIZE, clusterRules, clusters, CONCURRENCY, ENRICH_SCHEMA, ENRICH_TIMEOUT_MS (+19 more)
-
 ### Community 19 - "Community 19"
-Cohesion: 0.06
-Nodes (28): argv, audit, badAgents, cloudLabels, errors, failed, fixes, learning (+20 more)
+Cohesion: 0.09
+Nodes (32): argv, assignFacet(), CONCURRENCY, FINDINGS_SCHEMA, frontmatterSubject(), isServicePath(), JSON_OUT, logQuery() (+24 more)
 
 ### Community 20 - "Community 20"
-Cohesion: 0.16
-Nodes (31): pickSchemaAdapter(), ARG_MAX, assertSchema(), _binCache, binExists(), deliverPrompt(), ensureWebCapable(), envBinKey() (+23 more)
+Cohesion: 0.06
+Nodes (28): argv, audit, badAgents, cloudLabels, errors, failed, fixes, learning (+20 more)
 
 ### Community 21 - "Community 21"
 Cohesion: 0.16
@@ -338,8 +341,8 @@ Cohesion: 0.1
 Nodes (25): argv, BACKEND, BATCH_SIZE, CACHE_DIR, cachePath(), CONFIG_PATH, DRY_RUN, edgeKey() (+17 more)
 
 ### Community 26 - "Community 26"
-Cohesion: 0.12
-Nodes (22): argv, CHANGED_SINCE, CHANGED_SINCE_MS, clean(), deterministicDigest(), DIGEST_SCHEMA, digestPrompt(), extractSection() (+14 more)
+Cohesion: 0.14
+Nodes (25): CONFUSABLES, COST_RANK, COST_TIERS, DATA_CLASSES, decide(), DEFAULT_OVERLAY, DEFAULT_REGISTRY, DEFAULT_TAXONOMY (+17 more)
 
 ### Community 27 - "Community 27"
 Cohesion: 0.14
@@ -350,28 +353,28 @@ Cohesion: 0.08
 Nodes (24): Мнемозина — агентный конвейер знаний, Пути, Ворота полноты (принудительное исполнение), Рой (основной режим), Контроль стадии 3 (верификация + обогащение), Стадия 4 — новый раздел, Финал, Зеркалирование (всегда, но строго ПОСЛЕ решения пользователя) (+16 more)
 
 ### Community 29 - "Community 29"
-Cohesion: 0.1
-Nodes (19): normSpecValue(), noteSectionsAfter(), projectSlugs(), RU_ENDINGS, ruStem(), SPEC_BODY_HEADINGS, SPEC_DATA_CLASSES, SPEC_SUBJECTS (+11 more)
+Cohesion: 0.12
+Nodes (20): argv, CHANGED_SINCE, CHANGED_SINCE_MS, clean(), deterministicDigest(), DIGEST_SCHEMA, extractSection(), FORCE (+12 more)
 
 ### Community 30 - "Community 30"
-Cohesion: 0.14
-Nodes (21): activeInboxFiles(), addSourceValues(), ALLOW_WEAK_ARCHIVE, APPLY, ARCHIVE, archiveFile(), argv, buildCoverageIndex() (+13 more)
-
-### Community 31 - "Community 31"
 Cohesion: 0.15
 Nodes (23): already_done(), channel_meta_from_video(), ensure_dirs(), enumerate_videos(), fetch_subtitles(), fetch_whisper(), harvest(), main() (+15 more)
 
-### Community 32 - "Community 32"
+### Community 31 - "Community 31"
 Cohesion: 0.12
 Nodes (21): arg(), argv, collectNotes(), find(), INDEX, JOBS, KB_EMBED, LIMIT (+13 more)
+
+### Community 32 - "Community 32"
+Cohesion: 0.14
+Nodes (21): activeInboxFiles(), addSourceValues(), ALLOW_WEAK_ARCHIVE, APPLY, ARCHIVE, archiveFile(), argv, buildCoverageIndex() (+13 more)
 
 ### Community 33 - "Community 33"
 Cohesion: 0.15
 Nodes (22): evaluateLaunchd(), evaluateRegistry(), expectedJobs(), INVENTORY, launchAgentsDir(), launchdExitCodes(), livePlistLabels(), loadState() (+14 more)
 
 ### Community 34 - "Community 34"
-Cohesion: 0.14
-Nodes (21): argv, CANON_VERIFIED_NORM, classify(), EMIT, mapVerificationStatus(), norm(), renderMarkdown(), REPORT (+13 more)
+Cohesion: 0.11
+Nodes (17): normSpecValue(), noteSectionsAfter(), projectSlugs(), RU_ENDINGS, ruStem(), SPEC_BODY_HEADINGS, SPEC_DATA_CLASSES, SPEC_UNTOUCHABLE_HEADINGS (+9 more)
 
 ### Community 35 - "Community 35"
 Cohesion: 0.09
@@ -394,280 +397,280 @@ Cohesion: 0.09
 Nodes (16): APPLY, argv, candidates, changed, data, file, LIMIT, next (+8 more)
 
 ### Community 40 - "Community 40"
-Cohesion: 0.1
-Nodes (18): APPLY, argv, CANON_VERIFIED, corpusFiles(), files, fm, fromList, insert (+10 more)
-
-### Community 41 - "Community 41"
 Cohesion: 0.18
 Nodes (19): ALLOWED_NEW_MANIFEST, arg(), argv, compare(), converge(), KB_LINT, linkTarget(), nfc() (+11 more)
 
-### Community 42 - "Community 42"
+### Community 41 - "Community 41"
 Cohesion: 0.23
 Nodes (20): arg(), argv, batchItems(), DEFAULT_ARCHIVE, DEFAULT_STATE, doMeasure(), doPlan(), doRecord() (+12 more)
 
-### Community 43 - "Community 43"
+### Community 42 - "Community 42"
 Cohesion: 0.24
 Nodes (20): cmd_add(), cmd_build(), cmd_pairs(), cmd_query(), cmd_rerank(), _combined(), _cos(), _emb() (+12 more)
 
-### Community 44 - "Community 44"
+### Community 43 - "Community 43"
 Cohesion: 0.1
 Nodes (20): 1. Bot on the host, 2. Mini App on the host, 3. Poller on your machine, Architecture, code:block1 (Telegram ──message──▶ Bot (always-on host)), code:bash (node scripts/mnemazine-telegram-bot.mjs --selftest), code:bash (TELEGRAM_BOT_TOKEN=<from @BotFather> \), code:bash (ALLOWED_CHAT_IDS=<your_chat_id>   # comma-separated for more) (+12 more)
 
-### Community 45 - "Community 45"
+### Community 44 - "Community 44"
 Cohesion: 0.1
 Nodes (20): Архитектура, 1. Бот на хосте, Безопасность, Селф-тесты, 2. Mini App на хосте, 3. Поллер на твоей машине, Компоненты, Установка (+12 more)
 
-### Community 46 - "Community 46"
+### Community 45 - "Community 45"
 Cohesion: 0.17
 Nodes (16): graphStats(), readGraph(), writeGraph(), arg(), argv, edgeKey(), flag(), main() (+8 more)
+
+### Community 46 - "Community 46"
+Cohesion: 0.15
+Nodes (18): digestPrompt(), APPLY, arg(), argv, BASELINE, git(), HERE, humanizeNote() (+10 more)
 
 ### Community 47 - "Community 47"
 Cohesion: 0.19
 Nodes (19): assertGitleaks(), assertNoUntracked(), assertPackageTargetsTracked(), assertPublicCheck(), assertPushRefs(), assertReportGate(), assertRgOrAuditFailsClosed(), BASELINE (+11 more)
 
 ### Community 48 - "Community 48"
+Cohesion: 0.11
+Nodes (12): assert(), ALLOWED, INBOX, PORT, REPORTS, RUN_FLAG, RUN_MARKER, SEARCH_QUEUE (+4 more)
+
+### Community 49 - "Community 49"
 Cohesion: 0.18
 Nodes (18): APPLY, argv, compact(), githubRepos(), listNotes(), main(), MIN_SCORE, noteSupportText() (+10 more)
 
-### Community 49 - "Community 49"
+### Community 50 - "Community 50"
 Cohesion: 0.1
 Nodes (19): Паспорт души, Шаг 0 — Кирилов (mnemazina-guard): Guard + Census, ⚙ ГЕЙТ 1 — МАНИФЕСТ ПОЛНЫЙ, Когда НЕ применять, Конец прогона (условие останова), Модель, Шаг 1 — Сопиков (mnemazina-triage): классификация, Старт сессии (перед любой работой) (+11 more)
 
-### Community 50 - "Community 50"
+### Community 51 - "Community 51"
 Cohesion: 0.21
 Nodes (17): arg(), args(), argv, assertAllowedTarget(), buildRsyncArgs(), cleanRel(), FORBIDDEN_TARGET_PATTERNS, hasFlag() (+9 more)
 
-### Community 51 - "Community 51"
+### Community 52 - "Community 52"
 Cohesion: 0.22
 Nodes (17): agentTypeOf(), arg(), argv, arithmeticHits(), checkRunObservability(), extractAgentCalls(), frontmatterModel(), hasModel() (+9 more)
 
-### Community 52 - "Community 52"
+### Community 53 - "Community 53"
 Cohesion: 0.16
 Nodes (17): argv, checkSurface(), diffSnapshots(), FIXTURE, main(), normalizeMtimes(), ONLY, PKG (+9 more)
 
-### Community 53 - "Community 53"
+### Community 54 - "Community 54"
+Cohesion: 0.14
+Nodes (15): ALLOW_EMPTY, argv, CHANGED_SINCE, CHANGED_SINCE_MS, checkVault(), FRESHNESS_RE, freshnessOk(), isServicePath() (+7 more)
+
+### Community 55 - "Community 55"
+Cohesion: 0.16
+Nodes (17): a, assumed, assumedVerdict, b, bin, fetchWithTimeout(), headOk(), isPublicHttpUrl() (+9 more)
+
+### Community 56 - "Community 56"
 Cohesion: 0.11
 Nodes (17): Atomization (G4), code:bash (# real Desktop Inbox run, strict full protocol:), Data boundary, Deep Mode (atomization + verification), Digest (Russian human-readable summary), Enabling deep mode, Enrichment (knowledge expansion), Environment variables (+9 more)
 
-### Community 54 - "Community 54"
-Cohesion: 0.16
-Nodes (16): a, assumed, assumedVerdict, b, bin, fetchWithTimeout(), headOk(), privateAddress() (+8 more)
-
-### Community 55 - "Community 55"
-Cohesion: 0.15
-Nodes (13): configVault(), countMarkdown(), DEFAULT_VAULT, guardVaultNoteCount(), resolveVault(), ROOT, argv, CHECK (+5 more)
-
-### Community 56 - "Community 56"
-Cohesion: 0.12
-Nodes (16): A Word From Mnemazine, Agent Skills, Bot: Drop a File, It's in the Base, Claude And Codex Parity, Documentation, Exit Codes, If You Improved Me, License (+8 more)
-
 ### Community 57 - "Community 57"
-Cohesion: 0.12
-Nodes (16): Что это, Требования, Навыки агентов, Мои агенты, Бот: кидаешь файл — он в базе, Приватность: что уходит с твоего компьютера, Коды возврата, Если ты меня улучшил (+8 more)
+Cohesion: 0.17
+Nodes (15): codexJson(), extractShard(), plan(), synthesize(), tokens(), llmAvailable(), llmJson(), progress() (+7 more)
 
 ### Community 58 - "Community 58"
 Cohesion: 0.12
-Nodes (16): Переменные окружения, Рой, Обогащение (расширение знаний), Справка (русская человеческая сводка), Безопасность, Недоверенный ввод изолируется, Песочница, Граница данных (+8 more)
+Nodes (16): A Word From Mnemazine, Agent Skills, Bot: Drop a File, It's in the Base, Claude And Codex Parity, Documentation, Exit Codes, If You Improved Me, License (+8 more)
 
 ### Community 59 - "Community 59"
-Cohesion: 0.23
-Nodes (15): bySectionMatch(), classifyFile(), classifyNote(), firstSegment(), FIXTURES, HERE, loadTaxonomy(), main() (+7 more)
+Cohesion: 0.12
+Nodes (16): Что это, Требования, Навыки агентов, Мои агенты, Бот: кидаешь файл — он в базе, Приватность: что уходит с твоего компьютера, Коды возврата, Если ты меня улучшил (+8 more)
 
 ### Community 60 - "Community 60"
-Cohesion: 0.17
-Nodes (16): bullets(), compact(), cyrillicCount(), decodeEntities(), enrichClusterFromGithub(), enrichClusterFromSources(), fetchJson(), fetchRawReadme() (+8 more)
+Cohesion: 0.12
+Nodes (16): Переменные окружения, Рой, Обогащение (расширение знаний), Справка (русская человеческая сводка), Безопасность, Недоверенный ввод изолируется, Песочница, Граница данных (+8 more)
 
 ### Community 61 - "Community 61"
 Cohesion: 0.17
-Nodes (14): APPLY, arg(), argv, BASELINE, git(), HERE, humanizeNote(), humanizePrompt() (+6 more)
+Nodes (16): bullets(), compact(), cyrillicCount(), decodeEntities(), enrichClusterFromGithub(), enrichClusterFromSources(), fetchJson(), fetchRawReadme() (+8 more)
 
 ### Community 62 - "Community 62"
+Cohesion: 0.17
+Nodes (12): configVault(), countMarkdown(), guardVaultNoteCount(), resolveVault(), ROOT, argv, CHECK, GATE (+4 more)
+
+### Community 63 - "Community 63"
 Cohesion: 0.19
 Nodes (13): activeCount(), argv, expandHome(), JSON_OUT, localConfig(), newestFile(), readJson(), rel() (+5 more)
 
-### Community 63 - "Community 63"
+### Community 64 - "Community 64"
 Cohesion: 0.24
 Nodes (14): DOC_FILES, enforcedByLive(), ENFORCEMENT, evaluate(), extractRules(), loadEnforcement(), main(), markerExists() (+6 more)
 
-### Community 64 - "Community 64"
+### Community 65 - "Community 65"
 Cohesion: 0.21
 Nodes (13): activeInboxFiles(), arg(), argv, deepFailures(), graphMtime(), latestReport(), main(), NEEDS_UPDATE_MAX_DAYS (+5 more)
 
-### Community 65 - "Community 65"
+### Community 66 - "Community 66"
 Cohesion: 0.13
 Nodes (15): code:bash (mnemazine), code:bash (npm run protocol:desktop:dry-run), code:bash (npm run preflight:live), code:bash (npm run last-run -- --require-ok), code:text (Mnemazine doctor), code:bash (npm run doctor), code:bash (npm run doctor:watch), code:bash (npm run doctor:full) (+7 more)
 
-### Community 66 - "Community 66"
+### Community 67 - "Community 67"
 Cohesion: 0.13
 Nodes (14): Установка, Agent Skills, code:bash (git clone https://github.com/zarubinvibe/Mnemazine.git "$HOM), code:bash (bash setup.sh), code:bash (MNEMAZINE_SETUP_DRYRUN=1 bash setup.sh), code:bash (swiftc -O skills/mnemazine/vision-ocr.swift -o .mnemazine/bi), code:bash (xcode-select --install), code:bash (npm run protocol:desktop:dry-run) (+6 more)
 
-### Community 67 - "Community 67"
+### Community 68 - "Community 68"
 Cohesion: 0.13
 Nodes (14): Agent Skills, code:bash (git clone https://github.com/zarubinvibe/Mnemazine.git "$HOM), code:bash (bash setup.sh), code:bash (MNEMAZINE_SETUP_DRYRUN=1 bash setup.sh), code:bash (swiftc -O skills/mnemazine/vision-ocr.swift -o .mnemazine/bi), code:bash (xcode-select --install), code:bash (npm run protocol:desktop:dry-run), code:bash (npm run preflight:live) (+6 more)
 
-### Community 68 - "Community 68"
+### Community 69 - "Community 69"
 Cohesion: 0.15
 Nodes (12): base(), blobs, dir, files, HOME, pr, { provenanceGaps, realGaps }, splitGaps() (+4 more)
 
-### Community 69 - "Community 69"
+### Community 70 - "Community 70"
+Cohesion: 0.19
+Nodes (14): atomFingerprint(), clusterTitle(), enrichCluster(), enrichPrompt(), fingerprint(), hostOf(), makeAtomNote(), makeNote() (+6 more)
+
+### Community 71 - "Community 71"
 Cohesion: 0.18
 Nodes (9): вернутьПроисхождение(), CANDIDATES, HERE, JOURNAL, JOURNAL_DIR, runDirectly, selftest(), squeezeText() (+1 more)
 
-### Community 70 - "Community 70"
+### Community 72 - "Community 72"
 Cohesion: 0.14
 Nodes (14): Запуск одной командой, code:bash (mnemazine), code:bash (npm run protocol:desktop:dry-run), code:bash (npm run preflight:live), code:bash (npm run last-run -- --require-ok), code:bash (npm run doctor), code:bash (npm run doctor:watch), code:bash (npm run doctor:full) (+6 more)
 
-### Community 71 - "Community 71"
-Cohesion: 0.23
-Nodes (12): fail(), git(), JSON_OUT, KEEP, main(), payload, READINESS_DRAFT, realPipCacheDir() (+4 more)
-
-### Community 72 - "Community 72"
+### Community 73 - "Community 73"
 Cohesion: 0.32
 Nodes (12): EDGE_KEY_FIELDS, edgeArrayKey(), edgeKey(), isBlank(), mergeGraphObjects(), mergeNode(), normalizeEdge(), normalizeEndpoint() (+4 more)
 
-### Community 73 - "Community 73"
-Cohesion: 0.18
-Nodes (7): cards, out, present(), presentNotePath(), rel, summaryOf(), VAULT
-
 ### Community 74 - "Community 74"
-Cohesion: 0.32
-Nodes (12): components_stats(), drop_templates(), is_code(), is_template(), load_graph(), main(), merge_duplicate_concepts(), norm() (+4 more)
+Cohesion: 0.21
+Nodes (11): argv, BACKLOG, DRY, main(), moveInto(), QUARANTINE, resolveInVault(), SELFTEST (+3 more)
 
 ### Community 75 - "Community 75"
-Cohesion: 0.15
-Nodes (12): Паспорт души, Конец хода, Шаг 1. Наземная сверка по имени файла (`source:` или `sources:`), Шаг 2. Разбор остатка, Вход, Контракт покрытия, Шаг 3. Адресная перепроверка (до 2 раундов), Шаг 4. Вердикт (+4 more)
+Cohesion: 0.26
+Nodes (12): cutoff(), enforcedByLive(), evaluate(), main(), ownerMachine(), REBUILD, REQUIRED, resolveLedger() (+4 more)
 
 ### Community 76 - "Community 76"
 Cohesion: 0.18
-Nodes (9): ALLOW_EMPTY, argv, checkReport(), failures, rawMarkers, REPORT, REPORTS, requiredSignals (+1 more)
+Nodes (7): cards, out, present(), presentNotePath(), rel, summaryOf(), VAULT
 
 ### Community 77 - "Community 77"
-Cohesion: 0.29
-Nodes (11): cutoff(), enforcedByLive(), evaluate(), main(), ownerMachine(), REBUILD, REQUIRED, resolveLedger() (+3 more)
+Cohesion: 0.23
+Nodes (12): fail(), git(), JSON_OUT, KEEP, main(), payload, READINESS_DRAFT, realPipCacheDir() (+4 more)
 
 ### Community 78 - "Community 78"
-Cohesion: 0.23
-Nodes (9): argv, build(), check(), HERE, isSynthesis(), MANIFEST, scanLayer(), vault (+1 more)
+Cohesion: 0.32
+Nodes (12): components_stats(), drop_templates(), is_code(), is_template(), load_graph(), main(), merge_duplicate_concepts(), norm() (+4 more)
 
 ### Community 79 - "Community 79"
-Cohesion: 0.17
-Nodes (8): APPLY, argv, changed, next, rel, relatedIndex, SKILLS_DIR, VAULT
+Cohesion: 0.15
+Nodes (12): Паспорт души, Конец хода, Шаг 1. Наземная сверка по имени файла (`source:` или `sources:`), Шаг 2. Разбор остатка, Вход, Контракт покрытия, Шаг 3. Адресная перепроверка (до 2 раундов), Шаг 4. Вердикт (+4 more)
 
 ### Community 80 - "Community 80"
-Cohesion: 0.17
-Nodes (8): argv, censusFile, corpus, inbox, raw, report, uncovered, VAULT
+Cohesion: 0.18
+Nodes (9): ALLOW_EMPTY, argv, checkReport(), failures, rawMarkers, REPORT, REPORTS, requiredSignals (+1 more)
 
 ### Community 81 - "Community 81"
 Cohesion: 0.17
-Nodes (11): code:bash (npm start), code:bash (npm run update), code:bash (npm run doctor), Failure Rule, `Mnemazine`, Mnemazine Agent Commands, `Mnemazine doctor`, `Mnemazine update` (+3 more)
+Nodes (8): APPLY, argv, changed, next, rel, relatedIndex, SKILLS_DIR, VAULT
 
 ### Community 82 - "Community 82"
-Cohesion: 0.17
-Nodes (5): Проекты (фикстура), Мнемозина, demo-project, mnemazine, sample-pipeline
+Cohesion: 0.23
+Nodes (9): argv, build(), check(), HERE, isSynthesis(), MANIFEST, scanLayer(), vault (+1 more)
 
 ### Community 83 - "Community 83"
 Cohesion: 0.17
-Nodes (11): Паспорт души, Стек (локальный, оффлайн, $0), Вход, Ожидаемые отказы (это норма, не сбой), Делай, Когда НЕ применять (и чем заменить), Верни (данные, не проза), Конец хода (+3 more)
+Nodes (8): argv, censusFile, corpus, inbox, raw, report, uncovered, VAULT
 
 ### Community 84 - "Community 84"
-Cohesion: 0.18
-Nodes (10): Пример ноты для гейта сохранности, Механика, Применение, Опыт практиков, Как это поможет мне, Достоверность, Связанные темы, Следующий ход (+2 more)
+Cohesion: 0.32
+Nodes (11): ALLOWED, api(), downloadFile(), handle(), INBOX, loadOffset(), main(), OFFSET_FILE (+3 more)
 
 ### Community 85 - "Community 85"
-Cohesion: 0.18
-Nodes (10): Пример ноты для гейта сохранности, Механика, Применение, Опыт практиков, Как это поможет мне, Достоверность, Связанные темы, Следующий ход (+2 more)
+Cohesion: 0.17
+Nodes (11): code:bash (npm start), code:bash (npm run update), code:bash (npm run doctor), Failure Rule, `Mnemazine`, Mnemazine Agent Commands, `Mnemazine doctor`, `Mnemazine update` (+3 more)
 
 ### Community 86 - "Community 86"
-Cohesion: 0.18
-Nodes (10): Пример ноты для гейта сохранности, Механика, Применение, Опыт практиков, Как это поможет мне, Достоверность, Связанные темы, Следующий ход (+2 more)
+Cohesion: 0.17
+Nodes (5): Проекты (фикстура), Мнемозина, demo-project, mnemazine, sample-pipeline
 
 ### Community 87 - "Community 87"
-Cohesion: 0.18
-Nodes (10): Паспорт души, Предусловие, Вход, Делай, Верни, Когда НЕ применять (и чем заменить), Правила, Конец хода (+2 more)
+Cohesion: 0.17
+Nodes (11): Паспорт души, Стек (локальный, оффлайн, $0), Вход, Ожидаемые отказы (это норма, не сбой), Делай, Когда НЕ применять (и чем заменить), Верни (данные, не проза), Конец хода (+3 more)
 
 ### Community 88 - "Community 88"
-Cohesion: 0.18
-Nodes (10): Паспорт души, Место в конвейере, Вход, Делай, Когда НЕ применять (и чем заменить), Правила, Конец хода, code:bash (OCR_BIN="$HOME/.codex/skills/mnemazina/vision-ocr") (+2 more)
+Cohesion: 0.31
+Nodes (8): cleanEnv(), main(), OUTCOMES, probeCli(), readCache(), runProbe(), selftest(), withCacheLock()
 
 ### Community 89 - "Community 89"
 Cohesion: 0.18
-Nodes (10): Паспорт души, 1. Guard — защита, 2. Census — перепись (наземная правда), Правила, Когда НЕ применять, Конец хода, code:bash (VAULT="${MNEMAZINE_VAULT:?укажите путь к vault}"; INBOX="$HO), code:bash (find "$INBOX" -maxdepth 1 -type f -not -name README.md -not ) (+2 more)
+Nodes (10): Пример ноты для гейта сохранности, Механика, Применение, Опыт практиков, Как это поможет мне, Достоверность, Связанные темы, Следующий ход (+2 more)
 
 ### Community 90 - "Community 90"
 Cohesion: 0.18
-Nodes (10): Паспорт души, Вход, Как читать материал, Что считается ядром (критерии, не шаги), Когда НЕ применять (и чем заменить), Верни, Конец хода, code:bash ("$HOME/.codex/skills/mnemazina/vision-ocr" "<путь>"   # текс) (+2 more)
+Nodes (10): Пример ноты для гейта сохранности, Механика, Применение, Опыт практиков, Как это поможет мне, Достоверность, Связанные темы, Следующий ход (+2 more)
 
 ### Community 91 - "Community 91"
 Cohesion: 0.18
-Nodes (10): Паспорт души, Вход, Обогащение включено по умолчанию, Делай, Верни, Когда НЕ применять, Конец хода, code:block1 (ВЕРДИКТ: да | частично | нет) (+2 more)
+Nodes (10): Пример ноты для гейта сохранности, Механика, Применение, Опыт практиков, Как это поможет мне, Достоверность, Связанные темы, Следующий ход (+2 more)
 
 ### Community 92 - "Community 92"
 Cohesion: 0.18
-Nodes (10): Backfill A Channel, code:bash (# newest 50 videos (default cap), and subscribe for future u), code:bash (python3 scripts/kb-yt-watch.py --dry-run        # show what ), code:bash (sed -e "s#__PYTHON__#$(command -v python3)#g" \), Daily Schedule (macOS launchd), Paths, Requirements, Safety (+2 more)
+Nodes (10): Паспорт души, Предусловие, Вход, Делай, Верни, Когда НЕ применять (и чем заменить), Правила, Конец хода (+2 more)
 
 ### Community 93 - "Community 93"
 Cohesion: 0.18
-Nodes (10): Забрать канал, Следить за новыми загрузками, Пути, Требования, Безопасность, code:bash (# новейшие 50 видео (дефолтный лимит) + подписка на будущие ), code:bash (python3 scripts/kb-yt-watch.py --dry-run        # показать, ), code:bash (sed -e "s#__PYTHON__#$(command -v python3)#g" \) (+2 more)
+Nodes (10): Паспорт души, Место в конвейере, Вход, Делай, Когда НЕ применять (и чем заменить), Правила, Конец хода, code:bash (OCR_BIN="$HOME/.codex/skills/mnemazina/vision-ocr") (+2 more)
 
 ### Community 94 - "Community 94"
 Cohesion: 0.18
-Nodes (10): Полные правила, Проверка покрытия, Миграционный контракт корпуса → NOTE-SPEC, `## Источники (тело) при пустом source:`, Standing legacy mappings, subject (§18 мастер-плана), `type`, `type_legacy` (+2 more)
+Nodes (10): Паспорт души, 1. Guard — защита, 2. Census — перепись (наземная правда), Правила, Когда НЕ применять, Конец хода, code:bash (VAULT="${MNEMAZINE_VAULT:?укажите путь к vault}"; INBOX="$HO), code:bash (find "$INBOX" -maxdepth 1 -type f -not -name README.md -not ) (+2 more)
 
 ### Community 95 - "Community 95"
+Cohesion: 0.18
+Nodes (10): Паспорт души, Вход, Как читать материал, Что считается ядром (критерии, не шаги), Когда НЕ применять (и чем заменить), Верни, Конец хода, code:bash ("$HOME/.codex/skills/mnemazina/vision-ocr" "<путь>"   # текс) (+2 more)
+
+### Community 96 - "Community 96"
+Cohesion: 0.18
+Nodes (10): Паспорт души, Вход, Обогащение включено по умолчанию, Делай, Верни, Когда НЕ применять, Конец хода, code:block1 (ВЕРДИКТ: да | частично | нет) (+2 more)
+
+### Community 97 - "Community 97"
+Cohesion: 0.18
+Nodes (10): Backfill A Channel, code:bash (# newest 50 videos (default cap), and subscribe for future u), code:bash (python3 scripts/kb-yt-watch.py --dry-run        # show what ), code:bash (sed -e "s#__PYTHON__#$(command -v python3)#g" \), Daily Schedule (macOS launchd), Paths, Requirements, Safety (+2 more)
+
+### Community 98 - "Community 98"
+Cohesion: 0.18
+Nodes (10): Забрать канал, Следить за новыми загрузками, Пути, Требования, Безопасность, code:bash (# новейшие 50 видео (дефолтный лимит) + подписка на будущие ), code:bash (python3 scripts/kb-yt-watch.py --dry-run        # показать, ), code:bash (sed -e "s#__PYTHON__#$(command -v python3)#g" \) (+2 more)
+
+### Community 99 - "Community 99"
+Cohesion: 0.18
+Nodes (10): Полные правила, Проверка покрытия, Миграционный контракт корпуса → NOTE-SPEC, `## Источники (тело) при пустом source:`, Standing legacy mappings, subject (§18 мастер-плана), `type`, `type_legacy` (+2 more)
+
+### Community 100 - "Community 100"
 Cohesion: 0.44
 Nodes (9): boiler_ratio(), cyr_share(), fetch_html(), main(), mojibake(), out(), result(), run_markitdown() (+1 more)
 
-### Community 96 - "Community 96"
-Cohesion: 0.2
-Nodes (10): atomizeCluster(), atomPrompt(), clusterTitle(), enrichCluster(), enrichPrompt(), hostOf(), mapLimit(), ownerProjects() (+2 more)
-
-### Community 97 - "Community 97"
+### Community 101 - "Community 101"
 Cohesion: 0.2
 Nodes (9): Паспорт души, Вход, Делай, Верни, Когда НЕ применять (и чем заменить), Правила, Конец хода, code:block1 (ЗАПИСАНО: [полный путь]) (+1 more)
 
-### Community 98 - "Community 98"
+### Community 102 - "Community 102"
 Cohesion: 0.2
 Nodes (9): Паспорт души, Вход, Делай, Верни, Когда НЕ применять (и чем заменить), Правила, Конец хода, code:block1 (ОБНОВЛЕНО: _Содержание (N разделов), _МАСТЕР-ИНДЕКС, [_ROUTI) (+1 more)
 
-### Community 99 - "Community 99"
+### Community 103 - "Community 103"
 Cohesion: 0.2
 Nodes (9): Паспорт души, Вход (от Мнемозины), Стадии, Запись, Железные правила, Когда НЕ применять (и кто вместо), Конец хода, code:block1 ({ "group_id", "files":[...], "outcome":"note|dup|noise|unrea) (+1 more)
 
-### Community 100 - "Community 100"
-Cohesion: 0.25
-Nodes (9): extractUrls(), fingerprint(), makeNote(), publicSources(), recordTitle(), topicSignals(), uniq(), isPublicHttpUrl() (+1 more)
-
-### Community 101 - "Community 101"
-Cohesion: 0.33
-Nodes (8): codexJson(), activeProvider(), defaultProvider(), fallbackProviders(), llmJson(), llmText(), progress(), providerChain()
-
-### Community 102 - "Community 102"
+### Community 104 - "Community 104"
 Cohesion: 0.22
 Nodes (7): APPLY, argv, JSON_OUT, lines, m, report, VAULT
 
-### Community 103 - "Community 103"
+### Community 105 - "Community 105"
 Cohesion: 0.39
 Nodes (7): _add_file_to_doc(), cmd_compress(), cmd_img2pdf(), cmd_merge(), cmd_pages(), cmd_sign(), _fitz()
 
-### Community 104 - "Community 104"
+### Community 106 - "Community 106"
 Cohesion: 0.22
 Nodes (8): How To Use It, Local OCR Before Model Vision, Related Notes, Reuse, Source, Verification, What This Is, Why It Matters
 
-### Community 105 - "Community 105"
+### Community 107 - "Community 107"
 Cohesion: 0.22
 Nodes (8): Паспорт души, Вход, Делай, Верни, Когда НЕ применять, Конец хода, code:block1 (РАЗДЕЛ: [NN Название] | НОВЫЙ_РАЗДЕЛ: [NN Название + обоснов), mnemazina-classify — Классификация по разделам
 
-### Community 106 - "Community 106"
-Cohesion: 0.22
-Nodes (8): 第 1 步：检查这台电脑, 第 2 步：选择收件箱, 第 3 步：选择知识库, 第 4 步：决定是否使用 deep mode, 第 5 步：运行一小批真实材料, 第 6 步：验证结果, code:bash (npm run doctor), Mnemazine 聊天式入门
-
-### Community 107 - "Community 107"
-Cohesion: 0.22
-Nodes (8): code:bash (python3 -m pip install graphifyy), code:bash (graphify update $HOME/Desktop/Mnemazine/vault), code:bash (export MNEMAZINE_VAULT="/path/to/your/vault"), code:bash (npm run graph:semantic:async), code:bash (MNEMAZINE_SEMANTIC_TASK_STRATEGY=full npm run graph:semantic), code:bash (OPENAI_API_KEY=... node scripts/mnemazine-refresh-graphify.m), code:bash (npm run graph:smoke), Graphify
-
 ### Community 108 - "Community 108"
 Cohesion: 0.22
-Nodes (8): Chat onboarding for Mnemazine, code:bash (npm run doctor), Step 1: Check the machine, Step 2: Pick the inbox, Step 3: Pick the knowledge vault, Step 4: Decide on deep mode, Step 5: Run a small real batch, Step 6: Verify the result
+Nodes (8): 第 1 步：检查这台电脑, 第 2 步：选择收件箱, 第 3 步：选择知识库, 第 4 步：决定是否使用 deep mode, 第 5 步：运行一小批真实材料, 第 6 步：验证结果, code:bash (npm run doctor), Mnemazine 聊天式入门
 
 ### Community 109 - "Community 109"
 Cohesion: 0.22
@@ -675,131 +678,131 @@ Nodes (8): code:bash (python3 -m pip install graphifyy), code:bash (graphify upd
 
 ### Community 110 - "Community 110"
 Cohesion: 0.22
-Nodes (8): Слои (от горячего к холодному), Протокол «старт разработки» (обязателен, не по желанию), Что НЕ строим (решено, не переоткрывать), Интеграция во внешний агентный рой (следующая фаза, не эта), AGENT-MEMORY — слоеная память агентов и место личного vault в ней, code:json ({ "mcpServers": { "vault-graph": {), L4: запись — только через воронку инбокса, L4: чтение — read-only MCP над графом, не файловый доступ
+Nodes (8): Chat onboarding for Mnemazine, code:bash (npm run doctor), Step 1: Check the machine, Step 2: Pick the inbox, Step 3: Pick the knowledge vault, Step 4: Decide on deep mode, Step 5: Run a small real batch, Step 6: Verify the result
 
 ### Community 111 - "Community 111"
 Cohesion: 0.22
-Nodes (8): Шаг 1: Проверить компьютер, Шаг 2: Выбрать входящие, Шаг 3: Выбрать базу знаний, Шаг 4: Решить про deep mode, Шаг 5: Прогнать маленькую настоящую пачку, Шаг 6: Проверить результат, code:bash (npm run doctor), Чат-онбординг Mnemazine
+Nodes (8): code:bash (python3 -m pip install graphifyy), code:bash (graphify update $HOME/Desktop/Mnemazine/vault), code:bash (export MNEMAZINE_VAULT="/path/to/your/vault"), code:bash (npm run graph:semantic:async), code:bash (MNEMAZINE_SEMANTIC_TASK_STRATEGY=full npm run graph:semantic), code:bash (OPENAI_API_KEY=... node scripts/mnemazine-refresh-graphify.m), code:bash (npm run graph:smoke), Graphify
 
 ### Community 112 - "Community 112"
-Cohesion: 0.29
-Nodes (7): CASES, DEEP, FIXTURES, HERE, main(), runSearch(), SCRIPT
+Cohesion: 0.22
+Nodes (8): Слои (от горячего к холодному), Протокол «старт разработки» (обязателен, не по желанию), Что НЕ строим (решено, не переоткрывать), Интеграция во внешний агентный рой (следующая фаза, не эта), AGENT-MEMORY — слоеная память агентов и место личного vault в ней, code:json ({ "mcpServers": { "vault-graph": {), L4: запись — только через воронку инбокса, L4: чтение — read-only MCP над графом, не файловый доступ
 
 ### Community 113 - "Community 113"
+Cohesion: 0.22
+Nodes (8): Шаг 1: Проверить компьютер, Шаг 2: Выбрать входящие, Шаг 3: Выбрать базу знаний, Шаг 4: Решить про deep mode, Шаг 5: Прогнать маленькую настоящую пачку, Шаг 6: Проверить результат, code:bash (npm run doctor), Чат-онбординг Mnemazine
+
+### Community 114 - "Community 114"
 Cohesion: 0.36
 Nodes (6): arg(), argv, countVaultFiles(), flag(), main(), RUN_ID
 
-### Community 114 - "Community 114"
-Cohesion: 0.25
-Nodes (7): Паспорт души, Вход, Делай, Верни, Когда НЕ применять, Конец хода, mnemazina-refine — Огранка в готовое знание
-
 ### Community 115 - "Community 115"
 Cohesion: 0.25
-Nodes (7): Паспорт души, Железные правила, Когда НЕ применять (и кто вместо), Конец хода, MODE ARCHIVE (ГЕЙТ-3 — только при «ПОКРЫТИЕ ПОЛНОЕ ✓»), MODE FIND, MODE STORE (запись + индексы, архива нет)
+Nodes (6): broken, degraded, end, ROOT, setup, start
 
 ### Community 116 - "Community 116"
 Cohesion: 0.25
-Nodes (7): 上手引导, 以后怎么更新, 如果这份引导帮到了你, code:bash (git clone https://github.com/zarubinvibe/mnemazine.git "$HOM), code:bash (MNEMAZINE_SETUP_DRYRUN=1 bash setup.sh), code:bash (bash setup.sh), code:bash (npm run doctor)
+Nodes (7): Паспорт души, Вход, Делай, Верни, Когда НЕ применять, Конец хода, mnemazina-refine — Огранка в готовое знание
 
 ### Community 117 - "Community 117"
 Cohesion: 0.25
-Nodes (7): Тело (порядок фиксирован — агент режет чтение сверху), Язык и плотность, Когда НЕ по этой спеке, code:yaml (---), Frontmatter (машинный слой), Managed-блоки (канон дозаписи), NOTE-SPEC — схема ноты Мнемозины (агент — первый читатель)
+Nodes (7): Паспорт души, Железные правила, Когда НЕ применять (и кто вместо), Конец хода, MODE ARCHIVE (ГЕЙТ-3 — только при «ПОКРЫТИЕ ПОЛНОЕ ✓»), MODE FIND, MODE STORE (запись + индексы, архива нет)
 
 ### Community 118 - "Community 118"
 Cohesion: 0.25
-Nodes (7): code:bash (git clone https://github.com/zarubinvibe/mnemazine.git "$HOM), code:bash (MNEMAZINE_SETUP_DRYRUN=1 bash setup.sh), code:bash (bash setup.sh), code:bash (npm run doctor), If this helped, Keeping it current, Onboarding
+Nodes (7): 上手引导, 以后怎么更新, 如果这份引导帮到了你, code:bash (git clone https://github.com/zarubinvibe/mnemazine.git "$HOM), code:bash (MNEMAZINE_SETUP_DRYRUN=1 bash setup.sh), code:bash (bash setup.sh), code:bash (npm run doctor)
 
 ### Community 119 - "Community 119"
 Cohesion: 0.25
-Nodes (7): Онбординг, Как обновляться дальше, Если это помогло, code:bash (git clone https://github.com/zarubinvibe/mnemazine.git "$HOM), code:bash (MNEMAZINE_SETUP_DRYRUN=1 bash setup.sh), code:bash (bash setup.sh), code:bash (npm run doctor)
+Nodes (7): Тело (порядок фиксирован — агент режет чтение сверху), Язык и плотность, Когда НЕ по этой спеке, code:yaml (---), Frontmatter (машинный слой), Managed-блоки (канон дозаписи), NOTE-SPEC — схема ноты Мнемозины (агент — первый читатель)
 
 ### Community 120 - "Community 120"
 Cohesion: 0.25
-Nodes (7): Agent Browser Control, How To Use It, Reuse, Source, Verification, What This Is, Why It Matters
+Nodes (7): code:bash (git clone https://github.com/zarubinvibe/mnemazine.git "$HOM), code:bash (MNEMAZINE_SETUP_DRYRUN=1 bash setup.sh), code:bash (bash setup.sh), code:bash (npm run doctor), If this helped, Keeping it current, Onboarding
 
 ### Community 121 - "Community 121"
+Cohesion: 0.25
+Nodes (7): Онбординг, Как обновляться дальше, Если это помогло, code:bash (git clone https://github.com/zarubinvibe/mnemazine.git "$HOM), code:bash (MNEMAZINE_SETUP_DRYRUN=1 bash setup.sh), code:bash (bash setup.sh), code:bash (npm run doctor)
+
+### Community 122 - "Community 122"
+Cohesion: 0.25
+Nodes (7): Agent Browser Control, How To Use It, Reuse, Source, Verification, What This Is, Why It Matters
+
+### Community 123 - "Community 123"
 Cohesion: 0.52
 Nodes (6): checkSource(), findMeta(), HOOK_NAMES, main(), selftest(), workflowBody()
 
-### Community 122 - "Community 122"
-Cohesion: 0.29
-Nodes (6): Безопасность, Как сообщить о проблеме, Никогда не публиковать, Гейт, который это проверяет, Куда уходит ваш материал, code:bash (npm run release-check)
-
-### Community 123 - "Community 123"
-Cohesion: 0.29
-Nodes (6): 安全, 如何报告问题, 永远不要公开, 负责检查的门禁, 你的材料去了哪里, code:bash (npm run release-check)
-
 ### Community 124 - "Community 124"
 Cohesion: 0.29
-Nodes (6): code:bash (npm run release-check), Never publish, Reporting a problem, Security, The gate that checks it, Where your material goes
+Nodes (5): codeJson, HELPER, ROOT, unsupportedJson, vault
 
 ### Community 125 - "Community 125"
 Cohesion: 0.29
-Nodes (6): 1. Inbox, 2. Extraction, 3. Refinement, 4. Vault, 5. Graph And Reports, Architecture
+Nodes (6): Безопасность, Как сообщить о проблеме, Никогда не публиковать, Гейт, который это проверяет, Куда уходит ваш материал, code:bash (npm run release-check)
 
 ### Community 126 - "Community 126"
 Cohesion: 0.29
-Nodes (6): Архитектура, 1. Inbox, 2. Извлечение, 3. Огранка, 4. Vault, 5. Граф и отчеты
+Nodes (6): 安全, 如何报告问题, 永远不要公开, 负责检查的门禁, 你的材料去了哪里, code:bash (npm run release-check)
 
 ### Community 127 - "Community 127"
+Cohesion: 0.29
+Nodes (6): code:bash (npm run release-check), Never publish, Reporting a problem, Security, The gate that checks it, Where your material goes
+
+### Community 128 - "Community 128"
+Cohesion: 0.29
+Nodes (6): 1. Inbox, 2. Extraction, 3. Refinement, 4. Vault, 5. Graph And Reports, Architecture
+
+### Community 129 - "Community 129"
+Cohesion: 0.29
+Nodes (6): Архитектура, 1. Inbox, 2. Извлечение, 3. Огранка, 4. Vault, 5. Граф и отчеты
+
+### Community 130 - "Community 130"
 Cohesion: 0.53
 Nodes (5): archived_ids(), main(), Fetch the channel RSS via curl (system certs — framework-python urllib     fails, rss_video_ids(), study_inbox()
 
-### Community 128 - "Community 128"
-Cohesion: 0.33
-Nodes (6): atomFingerprint(), localSourceRefsForAtom(), makeAtomNote(), specVerified(), words(), yamlList()
-
-### Community 129 - "Community 129"
-Cohesion: 0.4
-Nodes (5): projectCategory(), atomsFromDeterministic(), atomsFromGithub(), atomsFromSources(), clusterTitleRu()
-
-### Community 130 - "Community 130"
-Cohesion: 0.4
-Nodes (4): Заметка с источником только в коде, Короткий ответ, Пример конфига, code:yaml (source: "demo/inbox/example.md")
-
 ### Community 131 - "Community 131"
 Cohesion: 0.4
-Nodes (5): code:bash (git clone https://github.com/zarubinvibe/Mnemazine.git "$HOM), code:bash (cd "$HOME/Desktop/Mnemazine" && git pull --ff-only && bash i), code:text (Mnemazine update), code:text ($HOME/Desktop/Mnemazine/vault), Install
+Nodes (5): extractUrls(), publicSources(), recordTitle(), topicSignals(), uniq()
 
 ### Community 132 - "Community 132"
 Cohesion: 0.4
-Nodes (5): Установка, code:bash (git clone https://github.com/zarubinvibe/Mnemazine.git "$HOM), code:bash (cd "$HOME/Desktop/Mnemazine" && git pull --ff-only && bash i), code:text (Mnemazine update), code:text ($HOME/Desktop/Mnemazine/vault)
+Nodes (5): projectCategory(), atomsFromDeterministic(), atomsFromGithub(), atomsFromSources(), clusterTitleRu()
 
 ### Community 133 - "Community 133"
-Cohesion: 0.5
-Nodes (3): Агентная память, Как это поможет мне, Достоверность
+Cohesion: 0.4
+Nodes (4): Заметка с источником только в коде, Короткий ответ, Пример конфига, code:yaml (source: "demo/inbox/example.md")
 
 ### Community 134 - "Community 134"
-Cohesion: 0.5
-Nodes (3): Короткий ответ, 🎯 Как это поможет мне, Достоверность
+Cohesion: 0.4
+Nodes (5): code:bash (git clone https://github.com/zarubinvibe/Mnemazine.git "$HOM), code:bash (cd "$HOME/Desktop/Mnemazine" && git pull --ff-only && bash i), code:text (Mnemazine update), code:text ($HOME/Desktop/Mnemazine/vault), Install
 
 ### Community 135 - "Community 135"
-Cohesion: 0.5
-Nodes (3): Короткий ответ, 🎯 Как это поможет мне, Достоверность
+Cohesion: 0.4
+Nodes (5): Установка, code:bash (git clone https://github.com/zarubinvibe/Mnemazine.git "$HOM), code:bash (cd "$HOME/Desktop/Mnemazine" && git pull --ff-only && bash i), code:text (Mnemazine update), code:text ($HOME/Desktop/Mnemazine/vault)
 
 ### Community 136 - "Community 136"
 Cohesion: 0.5
-Nodes (3): Короткий ответ, Как поможет мне, Достоверность
+Nodes (3): Агентная память, Как это поможет мне, Достоверность
 
 ### Community 137 - "Community 137"
 Cohesion: 0.5
-Nodes (3): code:bash (node scripts/mnemazine-weekly-brief-html.mjs), code:text ($HOME/Desktop/Mnemazine/reports), Еженедельный HTML-брифинг
+Nodes (3): Короткий ответ, 🎯 Как это поможет мне, Достоверность
 
 ### Community 138 - "Community 138"
 Cohesion: 0.5
-Nodes (4): code:bash (export MNEMAZINE_VAULT="/path/to/your/vault"), code:bash (npm run graph:semantic:async), code:bash (export MNEMAZINE_MIRROR_DEST="root@YOUR_VPS_HOST:/srv/agent-), Graphify
+Nodes (3): Короткий ответ, 🎯 Как это поможет мне, Достоверность
 
 ### Community 139 - "Community 139"
 Cohesion: 0.5
-Nodes (4): code:bash (npm run last-run), code:bash (npm run doctor), code:bash (npm run doctor:full), Something Broke — What to Do
+Nodes (3): Короткий ответ, Как поможет мне, Достоверность
 
 ### Community 140 - "Community 140"
 Cohesion: 0.5
-Nodes (3): Apple Vision OCR, code:bash (swiftc -O skills/mnemazine/vision-ocr.swift -o .mnemazine/bi), code:bash (.mnemazine/bin/vision-ocr path/to/image.png)
+Nodes (3): code:bash (node scripts/mnemazine-weekly-brief-html.mjs), code:text ($HOME/Desktop/Mnemazine/reports), Еженедельный HTML-брифинг
 
 ### Community 141 - "Community 141"
 Cohesion: 0.5
-Nodes (4): Сломалось — что делать, code:bash (npm run last-run), code:bash (npm run doctor), code:bash (npm run doctor:full)
+Nodes (4): code:bash (npm run last-run), code:bash (npm run doctor), code:bash (npm run doctor:full), Something Broke — What to Do
 
 ### Community 142 - "Community 142"
 Cohesion: 0.5
@@ -807,43 +810,55 @@ Nodes (4): code:bash (export MNEMAZINE_VAULT="/path/to/your/vault"), code:bash (
 
 ### Community 143 - "Community 143"
 Cohesion: 0.5
-Nodes (3): code:bash (node scripts/mnemazine-weekly-brief-html.mjs), code:text ($HOME/Desktop/Mnemazine/reports), Weekly HTML Brief
+Nodes (3): Apple Vision OCR, code:bash (swiftc -O skills/mnemazine/vision-ocr.swift -o .mnemazine/bi), code:bash (.mnemazine/bin/vision-ocr path/to/image.png)
 
 ### Community 144 - "Community 144"
 Cohesion: 0.5
-Nodes (3): Apple Vision OCR, code:bash (swiftc -O skills/mnemazine/vision-ocr.swift -o .mnemazine/bi), code:bash (.mnemazine/bin/vision-ocr path/to/image.png)
+Nodes (4): code:bash (export MNEMAZINE_VAULT="/path/to/your/vault"), code:bash (npm run graph:semantic:async), code:bash (export MNEMAZINE_MIRROR_DEST="root@YOUR_VPS_HOST:/srv/agent-), Graphify
 
 ### Community 145 - "Community 145"
+Cohesion: 0.5
+Nodes (4): Сломалось — что делать, code:bash (npm run last-run), code:bash (npm run doctor), code:bash (npm run doctor:full)
+
+### Community 146 - "Community 146"
+Cohesion: 0.5
+Nodes (3): code:bash (node scripts/mnemazine-weekly-brief-html.mjs), code:text ($HOME/Desktop/Mnemazine/reports), Weekly HTML Brief
+
+### Community 147 - "Community 147"
+Cohesion: 0.5
+Nodes (3): Apple Vision OCR, code:bash (swiftc -O skills/mnemazine/vision-ocr.swift -o .mnemazine/bi), code:bash (.mnemazine/bin/vision-ocr path/to/image.png)
+
+### Community 148 - "Community 148"
 Cohesion: 0.67
 Nodes (3): LOG, codeCoverageGate(), mergeCodeGaps()
 
-### Community 150 - "Community 150"
+### Community 153 - "Community 153"
 Cohesion: 0.67
 Nodes (3): code:bash (npm run release-check), code:bash (npm run audit:local), Safety
 
-### Community 151 - "Community 151"
+### Community 154 - "Community 154"
 Cohesion: 0.67
 Nodes (3): Безопасность, code:bash (npm run release-check), code:bash (npm run audit:local)
 
 ## Knowledge Gaps
-- **1234 isolated node(s):** `units`, `pr`, `un`, `{ provenanceGaps, realGaps }`, `dir` (+1229 more)
+- **1243 isolated node(s):** `units`, `pr`, `un`, `{ provenanceGaps, realGaps }`, `dir` (+1238 more)
   These have ≤1 connection - possible missing edges or undocumented components.
 - **43 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `resolveVault()` connect `Community 55` to `Community 0`, `Community 1`, `Community 2`, `Community 3`, `Community 5`, `Community 6`, `Community 8`, `Community 11`, `Community 12`, `Community 13`, `Community 14`, `Community 15`, `Community 16`, `Community 17`, `Community 18`, `Community 22`, `Community 23`, `Community 24`, `Community 25`, `Community 26`, `Community 27`, `Community 30`, `Community 32`, `Community 34`, `Community 38`, `Community 39`, `Community 40`, `Community 41`, `Community 42`, `Community 46`, `Community 48`, `Community 61`, `Community 64`, `Community 73`, `Community 77`, `Community 78`, `Community 79`, `Community 80`, `Community 102`, `Community 113`?**
-  _High betweenness centrality (0.126) - this node is a cross-community bridge._
-- **Why does `LOG` connect `Community 145` to `Community 24`?**
+- **Why does `resolveVault()` connect `Community 62` to `Community 0`, `Community 1`, `Community 3`, `Community 4`, `Community 5`, `Community 9`, `Community 10`, `Community 11`, `Community 12`, `Community 13`, `Community 14`, `Community 15`, `Community 17`, `Community 18`, `Community 19`, `Community 22`, `Community 23`, `Community 24`, `Community 25`, `Community 27`, `Community 29`, `Community 31`, `Community 32`, `Community 38`, `Community 39`, `Community 40`, `Community 41`, `Community 45`, `Community 46`, `Community 49`, `Community 54`, `Community 65`, `Community 74`, `Community 75`, `Community 76`, `Community 81`, `Community 82`, `Community 83`, `Community 104`, `Community 114`?**
+  _High betweenness centrality (0.139) - this node is a cross-community bridge._
+- **Why does `LOG` connect `Community 148` to `Community 24`?**
   _High betweenness centrality (0.023) - this node is a cross-community bridge._
-- **Why does `parseArgs()` connect `Community 0` to `Community 59`, `Community 21`?**
-  _High betweenness centrality (0.012) - this node is a cross-community bridge._
+- **Why does `parseArgs()` connect `Community 4` to `Community 88`, `Community 26`, `Community 21`?**
+  _High betweenness centrality (0.018) - this node is a cross-community bridge._
 - **What connects `units`, `pr`, `un` to the rest of the system?**
-  _1234 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _1243 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Community 0` be split into smaller, more focused modules?**
-  _Cohesion score 0.05 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.07 - nodes in this community are weakly interconnected._
 - **Should `Community 1` be split into smaller, more focused modules?**
   _Cohesion score 0.07 - nodes in this community are weakly interconnected._
 - **Should `Community 2` be split into smaller, more focused modules?**
-  _Cohesion score 0.07 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.04 - nodes in this community are weakly interconnected._

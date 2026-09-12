@@ -972,6 +972,7 @@ async function docContractGate() { await runMetaGate('scripts/mnemazine-doc-cont
 async function singleTruthGate() { await runMetaGate('scripts/mnemazine-single-truth-check.mjs') }
 async function lessonGateCheck() { await runMetaGate('scripts/mnemazine-lesson-gate.mjs') }
 async function checksInventoryGate() { await runMetaGate('scripts/mnemazine-checks-inventory.mjs') }
+async function freshnessGateCheck() { await must('freshness gate selftest', process.execPath, ['scripts/mnemazine-freshness-gate.mjs', '--selftest']) }
 async function modelPinCheck() { await runMetaGate('scripts/mnemazine-model-pin-check.mjs') }
 
 async function trackingGuardCheck() { await runMetaGate('scripts/mnemazine-tracking-guard.mjs') }
@@ -1272,6 +1273,7 @@ async function main() {
     ['single-truth-check', singleTruthGate],
     ['lesson-gate', lessonGateCheck],
     ['checks-inventory', checksInventoryGate],
+    ['freshness-gate', freshnessGateCheck],
     ['model-pin', modelPinCheck],
     ['tracking-guard', trackingGuardCheck],
     ['machine-class-gate', machineClassGateCheck],
