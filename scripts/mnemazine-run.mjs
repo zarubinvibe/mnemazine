@@ -9,6 +9,7 @@ import { llmAvailable, llmText } from './mnemazine-llm.mjs'
 import { strictKnowledgeReady } from './mnemazine-note-spec.mjs'
 import { resolveVault } from './mnemazine-paths.mjs'
 import { requireEngines } from './mnemazine-local-engines.mjs'
+import { acquireVaultLock } from './mnemazine-vault-lock.mjs'
 
 const ROOT = process.env.MNEMAZINE_ROOT || path.resolve(process.cwd())
 
@@ -690,8 +691,8 @@ function finishGateOk(key, entry) {
 
 // result.ok больше не литерал: прогон зеленый только если ноль файлов упало И
 // каждый обязательный элемент finish.* в легальном состоянии. Коды гейтов,
-// собранные finishRun, наконец читаются — до архива они решали, после архива
-// теперь не «советуют», а считаются. finish === null (черновая ветка/FINISH=0):
+// собранные finishRun, должны пройти до переноса оригиналов в архив.
+// finish === null (черновая ветка/FINISH=0):
 // решает только failed.
 function computeRunOk(failed, finish) {
   if (Number(failed || 0) !== 0) return false
@@ -701,6 +702,14 @@ function computeRunOk(failed, finish) {
     if (!finishGateOk(key, entry)) return false
   }
   return true
+}
+
+export async function archiveAfterValidation({ failed, finish, validate, items, archive = archiveFile }) {
+  if (!computeRunOk(failed, finish)) throw new Error('final validation failed before archive')
+  await validate()
+  const archived = []
+  for (const item of items) archived.push(await archive(item.file, item.hash))
+  return archived
 }
 
 async function finishRun(runStartedAt) {
@@ -953,9 +962,21 @@ async function main() {
       }, human.status || 1)
     }
   }
-  const archived = []
-  for (const item of toArchive) archived.push(await archiveFile(item.file, item.hash))
   const finish = FINISH ? await finishRun(runStartedAt) : { skipped: true }
+  const pending = { ok: false, phase: 'pending_archive', pre_archive_ready: computeRunOk(failed, finish), archive_pending: toArchive.length, archived: 0, inbox: entries.length, processed, cached_only: cachedOnly, failed, deep: DEEP, deep_required: REQUIRE_DEEP, enrich_required: ENRICH_REQUIRED, strict_archive_knowledge: STRICT_ARCHIVE_KNOWLEDGE, synthesize, finish, vault: VAULT, started_at: runStartedAt }
+  await writeRunState(pending)
+  let archived
+  try {
+    archived = await archiveAfterValidation({ failed, finish, items: toArchive, validate: async () => {
+      if (!FINISH && !REQUIRE_DEEP) return
+      const check = runLocalNodeScript('mnemazine-complete-check.mjs', ['--before-archive', ...(REQUIRE_DEEP ? ['--require-deep'] : [])])
+      if (!check.ok) throw new Error(`completion failed before archive: ${check.stderr || check.stdout || check.reason || 'unknown error'}`)
+    } })
+  } catch (error) {
+    await writeRunState({ ...pending, pre_archive_ready: false, failure: error.message, finished_at: new Date().toISOString() })
+    console.error(error.message)
+    process.exit(1)
+  }
   const result = { ok: computeRunOk(failed, finish), inbox: entries.length, processed, cached_only: cachedOnly, failed, archived: archived.length, deep: DEEP, deep_required: REQUIRE_DEEP, enrich_required: ENRICH_REQUIRED, strict_archive_knowledge: STRICT_ARCHIVE_KNOWLEDGE, synthesize, finish, vault: VAULT, started_at: runStartedAt, finished_at: new Date().toISOString() }
   await writeRunState(result)
   console.log(JSON.stringify(result, null, 2))
@@ -965,8 +986,11 @@ async function main() {
 // а не импортируется. Импорт нужен пробе runLocalNodeScript (harness на две строки)
 // и любому будущему потребителю экспортов — он не должен гонять пайплайн.
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
-  main().catch(err => {
+  Promise.resolve().then(async () => {
+    const release = acquireVaultLock(VAULT)
+    try { await main() } finally { release() }
+  }).catch(err => {
     console.error(err)
-    process.exit(1)
+    process.exit(err.code === 'MNEMAZINE_VAULT_BUSY' ? 75 : 1)
   })
 }

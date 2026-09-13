@@ -6,11 +6,27 @@ ENV_INBOX="${MNEMAZINE_INBOX:-}"
 ENV_VAULT="${MNEMAZINE_VAULT:-}"
 ENV_DEEP="${MNEMAZINE_DEEP:-}"
 ENV_REQUIRE_DEEP="${MNEMAZINE_REQUIRE_DEEP:-}"
+ENV_REPORTS="${MNEMAZINE_REPORTS:-}"
+ENV_STATE="${MNEMAZINE_STATE:-}"
+ENV_ARCHIVE="${MNEMAZINE_ARCHIVE:-}"
+ENV_CACHE="${MNEMAZINE_CACHE:-}"
+ENV_EXTRACTS="${MNEMAZINE_EXTRACTS:-}"
+ENV_RUN_ID="${MNEMAZINE_RUN_ID:-}"
+ENV_JOB_GROUPS="${MNEMAZINE_JOB_GROUPS:-}"
 DRY_RUN=0
 [ "${1:-}" = "--dry-run" ] && DRY_RUN=1
 
 [ -f "$REPO/.mnemazine/config.env" ] && . "$REPO/.mnemazine/config.env"
 [ -f "$REPO/.mnemazine/config.local.sh" ] && . "$REPO/.mnemazine/config.local.sh"
+
+# Explicit job paths must survive trusted owner configuration loading.
+[ -z "$ENV_REPORTS" ] || export MNEMAZINE_REPORTS="$ENV_REPORTS"
+[ -z "$ENV_STATE" ] || export MNEMAZINE_STATE="$ENV_STATE"
+[ -z "$ENV_ARCHIVE" ] || export MNEMAZINE_ARCHIVE="$ENV_ARCHIVE"
+[ -z "$ENV_CACHE" ] || export MNEMAZINE_CACHE="$ENV_CACHE"
+[ -z "$ENV_EXTRACTS" ] || export MNEMAZINE_EXTRACTS="$ENV_EXTRACTS"
+[ -z "$ENV_RUN_ID" ] || export MNEMAZINE_RUN_ID="$ENV_RUN_ID"
+[ -z "$ENV_JOB_GROUPS" ] || export MNEMAZINE_JOB_GROUPS="$ENV_JOB_GROUPS"
 
 CONFIG_VAULT=""
 if [ -f "$REPO/.mnemazine/config.json" ] && command -v node >/dev/null 2>&1; then
@@ -71,6 +87,16 @@ if [ "$DRY_RUN" = "1" ]; then
     npm run --silent run
   echo "Mnemazine protocol dry-run: ok" >&2
   exit 0
+fi
+
+# Hold one canonical-vault lock across run AND complete. Child runs verify
+# inherited ownership (nonce, process start and ancestry) before reentering.
+if [ "${MNEMAZINE_DRAFT_ONLY:-0}" = "1" ]; then
+  echo "strict protocol vs draft-only: MNEMAZINE_REQUIRE_DEEP=1 и MNEMAZINE_DRAFT_ONLY=1 несовместимы" >&2
+  exit 2
+fi
+if ! node "$REPO/scripts/mnemazine-vault-lock.mjs" --check "$MNEMAZINE_VAULT"; then
+  exec node "$REPO/scripts/mnemazine-vault-lock.mjs" --vault "$MNEMAZINE_VAULT" -- bash "${BASH_SOURCE[0]}" "$@"
 fi
 
 ran=0

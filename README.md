@@ -141,6 +141,8 @@ npm run doctor         # plain terminal: is it alive?
 
 `setup.sh` is the guided path: it checks the prerequisites, asks where the inbox goes, and can deploy the Telegram bot. `MNEMAZINE_SETUP_DRYRUN=1 bash setup.sh` previews it without touching anything, and `bash install.sh` is the non-interactive skeleton if you already know what you want. No Git? Download [the ZIP](https://github.com/zarubinvibe/mnemazine/archive/refs/heads/main.zip) or [the tarball](https://github.com/zarubinvibe/mnemazine/archive/refs/heads/main.tar.gz) and run the same script inside. First time here? Open the project in Claude Code and run `/mnemazine-setup`: the install goes as a conversation, one question at a time, and nothing is installed without your yes.
 
+To try the macOS menu-bar preview after setup, run `npm run app:build`, then `open .mnemazine/tmp/Mnemazine.app`. It runs on macOS 14+; building needs Xcode 26+ with the macOS 26 SDK. The app opens a Spotlight-style search capsule beside separate round controls for links, files, clipboard and settings. Dragging a file turns the row into a drop target; processing starts only after confirmation. Native Liquid Glass is used on macOS 26, with system materials on older versions. The icon is a connected-node graph. See [the app guide (Russian)](docs/macos-app.ru.md).
+
 Never done this before? [The onboarding](docs/ONBOARDING.md) walks the whole first run step by step and says what you see after every command.
 
 **You get:** the folders are ready, the engines say plainly what is installed and what is degraded, and `vault/` opens as an Obsidian vault.
@@ -187,6 +189,9 @@ Status: working, with a release check and honest exit codes.
 - Verification finds sources and contradictions, but the final judgement is still yours.
 - A very large first run takes time and, in deep mode, tokens.
 - The vault is plain Markdown: no hosted service keeps a backup for you.
+- The macOS app is a source preview with an ad-hoc signature, not a notarized download or installer. Its local repository and Node.js paths must remain valid; the bundle does not include a standalone backend.
+- The app accepts URLs, including YouTube links, or titles as research requests. A full page or video transcript is not guaranteed.
+- CLI discovery includes built-in Claude Code, Codex and Kimi adapters. After a quota or rate-limit error, fallback uses only eligible providers; other CLIs need an adapter. Discovery does not confirm login or quota.
 
 Deeper: [the full reference](docs/DETAILS.md) covers site and video intake, the quality contract, the agent roster, exit codes and troubleshooting.
 

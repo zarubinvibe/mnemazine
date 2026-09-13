@@ -14,10 +14,11 @@
 //
 // Default pipeline never calls an LLM — only the opt-in --deep path does.
 import { spawnSync, spawn } from 'node:child_process'
-import { existsSync, promises as fs } from 'node:fs'
+import { appendFileSync, promises as fs } from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
 import { loadRegistry, orderCandidates, pickSchemaAdapter } from './mnemazine-cli-router.mjs'
+import { resolveExecutable, readCooldown, recordCooldown, classifyProcessFailure } from './mnemazine-cli-runtime.mjs'
 
 const PROGRESS_EVERY_MS = Number(process.env.MNEMAZINE_LLM_PROGRESS_EVERY_MS || '30000')
 const PROGRESS = process.env.MNEMAZINE_LLM_PROGRESS !== '0'
@@ -27,7 +28,6 @@ const TIMEOUT_MS = Number(process.env.MNEMAZINE_LLM_TIMEOUT_MS || '420000')
 // this machine). A CLI without stdin_prompt gets the prompt in argv; over this we
 // fail with a named cause and move down the chain, never silently truncate.
 const ARG_MAX = Number(process.env.MNEMAZINE_ARG_MAX || '1048576')
-const HOME = os.homedir()
 const WEB_TOOL_RE = /^(WebSearch|WebFetch|mcp__firecrawl|mcp__tavily)$/i
 
 function progress(label, message) {
@@ -48,6 +48,22 @@ function runProc(bin, args, { input, timeoutMs, cwd, label } = {}) {
     // убит руками. Родитель по-прежнему дожидается ребенка: unref не зовется.
     try { child = spawn(bin, args, { cwd, stdio: ['pipe', 'pipe', 'pipe'], detached: true }) }
     catch (e) { return resolve({ status: 1, stdout: '', stderr: String(e.message) }) }
+    // The durable job owns cancellation of every detached LLM group, including
+    // CLI wrappers that outlive the pipeline process. PID start time prevents
+    // killing an unrelated process after a job/worker restart.
+    if (child.pid && process.env.MNEMAZINE_JOB_GROUPS) {
+      try {
+        const started = spawnSync('ps', ['-p', String(child.pid), '-o', 'lstart='], { encoding: 'utf8' }).stdout?.trim()
+        if (!started) throw new Error('cannot record LLM process identity')
+        appendFileSync(process.env.MNEMAZINE_JOB_GROUPS, JSON.stringify({ pid: child.pid, started }) + '\n', { mode: 0o600 })
+      } catch (error) {
+        try { process.kill(-child.pid, 'SIGKILL') } catch { /* child already exited */ }
+        child.on('error', () => {})
+        child.stdin.on('error', () => {})
+        child.stdin.end()
+        return resolve({ status: 1, stdout: '', stderr: `job process tracking failed: ${error.message}` })
+      }
+    }
     let out = '', err = '', killed = false, grace = null
     const started = Date.now()
     progress(label, `start timeout=${timeoutMs || 0}ms`)
@@ -106,41 +122,17 @@ function providerChain(dataClass, capabilities) {
 }
 
 // --- binary resolution (generic, per invoke[0]) -------------------------------
-// The binary is invoke[0], resolved via env override (MNEMAZINE_<NAME>_BIN),
-// then the login shell (however the user installed it), then a small table of
-// known install locations, then a bare PATH lookup at spawn. resolveClaudeBin's
-// knowledge survives as the `claude` entry of EXTRA_CANDIDATES — data, not a
-// name branch.
-const EXTRA_CANDIDATES = {
-  claude: [
-    path.join(HOME, '.claude/local/claude'),
-    '/opt/homebrew/bin/claude',
-    '/usr/local/bin/claude',
-    path.join(HOME, '.local/bin/claude'),
-    path.join(HOME, '.npm-global/bin/claude'),
-    '/Applications/Claude.app/Contents/Resources/claude'
-  ]
-}
-const _binCache = {}
+// Resolve executable files from PATH/common install directories; never
+// interpolate a registry value into shell code or invoke auth probes.
 function envBinKey(binName) {
   return `MNEMAZINE_${binName.toUpperCase().replace(/[^A-Z0-9]/g, '_')}_BIN`
 }
 function resolveBin(binName) {
-  if (_binCache[binName] !== undefined) return _binCache[binName]
-  const override = process.env[envBinKey(binName)]
-  if (override) return (_binCache[binName] = override)
-  const shell = process.env.SHELL || '/bin/zsh'
-  const viaShell = spawnSync(shell, ['-lic', `command -v ${binName}`], { encoding: 'utf8' }).stdout || ''
-  const hit = viaShell.trim().split('\n').pop()
-  if (hit && existsSync(hit)) return (_binCache[binName] = hit)
-  for (const c of (EXTRA_CANDIDATES[binName] || [])) if (existsSync(c)) return (_binCache[binName] = c)
-  return (_binCache[binName] = binName) // last resort: bare PATH lookup at spawn time
+  return resolveExecutable(binName)
 }
 
 function binExists(bin) {
-  if (bin.includes('/')) return existsSync(bin)
-  const which = spawnSync(process.env.SHELL || '/bin/zsh', ['-lic', `command -v ${bin}`], { encoding: 'utf8' })
-  return which.status === 0 && Boolean(which.stdout.trim())
+  return Boolean(bin && resolveExecutable(bin))
 }
 
 function requireBin(provider, entry) {
@@ -176,7 +168,7 @@ export function providerCostTier(provider) {
 }
 
 function needsWebTools(opts = {}) {
-  return (opts.tools || []).some(tool => WEB_TOOL_RE.test(tool))
+  return (opts.capabilities || []).includes('web_search') || (opts.tools || []).some(tool => WEB_TOOL_RE.test(tool))
 }
 
 function ensureWebCapable(provider, entry, opts) {
@@ -190,8 +182,9 @@ function ensureWebCapable(provider, entry, opts) {
 // the general rule that replaced the old per-provider web-tools literal.
 function fallbackProviders(provider, opts = {}) {
   if (process.env.MNEMAZINE_LLM_FALLBACK === '0') return []
-  const caps = needsWebTools(opts) ? ['web_search'] : []
-  return providerChain(opts.dataClass || 'infra', caps).filter(name => name !== provider && llmAvailable(name))
+  const caps = [...(opts.capabilities || []), ...(needsWebTools(opts) ? ['web_search'] : [])]
+  return orderCandidates(registry(), { dataClass: opts.dataClass || 'infra', capabilities: caps, tier: opts.tier }).candidates
+    .map(entry => entry.name).filter(name => name !== provider && llmAvailable(name))
 }
 
 // --- untrusted input fence (unchanged; primary prompt-injection defense) -------
@@ -259,11 +252,12 @@ function assertSchema(value, schema, where = '$') {
 }
 
 function procError(label, res) {
-  const stderr = String(res.stderr || '').trim()
-  if (stderr) return `${label} failed (status ${res.status}): ${stderr.slice(-400)}`
-  const stdout = String(res.stdout || '').trim()
-  if (stdout) return `${label} failed (status ${res.status}): ${stdout.slice(-400)}`
-  return `${label} failed (status ${res.status}): empty stderr/stdout`
+  const reason = classifyProcessFailure(res)
+  const error = new Error(`${label} failed (${reason}; status ${res.status})`)
+  error.reason = reason
+  const retry = `${res.stderr || ''}\n${res.stdout || ''}`.match(/\bretry-after\s*:\s*(\d+)\b/i)
+  if (retry) error.retryAfterMs = Number(retry[1]) * 1000
+  return error
 }
 
 // Prompt goes on stdin when the CLI declares stdin_prompt; otherwise as the last
@@ -305,7 +299,7 @@ async function inlineSchemaJson(provider, entry, prompt, schema, opts) {
   args = [...args, '--json-schema', JSON.stringify(strictOutputSchema(schema))]
   const { args: finalArgs, input } = deliverPrompt(entry, args, prompt)
   const res = await runProc(bin, finalArgs, { input, timeoutMs: opts.timeoutMs || TIMEOUT_MS, label: opts.label || `${provider}-json` })
-  if (res.status !== 0) throw new Error(procError(`${provider} json`, res))
+  if (res.status !== 0) throw procError(`${provider} json`, res)
   return extractJson(unwrap(res.stdout))
 }
 
@@ -321,7 +315,7 @@ async function fileSchemaJson(provider, entry, prompt, schema, opts) {
     args = insertCwd(args, cwd)
     args = [...args, '--output-schema', schemaFile, '-o', outFile, '-'] // prompt via stdin
     const res = await runProc(bin, args, { input: prompt, timeoutMs: opts.timeoutMs || TIMEOUT_MS, label: opts.label || `${provider}-json${needsWebTools(opts) ? ':search' : ''}` })
-    if (res.status !== 0) throw new Error(procError(`${provider} exec`, res))
+    if (res.status !== 0) throw procError(`${provider} exec`, res)
     const raw = await fs.readFile(outFile, 'utf8').catch(() => '')
     if (!raw.trim()) throw new Error(`${provider} returned empty output`)
     try { return JSON.parse(raw) } catch (err) { throw new Error(`${provider} returned non-JSON: ${err.message}; head: ${raw.slice(0, 200)}`) }
@@ -335,7 +329,7 @@ async function inPromptJson(provider, entry, prompt, schema, opts) {
   const full = `${prompt}\n\nReturn ONLY a single JSON object matching this JSON Schema (no prose, no code fence):\n${JSON.stringify(strictOutputSchema(schema))}`
   const { args: finalArgs, input } = deliverPrompt(entry, entry.invoke.slice(1), full)
   const res = await runProc(bin, finalArgs, { input, timeoutMs: opts.timeoutMs || TIMEOUT_MS, label: opts.label || `${provider}-json` })
-  if (res.status !== 0) throw new Error(procError(`${provider} json`, res))
+  if (res.status !== 0) throw procError(`${provider} json`, res)
   const output = extractJson(unwrap(res.stdout))
   assertSchema(output, strictOutputSchema(schema))
   return output
@@ -354,24 +348,7 @@ async function jsonOnce(provider, prompt, schema, opts) {
 // degrade gracefully). Provider via opts.provider or MNEMAZINE_LLM; on failure
 // walks the capability-filtered fallback chain.
 export async function llmJson(prompt, schema, opts = {}) {
-  const provider = activeProvider(opts)
-  const chain = [...new Set([provider, ...fallbackProviders(provider, opts)])]
-  let lastError
-  for (const candidate of chain) {
-    try {
-      const result = await jsonOnce(candidate, prompt, schema, opts)
-      // Surface the ACTUAL executor next to the result (not the requested one).
-      // A silent fallback is now observable: the caller can print provider_used
-      // and see that `deadcli` was answered by `claude`.
-      opts.provider_used = candidate
-      return result
-    }
-    catch (error) {
-      lastError = error
-      progress(opts.label || 'json', `fallback ${candidate}: ${String(error.message || error).slice(0, 160)}`)
-    }
-  }
-  throw lastError || new Error('no provider available for llmJson')
+  return dispatch(opts, (candidate, callOpts) => jsonOnce(candidate, prompt, schema, callOpts))
 }
 
 // --- plain-text path (no schema; vision/extraction fallback) ------------------
@@ -385,7 +362,7 @@ async function textOnce(provider, prompt, opts) {
     args = insertCwd(args, opts.cwd || process.cwd())
     args = [...args, '-']
     const res = await runProc(bin, args, { input: prompt, timeoutMs: opts.timeoutMs || TIMEOUT_MS, label: opts.label || `${provider}-text${needsWebTools(opts) ? ':search' : ''}` })
-    if (res.status !== 0) throw new Error(procError(`${provider} exec`, res))
+    if (res.status !== 0) throw procError(`${provider} exec`, res)
     return String(res.stdout || '').trim()
   }
   // Flat-invoke CLI (claude inline / kimi in-prompt): tools via --allowedTools
@@ -394,24 +371,55 @@ async function textOnce(provider, prompt, opts) {
   if (adapter === 'json_schema_inline') args = withAllowedTools(args, opts)
   const { args: finalArgs, input } = deliverPrompt(entry, args, prompt)
   const res = await runProc(bin, finalArgs, { input, timeoutMs: opts.timeoutMs || TIMEOUT_MS, label: opts.label || `${provider}-text` })
-  if (res.status !== 0) throw new Error(procError(`${provider} text`, res))
+  if (res.status !== 0) throw procError(`${provider} text`, res)
   return unwrap(res.stdout).trim()
 }
 
 export async function llmText(prompt, opts = {}) {
+  return dispatch(opts, (candidate, callOpts) => textOnce(candidate, prompt, callOpts))
+}
+
+async function dispatch(opts, invoke) {
   const provider = activeProvider(opts)
+  const dataClass = opts.dataClass || 'infra'
+  const admission = orderCandidates(registry(), { dataClass }).candidates.map(entry => entry.name)
+  opts.attempts = []
+  delete opts.provider_used
+  // A forbidden explicit/owner-pinned primary is a policy error, never a
+  // reason to move private material to a more permissive cloud provider.
+  if (!admission.includes(provider)) {
+    opts.attempts.push({ provider, status: 'denied', reason: 'privacy' })
+    throw new Error(`Provider ${provider} is not admitted for data class ${dataClass}`)
+  }
+  const caps = [...(opts.capabilities || []), ...(needsWebTools(opts) ? ['web_search'] : [])]
+  const allowed = orderCandidates(registry(), { dataClass, capabilities: caps, tier: opts.tier }).candidates
+    .filter(entry => pickSchemaAdapter(entry)).map(entry => entry.name)
   const chain = [...new Set([provider, ...fallbackProviders(provider, opts)])]
+  const requestedBudget = Number(opts.totalTimeoutMs ?? process.env.MNEMAZINE_LLM_CHAIN_TIMEOUT_MS ?? TIMEOUT_MS)
+  const deadline = Date.now() + Math.max(1, Math.min(Number.isFinite(requestedBudget) ? requestedBudget : 420000, 1800000))
   let lastError
   for (const candidate of chain) {
+    if (!allowed.includes(candidate)) { opts.attempts.push({ provider: candidate, status: 'skipped', reason: 'capability_or_tier' }); continue }
+    const cooling = readCooldown(candidate)
+    if (cooling) { opts.attempts.push({ provider: candidate, status: 'skipped', reason: cooling.reason, until: cooling.until }); continue }
+    const remaining = deadline - Date.now()
+    if (remaining <= 0) { lastError = new Error('CLI chain time budget exhausted'); break }
     try {
-      const result = await textOnce(candidate, prompt, opts)
-      opts.provider_used = candidate // actual executor, so a fallback is never silent
+      const perCall = Number(opts.timeoutMs || TIMEOUT_MS)
+      const result = await invoke(candidate, { ...opts, timeoutMs: Math.max(1, Math.min(Number.isFinite(perCall) ? perCall : remaining, remaining)) })
+      opts.attempts.push({ provider: candidate, status: 'completed' })
+      opts.provider_used = candidate
       return result
     }
     catch (error) {
-      lastError = error
-      progress(opts.label || 'text', `fallback ${candidate}: ${String(error.message || error).slice(0, 160)}`)
+      const reason = error.reason || 'invalid_output_or_unavailable'
+      // Provider stderr and malformed output may echo the original document.
+      // Return only a category across the bridge, including on final failure.
+      lastError = Object.assign(new Error(`CLI ${candidate} failed: ${reason}`), { reason })
+      const cooling = recordCooldown(candidate, reason, { retryAfterMs: error.retryAfterMs })
+      opts.attempts.push({ provider: candidate, status: 'failed', reason, ...(cooling ? { until: cooling.until } : {}) })
+      progress(opts.label || 'llm', `fallback ${candidate}: ${reason}`)
     }
   }
-  throw lastError || new Error('no provider available for llmText')
+  throw lastError || new Error('No admitted CLI available: missing capability or active cooldown')
 }

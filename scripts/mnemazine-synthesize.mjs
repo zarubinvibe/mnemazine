@@ -721,7 +721,7 @@ ${sourceLines.join('\n')}
 - ${template.next}
 - Тема: ${clusterTitleRu(cluster.id)} — черновик собран, но требует проверки перед применением.
 
-## Достоверность
+## Проверка
 
 - **Автоматический fact-check не запускался.** Это unverified synthesis cluster (\`status: draft\`). URL из extraction или topic hints - указатели, не подтверждение конкретного claim.
 - Повышать до \`status: final\` только после проверки человеком или verify gate по primary sources.
@@ -1019,7 +1019,7 @@ ${addedFacts}
 - ${compact(atom.next, 240) || 'Применить в ближайшей задаче по теме кластера.'}
 - Тема: ${clusterTitleRu(cluster.id)} — смотреть сюда, когда всплывет этот вопрос.
 
-## Достоверность
+## Проверка
 
 - Статус проверки: **${v.status}**${v.note ? ` (${v.note})` : ''}.
 ${isVerified
@@ -1054,6 +1054,10 @@ if (argv.includes('--selftest')) {
   for (const line of junk) if (!looksLikeCode(line)) throw new Error(`selftest: junk passed the filter: ${line}`)
   for (const line of prose) if (looksLikeCode(line)) throw new Error(`selftest: prose rejected by the filter: ${line}`)
   if (readmePoints(junk.concat(prose).join('\n'), 6).length !== prose.length) throw new Error('selftest: readmePoints kept the wrong lines')
+  const fixtureCluster = { id: 'misc', records: [{ text: prose.join('\n'), source_ref: 'local-media:fixture' }] }
+  const draft = makeAtomNote(fixtureCluster, { title: 'Проверка заметки', what: prose[0], sources: [] }, { status: 'unknown' })
+  if (!/^## Проверка$/m.test(draft) || !/^## Проверка$/m.test(makeNote(fixtureCluster))) throw new Error('selftest: producer must use the human-layer verification section')
+  if (!draft.includes('verification_status: "unknown"') || !draft.includes('status: "draft"') || draft.includes('Утверждение сверено с указанными источниками')) throw new Error('selftest: section rename must not upgrade unverified facts')
   console.log(JSON.stringify({ ok: true, selftest: 'source-scrape junk filter' }))
   process.exit(0)
 }

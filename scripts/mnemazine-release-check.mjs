@@ -200,6 +200,7 @@ async function demoSmoke() {
   // Список копирования ручной, и врезка Метиды его не пополнила - гейт краснел на исправном коде.
   await fs.copyFile(path.join(ROOT, 'scripts/mnemazine-metiz.mjs'), path.join(scripts, 'mnemazine-metiz.mjs'))
   await fs.copyFile(path.join(ROOT, 'scripts/mnemazine-llm.mjs'), path.join(scripts, 'mnemazine-llm.mjs'))
+  await fs.copyFile(path.join(ROOT, 'scripts/mnemazine-cli-runtime.mjs'), path.join(scripts, 'mnemazine-cli-runtime.mjs'))
   await fs.copyFile(path.join(ROOT, 'scripts/mnemazine-cli-router.mjs'), path.join(scripts, 'mnemazine-cli-router.mjs'))
   await fs.copyFile(path.join(ROOT, 'scripts/mnemazine-cli-probe.mjs'), path.join(scripts, 'mnemazine-cli-probe.mjs'))
   await fs.copyFile(path.join(ROOT, 'scripts/mnemazine-codex.mjs'), path.join(scripts, 'mnemazine-codex.mjs'))
@@ -208,7 +209,7 @@ async function demoSmoke() {
   await fs.copyFile(path.join(ROOT, 'config/project-categories.json'), path.join(config, 'project-categories.json'))
   await fs.writeFile(path.join(config, 'cli-registry.local.json'), '{}\n', 'utf8')
 
-  await must('demo intake smoke', process.execPath, ['scripts/mnemazine-run.mjs'], {
+  const mixedRun = await run(process.execPath, ['scripts/mnemazine-run.mjs'], {
     env: {
       MNEMAZINE_ROOT: temp,
       MNEMAZINE_INBOX: inbox,
@@ -220,10 +221,18 @@ async function demoSmoke() {
       MNEMAZINE_FINISH: '0'
     }
   })
+  if (mixedRun.code === 0) throw new Error('demo smoke failed: mixed batch with unextractable input passed')
+  if (!existsSync(path.join(inbox, 'example-guide.md')) || !existsSync(path.join(inbox, 'empty-source.bin'))) throw new Error('demo smoke failed: failed batch archived an input')
+  if ((await listFiles(path.join(temp, '.mnemazine/archive'))).length) throw new Error('demo smoke failed: failed batch must archive nothing')
+  // Isolate the rejected fixture; only the now-complete batch may archive.
+  await fs.rename(path.join(inbox, 'empty-source.bin'), path.join(temp, 'empty-source.bin'))
+  await must('demo validated-source archive smoke', process.execPath, ['scripts/mnemazine-run.mjs'], {
+    env: { MNEMAZINE_ROOT: temp, MNEMAZINE_INBOX: inbox, MNEMAZINE_VAULT: vault, MNEMAZINE_FINISH: '0' }
+  })
 
   const inboxFiles = await fs.readdir(inbox)
-  if (inboxFiles.length !== 1 || inboxFiles[0] !== 'empty-source.bin') {
-    throw new Error(`demo smoke failed: expected only unextractable source in inbox (${inboxFiles.join(', ')})`)
+  if (inboxFiles.length !== 0) {
+    throw new Error(`demo smoke failed: expected validated inbox to be empty (${inboxFiles.join(', ')})`)
   }
 
   const notes = (await listFiles(vault))
@@ -259,8 +268,8 @@ async function demoSmoke() {
     }
   })
   const cachedInboxFiles = await fs.readdir(inbox)
-  if (cachedInboxFiles.length !== 1 || cachedInboxFiles[0] !== 'empty-source.bin') {
-    throw new Error(`demo cached smoke failed: expected only unextractable source in inbox (${cachedInboxFiles.join(', ')})`)
+  if (cachedInboxFiles.length !== 0) {
+    throw new Error(`demo cached smoke failed: expected validated inbox to be empty (${cachedInboxFiles.join(', ')})`)
   }
   const archivedAfterCachedRun = await listFiles(path.join(temp, '.mnemazine/archive'))
   if (archivedAfterCachedRun.length !== 2) throw new Error(`demo cached smoke failed: expected 2 archived finalized sources, got ${archivedAfterCachedRun.length}`)
@@ -286,6 +295,7 @@ async function strictArchiveGateSmoke() {
     await fs.copyFile(path.join(ROOT, 'scripts/mnemazine-humanize-gate.mjs'), path.join(scripts, 'mnemazine-humanize-gate.mjs'))
     await fs.copyFile(path.join(ROOT, 'scripts/mnemazine-human-layer-gate.mjs'), path.join(scripts, 'mnemazine-human-layer-gate.mjs'))
     await fs.copyFile(path.join(ROOT, 'scripts/mnemazine-llm.mjs'), path.join(scripts, 'mnemazine-llm.mjs'))
+    await fs.copyFile(path.join(ROOT, 'scripts/mnemazine-cli-runtime.mjs'), path.join(scripts, 'mnemazine-cli-runtime.mjs'))
     await fs.copyFile(path.join(ROOT, 'scripts/mnemazine-cli-router.mjs'), path.join(scripts, 'mnemazine-cli-router.mjs'))
     await fs.copyFile(path.join(ROOT, 'scripts/mnemazine-cli-probe.mjs'), path.join(scripts, 'mnemazine-cli-probe.mjs'))
     await fs.copyFile(path.join(ROOT, 'scripts/mnemazine-codex.mjs'), path.join(scripts, 'mnemazine-codex.mjs'))
@@ -390,7 +400,35 @@ Local source refs:
 
 - Держать эту ноту как smoke fixture для strict archive gate.
 `)
-  await must('strict archive gate smoke:good', process.execPath, ['scripts/mnemazine-run.mjs'], {
+  const noCompletion = await run(process.execPath, ['scripts/mnemazine-run.mjs'], {
+    env: { MNEMAZINE_ROOT: goodTemp, MNEMAZINE_INBOX: good.inbox, MNEMAZINE_VAULT: good.vault,
+      MNEMAZINE_DEEP: '1', MNEMAZINE_REQUIRE_DEEP: '1', MNEMAZINE_SYNTHESIZE: '0', MNEMAZINE_FINISH: '0' }
+  })
+  if (noCompletion.code === 0 || !existsSync(good.sourceFile)) throw new Error('strict archive gate smoke failed: cached knowledge without completion must retain source')
+  if (!`${noCompletion.stdout}\n${noCompletion.stderr}`.includes('completion failed before archive')) throw new Error('strict archive gate smoke failed: expected explicit missing-completion rejection')
+  // Strict cached intake still requires real completion gates with FINISH=0.
+  // Supply measured fixture baseline and truthful fixture reports, never a PASS shim.
+  for (const name of ['complete-check', 'coverage-check', 'spec-ceiling', 'report-quality-gate']) {
+    await fs.copyFile(path.join(ROOT, `scripts/mnemazine-${name}.mjs`), path.join(goodTemp, `scripts/mnemazine-${name}.mjs`))
+  }
+  const goodState = path.join(goodTemp, '.mnemazine/state')
+  const goodReports = path.join(goodTemp, 'reports')
+  await fs.mkdir(goodState, { recursive: true })
+  await fs.mkdir(goodReports, { recursive: true })
+  await fs.mkdir(path.join(good.vault, '99 Система'), { recursive: true })
+  await fs.writeFile(path.join(good.vault, '99 Система/_ПРОЕКТЫ.md'), '# Проекты тестовой базы\n\n## Мнемозина\n\nЛокальная проверка конвейера.\n', 'utf8')
+  await must('strict fixture measured baseline', process.execPath, [path.join(goodTemp, 'scripts/mnemazine-spec-ceiling.mjs'), '--update', '--vault', good.vault], {
+    env: { MNEMAZINE_ROOT: goodTemp, MNEMAZINE_VAULT: good.vault }
+  })
+  await fs.writeFile(path.join(goodReports, 'visual-knowledge-report.html'), `<!doctype html><html lang="ru"><body>
+<h1>Отчет Mnemazine</h1><h2>Новые и обновленные знания</h2>
+<p>Синтез: тестовый материал описывает преобразование документов в текст и сохраняет ссылки на происхождение. Эта фикстура проверяет порядок завершения локального конвейера и не представляет результат нового внешнего исследования.</p>
+<h2>Источники</h2><a href="https://github.com/microsoft/markitdown">Репозиторий</a><a href="https://github.com/microsoft/markitdown/issues">Обсуждения</a><a href="https://github.com/microsoft/markitdown/releases">Выпуски</a>
+<h2>Применение</h2><p>Проверить сохранность источника до успешного завершения всех обязательных проверок.</p>
+<h2>Проверка</h2><p>Используется заранее подготовленная локальная тестовая запись. Сетевые запросы и обращения к модели в этой проверке не выполняются.</p>
+<h2>Следующее действие</h2><p>После успешной проверки перенести только покрытый тестовый источник в архив.</p></body></html>`, 'utf8')
+  await fs.writeFile(path.join(goodState, 'last-action-brief.md'), '# Короткий отчет Mnemazine\n\n## Статус\n\nПодготовлена локальная фикстура проверки очередности архивирования.\n\n## Следующие действия\n\nЗавершить проверки и сохранить источник при любом отказе.\n', 'utf8')
+  await must('strict archive gate smoke:real-completion', process.execPath, ['scripts/mnemazine-run.mjs'], {
     env: {
       MNEMAZINE_ROOT: goodTemp,
       MNEMAZINE_INBOX: good.inbox,
@@ -694,7 +732,8 @@ async function completeGateSmoke() {
   }, null, 2), 'utf8')
   // Потолок спеки для демо-корпуса (план П06 шаг 8): единственная демо-нота спеке
   // не отвечает, потолок честно равен 1 — spec-ceiling --check из complete-check
-  // держится, а не краснеет. Пишется во временный MNEMAZINE_STATE, не в репозиторий.
+  // держится, а не краснеет. Runtime state изолирован; путь fixture baseline
+  // передается явно, чтобы не выбирать baseline другого (живого) корпуса.
   await fs.writeFile(path.join(state, 'spec-ceiling.json'), JSON.stringify({
     vault: path.join(ROOT, 'demo/vault'),
     ceiling: 1
@@ -704,7 +743,8 @@ async function completeGateSmoke() {
       MNEMAZINE_VAULT: path.join(ROOT, 'demo/vault'),
       MNEMAZINE_INBOX: inbox,
       MNEMAZINE_REPORTS: reports,
-      MNEMAZINE_STATE: state
+      MNEMAZINE_STATE: state,
+      MNEMAZINE_SPEC_CEILING: path.join(state, 'spec-ceiling.json')
     }
   })
 }
@@ -924,6 +964,13 @@ async function searchEvalSmoke() {
   // (LLM judge) is opt-in via `npm run search:eval -- --deep`, not in the gate.
   await must('kb-search selftest', process.execPath, ['scripts/mnemazine-kb-search.mjs', '--selftest'])
   await must('kb-search eval (Tier A)', process.execPath, ['tests/search-eval.mjs'])
+  await must('kb-search evidence regressions', process.execPath, ['tests/test-search-evidence.mjs'])
+  await must('durable jobs', process.execPath, ['tests/test-jobs.mjs'])
+  await must('CLI failover', process.execPath, ['tests/test-cli-failover.mjs'])
+  await must('prearchive validation', process.execPath, ['tests/test-prearchive-validation.mjs'])
+  await must('coverage hash', process.execPath, ['tests/test-coverage-hash.mjs'])
+  await must('shared vault lock', process.execPath, ['tests/test-vault-lock.mjs'])
+  await must('Olympuz jobs adapter', process.execPath, ['tests/test-olympuz-adapter.mjs'])
 }
 
 async function repoMetadataCheck() {

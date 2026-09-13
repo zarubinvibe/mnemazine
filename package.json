@@ -9,6 +9,10 @@
     "Mnemazine": "bin/mnemazine"
   },
   "scripts": {
+    "app:build": "bash scripts/build-macos-app.sh",
+    "app:test": "swift test --package-path macos",
+    "jobs": "node scripts/mnemazine-jobs.mjs",
+    "olympuz": "node scripts/mnemazine-olympuz.mjs",
     "install:local": "bash install.sh",
     "start": "bash scripts/mnemazine-desktop-protocol.sh",
     "desktop": "bash scripts/mnemazine-desktop-protocol.sh",

@@ -5,7 +5,7 @@
   "project": {
     "slug": "mnemazine",
     "deity": "Mnemosyne",
-    "symbol": "memory scroll and knowledge graph"
+    "symbol": "horizontal knowledge graph; memory scroll remains a narrative prop"
   },
   "visuals": {
     "style_anchor_sha256": "ce524f9d22cb0092cb17aa280832e1b2ab2a77a0e01602065ec502232a3bb2d2",
@@ -33,7 +33,7 @@
       {
         "id": "capture",
         "title_en": "Drop material into the inbox",
-        "title_ru": "Положите материал во входящие",
+        "title_ru": "Положи материал во входящие",
         "diagram_en": "Capture",
         "diagram_ru": "Захват",
         "title_zh": "把材料丢进收件箱",
@@ -168,6 +168,10 @@
       }
     },
     "doc_pages": [
+      {
+        "path": "docs/macos-app.ru.md",
+        "frames": ["assets/pantheon/app-icon-mnemazine.png"]
+      },
       {
         "path": "docs/DETAILS.md",
         "frames": [

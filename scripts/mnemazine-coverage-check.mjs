@@ -18,9 +18,14 @@
 // возвращают ровно тот зеленый, что мастер-план §8 запрещает прибору оркестрации.
 // Покрытым считается файл, чей basename встречается в теле или frontmatter хотя бы одной ноты vault —
 // та же семантика, что у сверщика (`source:`/`sources:`), но без права ошибиться в регулярке.
+// Для переименованных job snapshots дополнительно считается SHA-256 текущего файла:
+// local-media hash засчитывается только из final verified enriched ноты (strictKnowledgeReady).
 import { promises as fs } from 'node:fs'
+import { constants } from 'node:fs'
+import { createHash } from 'node:crypto'
 import path from 'node:path'
 import { resolveVault } from './mnemazine-paths.mjs'
+import { strictKnowledgeReady } from './mnemazine-note-spec.mjs'
 
 const argv = process.argv.slice(2)
 const arg = (name, fallback = '') => {
@@ -32,16 +37,23 @@ const arg = (name, fallback = '') => {
 /** Ноты vault одним чтением: корпус мал (< 20 МБ), а N грепов по файлу — это N спавнов и гонка. */
 async function readCorpus(vault) {
   const chunks = []
+  const verifiedRefs = new Set()
   async function walk(dir) {
     for (const item of await fs.readdir(dir, { withFileTypes: true }).catch(() => [])) {
       if (['.git', '.obsidian', '.mnemazine'].includes(item.name) || item.name.startsWith('graphify-out')) continue
       const p = path.join(dir, item.name)
       if (item.isDirectory()) await walk(p)
-      else if (item.isFile() && p.endsWith('.md')) chunks.push(await fs.readFile(p, 'utf8'))
+      else if (item.isFile() && p.endsWith('.md')) {
+        const text = await fs.readFile(p, 'utf8')
+        chunks.push(text)
+        if (strictKnowledgeReady(text)) {
+          for (const match of text.matchAll(/\blocal-media:([a-f0-9]{64}|[a-f0-9]{16})(?![a-f0-9])/gi)) verifiedRefs.add(match[1].toLowerCase())
+        }
+      }
     }
   }
   await walk(vault)
-  return chunks.join('\n')
+  return { text: chunks.join('\n'), verifiedRefs }
 }
 
 /**
@@ -92,8 +104,26 @@ if (census.length === 0 && !argv.includes('--allow-empty')) {
   process.exit(2)
 }
 
-const corpus = (await readCorpus(VAULT)).normalize('NFC')
-const uncovered = census.filter(f => !isCovered(corpus, f))
+const corpus = await readCorpus(VAULT)
+const corpusNfc = corpus.text.normalize('NFC')
+const uncovered = []
+for (const file of census) {
+  if (isCovered(corpusNfc, file)) continue
+  let coveredByHash = false
+  if (corpus.verifiedRefs.size) {
+    try {
+      const handle = await fs.open(file, constants.O_RDONLY | constants.O_NOFOLLOW | constants.O_NONBLOCK)
+      const hash = createHash('sha256')
+      try {
+        if (!(await handle.stat()).isFile()) throw new Error('Source is not a regular file')
+        for await (const chunk of handle.createReadStream({ autoClose: false })) hash.update(chunk)
+      } finally { await handle.close() }
+      const digest = hash.digest('hex')
+      coveredByHash = corpus.verifiedRefs.has(digest) || corpus.verifiedRefs.has(digest.slice(0, 16))
+    } catch { /* Unreadable sources cannot be proven covered by content. */ }
+  }
+  if (!coveredByHash) uncovered.push(file)
+}
 const report = { ok: uncovered.length === 0, vault: VAULT, census: census.length, covered: census.length - uncovered.length, uncovered }
 
 if (argv.includes('--json')) console.log(JSON.stringify(report, null, 2))

@@ -15,8 +15,10 @@
 // engages the LLM swarm. Report written to reports/ as Markdown; path printed.
 import { promises as fs } from 'node:fs'
 import path from 'node:path'
+import { fileURLToPath } from 'node:url'
 import { resolveVault } from './mnemazine-paths.mjs'
 import { activeProvider, llmAvailable, llmJson, fenceUntrusted } from './mnemazine-llm.mjs'
+import { classifyFile, loadTaxonomy, parseFrontmatter } from './mnemazine-machine-class-gate.mjs'
 
 const argv = process.argv.slice(2)
 const SELFTEST = argv.includes('--selftest')
@@ -29,6 +31,7 @@ function arg(name, fb = '') {
 const DEEP = argv.includes('--deep') || process.env.MNEMAZINE_DEEP === '1'
 const STDOUT = argv.includes('--stdout')
 const JSON_OUT = argv.includes('--json')
+const RESULT_JSON = argv.includes('--result-json')
 
 if (argv.includes('--help')) {
   console.log(`mnemazine-kb-search.mjs — тематический поиск по корпусу знаний.
@@ -41,8 +44,10 @@ if (argv.includes('--help')) {
                      каталог внутри корпуса — отказ с кодом 2
   --stdout           отчет в stdout, файл не создается
   --json             машинная выдача в stdout: results[] с note/score/subject/snippets
+  --result-json      готовая справка и источники в stdout: {text,sources,stats}
   --deep             LLM-рой: планирование запроса, шард-агенты, синтез
-  --verify           отбраковка необоснованных находок (только с --deep)
+  --verify           совместимость: проверка включена всегда с --deep
+  --project ID       фильтр projects (не механизм авторизации)
   --concurrency N    параллелизм роя (по умолчанию 4)
   --max-notes N      потолок кандидатов для роя (по умолчанию 60)
   --shard-size N     заметок на агента (по умолчанию 6)
@@ -59,10 +64,9 @@ const MAX_NOTES = Number(arg('max-notes', '60'))     // candidate cap fed to the
 const SHARD_SIZE = Number(arg('shard-size', '6'))    // notes per agent
 const MAX_SHARDS = Number(arg('max-shards', process.env.MNEMAZINE_SEARCH_MAX_SHARDS || '12')) // deep cost cap: hard limit on agents spawned
 const EXCERPT = 2500                                  // chars of each note shown to an agent
-// 2B perspective-diverse verify: opt-in (extra K agents). Default OFF to keep
-// the token budget tight — enable when groundedness matters. One call per
-// top-K finding, judging 3 lenses at once (grounded/relevant/actionable).
-const VERIFY = argv.includes('--verify') || process.env.MNEMAZINE_SEARCH_VERIFY === '1'
+// Verification is mandatory for deep findings. The budget bounds accepted
+// findings too: unreviewed findings never leak around the verifier.
+const VERIFY = DEEP || argv.includes('--verify') || process.env.MNEMAZINE_SEARCH_VERIFY === '1'
 const MAX_VERIFY = Number(arg('max-verify', '5')) // top-K findings to verify
 
 // --- helpers -----------------------------------------------------------------
@@ -78,7 +82,7 @@ async function walk(dir, out = []) {
     const full = path.join(dir, e.name)
     if (isServicePath(full)) continue
     if (e.isDirectory()) await walk(full, out)
-    else if (e.name.endsWith('.md')) out.push(full)
+    else if (e.isFile() && e.name.endsWith('.md')) out.push(full)
   }
   return out
 }
@@ -126,6 +130,30 @@ function snippets(text, terms, max = 3) {
   return out
 }
 
+// ponytail: bounded windows cover the whole note without a second index.
+// A persistent chunk index can replace this when the corpus latency warrants it.
+export function evidenceExcerpt(text, topic) {
+  const terms = uniq(tokens(topic))
+  const windows = []
+  for (let start = 0; start < text.length; start += 800) {
+    const body = text.slice(start, start + 1000)
+    const found = new Set(tokens(body))
+    windows.push({ start, body, score: terms.filter(t => found.has(t)).length })
+  }
+  return windows.sort((a, b) => b.score - a.score || a.start - b.start)
+    .slice(0, 2).sort((a, b) => a.start - b.start)
+    .map(w => `[символы ${w.start + 1}–${w.start + w.body.length}]\n${w.body}`)
+    .join('\n\n').slice(0, EXCERPT)
+}
+
+export function cloudReadable(file, taxonomy) {
+  const classification = classifyFile(file, taxonomy)
+  if (classification.undetermined || !['public', 'infra', 'text'].includes(classification.klass)) return false
+  // Directory ancestry can raise sensitivity even when frontmatter omits the
+  // section or the note lives in a nested folder inside a private section.
+  return !path.resolve(file).split(path.sep).some(segment => ['personal', 'pd'].includes(taxonomy.by_section[segment]))
+}
+
 function frontmatterSubject(text) {
   if (!text.startsWith('---')) return null
   const end = text.indexOf('\n---', 3)
@@ -142,7 +170,7 @@ function frontmatterSubject(text) {
 }
 
 async function logQuery(entry) {
-  const file = path.resolve('.mnemazine', 'state', 'kb-search-log.jsonl')
+  const file = path.resolve(process.env.MNEMAZINE_SEARCH_LOG || path.join('.mnemazine', 'state', 'kb-search-log.jsonl'))
   await fs.mkdir(path.dirname(file), { recursive: true })
   await fs.appendFile(file, `${JSON.stringify(entry)}\n`, 'utf8')
 }
@@ -261,7 +289,7 @@ function assignFacet(note, facets) {
 async function extractShard(topic, shard, facet) {
   if (DEEP && llmAvailable(PROVIDER)) {
     const blob = shard.map(n =>
-      fenceUntrusted('NOTE', `### ${n.rel}\n${n.text.slice(0, EXCERPT)}`)).join('\n\n')
+      fenceUntrusted('NOTE', `### ${n.rel}\n${evidenceExcerpt(n.text, topic)}`)).join('\n\n')
     const focus = facet ? `\nФокус-ось этого шарда: «${facet}» — приоритет находкам по этой оси (но не пропускай иное важное по теме).` : ''
     const prompt = `Ты агент-исследователь. Тема: "${topic}".${focus}
 Из заметок ниже выбери ТОЛЬКО релевантное теме. Для каждой находки: note (путь заметки), source (URL/ссылка из заметки, если есть), insight (1-2 предложения по-русски — что важного для темы), relevance (1-5). Ничего не выдумывай сверх заметок.
@@ -269,7 +297,8 @@ async function extractShard(topic, shard, facet) {
 ${blob}`
     try {
       const out = await llmJson(prompt, FINDINGS_SCHEMA, { provider: PROVIDER, tools: [] })
-      return (out.findings || []).filter(f => f.insight && f.relevance >= 2)
+      return (out.findings || []).filter(f => f.insight && f.relevance >= 2 && shard.some(n => n.rel === f.note))
+        .map(f => ({ ...f, source: shard.find(n => n.rel === f.note).text.includes(f.source || '\0') && /^https?:\/\//.test(f.source || '') ? f.source : '' }))
     } catch (e) {
       console.error(`[kb-search] shard agent failed: ${e.message}; local fallback`)
     }
@@ -286,10 +315,9 @@ ${blob}`
 // One agent per finding, judging 3 lenses at once (grounded/relevant/actionable)
 // against the note's own text. Bounded (K calls). Drops ungrounded findings —
 // the anti-hallucination gate (§6 claim->content). Opt-in via VERIFY.
-async function verifyFindings(topic, findings, textByNote) {
-  if (!VERIFY || !DEEP || !llmAvailable(PROVIDER) || !findings.length) return { kept: findings, dropped: 0 }
+export async function verifyFindings(topic, findings, textByNote, verify = llmJson, enabled = VERIFY && DEEP && llmAvailable(PROVIDER)) {
+  if (!enabled || !findings.length) return { kept: findings, dropped: 0 }
   const top = findings.slice(0, MAX_VERIFY)
-  const rest = findings.slice(MAX_VERIFY)
   const verdicts = []
   await mapLimit(top, CONCURRENCY, async (f, idx) => {
     const note = textByNote.get(f.note) || ''
@@ -297,12 +325,12 @@ async function verifyFindings(topic, findings, textByNote) {
 "${f.insight}"
 Оцени по 3 осям относительно текста заметки ниже: grounded (находка реально опирается на текст, не выдумана), relevant (по теме), actionable (полезна на практике). Верни булевы + reason.
 
-${fenceUntrusted('NOTE', note.slice(0, EXCERPT))}`
-    try { verdicts[idx] = await llmJson(prompt, VERDICT_SCHEMA, { provider: PROVIDER, tools: [] }) }
-    catch (e) { console.error(`[kb-search] verify failed for ${f.note}: ${e.message}; keeping finding`); verdicts[idx] = { grounded: true, relevant: true, actionable: true } }
+${fenceUntrusted('NOTE', evidenceExcerpt(note, `${topic} ${f.insight}`))}`
+    try { verdicts[idx] = note ? await verify(prompt, VERDICT_SCHEMA, { provider: PROVIDER, tools: [], dataClass: 'text' }) : null }
+    catch (e) { console.error(`[kb-search] verify failed for ${f.note}: ${e.message}; finding withheld`); verdicts[idx] = null }
   })
-  const kept = top.filter((_, i) => verdicts[i]?.grounded !== false).concat(rest)
-  return { kept, dropped: top.length - (kept.length - rest.length) }
+  const kept = top.filter((_, i) => verdicts[i]?.grounded === true && verdicts[i]?.relevant === true)
+  return { kept, dropped: findings.length - kept.length }
 }
 
 // --- orchestrator: synthesize findings into a report -------------------------
@@ -313,7 +341,7 @@ async function synthesize(topic, findings, facets = []) {
     const prompt = `Ты оркестратор. Собери из находок агентов справку по теме "${topic}" на РУССКОМ, стиль humanizer — живо, ясно, по делу, без воды и канцелярита. Дедуплицируй, сгруппируй по под-темам (themes), отметь связи (connections), противоречия (contradictions), пробелы знаний (gaps) и следующие шаги (next). Не выдумывай сверх находок.${axes}
 
 Находки:
-${blob}`
+${fenceUntrusted('FINDINGS', blob)}`
     try { return await llmJson(prompt, SYNTH_SCHEMA, { provider: PROVIDER }) }
     catch (e) { console.error(`[kb-search] synthesis failed: ${e.message}; local assembly`) }
   }
@@ -342,7 +370,7 @@ function renderReport(topic, report, meta) {
   L.push(`> Поиск по базе знаний · ${meta.stamp} · просмотрено ${meta.scanned} заметок, отобрано ${meta.candidates}, находок ${meta.findings} · режим: ${meta.deep ? 'рой агентов (deep)' : 'локальный'}`, '')
   if (meta.facets?.length) L.push(`> Оси разбора: ${meta.facets.join(' · ')}`, '')
   if (meta.droppedNotes) L.push(`> ⚠️ Лимит стоимости: ${meta.droppedNotes} заметок-кандидатов не разобраны (--max-shards). Подними лимит для полного охвата.`, '')
-  if (meta.droppedByVerify) L.push(`> 🔎 Verify: ${meta.droppedByVerify} находок отброшено как необоснованные.`, '')
+  if (meta.droppedByVerify) L.push(`> Проверка: не включено ${meta.droppedByVerify} находок (нет подтверждения, ошибка проверки или предел проверок).`, '')
   L.push('## Главное', '', report.summary || '—', '')
   if (report.themes?.length) {
     L.push('## По под-темам', '')
@@ -361,17 +389,27 @@ function renderReport(topic, report, meta) {
 }
 
 // --- main --------------------------------------------------------------------
-async function run(topic, vault, outDir, { stdout = false, json = false } = {}) {
+async function run(topic, vault, outDir, { stdout = false, json = false, resultJson = false } = {}) {
   const stamp = new Date().toISOString()
   const { terms, facets } = await plan(topic)
   // RECON
   const files = await walk(vault)
   const scored = []
+  const taxonomy = DEEP ? loadTaxonomy() : null
+  let withheld = 0
+  const project = arg('project')
   for (const f of files) {
     const text = await fs.readFile(f, 'utf8').catch(() => '')
     if (!text) continue
+    if (project && !parseFrontmatter(text).fields?.projects?.includes(project)) continue
+    if (DEEP) {
+      // Cloud research only sees ordinary/public notes. A missing class must
+      // not inherit the LLM bridge's default infra class.
+      if (!cloudReadable(f, taxonomy)) { withheld++; continue }
+    }
     const rel = path.relative(vault, f)
-    const score = scoreNote(text, rel, terms)
+    // Expanded synonyms are alternatives, never extra mandatory query words.
+    const score = Math.max(scoreNote(text, rel, tokens(topic)), ...terms.map(term => scoreNote(text, rel, [term])))
     if (score > 0) scored.push({ rel, text, score, subject: frontmatterSubject(text), url: text.match(/https?:\/\/\S+/)?.[0] || '' })
   }
   scored.sort((a, b) => b.score - a.score)
@@ -384,7 +422,7 @@ async function run(topic, vault, outDir, { stdout = false, json = false } = {}) 
       snippets: snippets(n.text, terms)
     }))
     await logQuery({ ts: stamp, topic, mode: 'json', results: results.length })
-    process.stdout.write(`${JSON.stringify({ topic, scanned: files.length, results }, null, 2)}\n`)
+    process.stdout.write(`${JSON.stringify({ topic, scanned: files.length, withheld, results }, null, 2)}\n`)
     return null
   }
   // FAN-OUT — shard within facet groups so each shard carries one focus axis
@@ -416,12 +454,22 @@ async function run(topic, vault, outDir, { stdout = false, json = false } = {}) 
     catch (e) { console.error(`[kb-search] shard failed: ${e.message}`) }
   })
   findings.sort((a, b) => (b.relevance || 0) - (a.relevance || 0))
-  // VERIFY (2B, opt-in): drop ungrounded top findings before synthesis.
+  // VERIFY: withhold unchecked findings before synthesis.
   const textByNote = new Map(candidates.map(c => [c.rel, c.text]))
   const { kept, dropped: droppedByVerify } = await verifyFindings(topic, findings, textByNote)
   // FAN-IN
   const report = await synthesize(topic, kept, facets)
-  const md = renderReport(topic, report, { stamp, scanned: files.length, candidates: candidates.length, findings: kept.length, deep: DEEP && llmAvailable(PROVIDER), droppedNotes, droppedByVerify, facets: facets.map(f => f.label) })
+  let md = renderReport(topic, report, { stamp, scanned: files.length, candidates: candidates.length, findings: kept.length, deep: DEEP && llmAvailable(PROVIDER), droppedNotes, droppedByVerify, facets: facets.map(f => f.label) })
+  if (withheld) md += `\n\nИз облачной обработки исключено заметок по классу данных: ${withheld}. Для локального поиска выключи deep.\n`
+  if (kept.length) md += '\n\n## Источники ответа\n\n' + [...new Set(kept.map(f => f.note))].map(note => {
+    const target = path.join(vault, note)
+    return `- [${note.replace(/[\[\]]/g, '')}](<${target.replace(/>/g, '%3E')}>)`
+  }).join('\n') + '\n'
+  if (resultJson) {
+    const sources = [...new Set(kept.map(f => f.note))].map(note => ({ title: note, path: path.join(vault, note) }))
+    process.stdout.write(JSON.stringify({ text: md, sources, stats: { scanned: files.length, findings: kept.length, withheld, droppedByVerify, droppedNotes } }) + '\n')
+    return null
+  }
   await logQuery({ ts: stamp, topic, mode: DEEP && llmAvailable(PROVIDER) ? 'deep' : 'local', results: kept.length })
   if (stdout) {
     process.stdout.write(md.endsWith('\n') ? md : `${md}\n`)
@@ -451,6 +499,7 @@ async function selftest() {
   console.log('selftest ok')
 }
 
+if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
 if (SELFTEST) {
   selftest().catch(e => { console.error(e.message); process.exit(1) })
 } else {
@@ -461,11 +510,12 @@ if (SELFTEST) {
   // fail-closed: каталог отчета внутри корпуса превращает просмотр в правку
   // корпуса — отказ держит код, а не привычку (план П08). С --stdout файла нет.
   const relOut = path.relative(vault, outDir)
-  if (!STDOUT && !JSON_OUT && (relOut === '' || (!relOut.startsWith('..') && !path.isAbsolute(relOut)))) {
+  if (!STDOUT && !JSON_OUT && !RESULT_JSON && (relOut === '' || (!relOut.startsWith('..') && !path.isAbsolute(relOut)))) {
     console.error(`[kb-search] отказ: каталог отчета внутри корпуса (out=${outDir}, vault=${vault}). Укажи --out вне корпуса или --stdout.`)
     process.exit(2)
   }
-  run(topic, vault, outDir, { stdout: STDOUT, json: JSON_OUT })
+  run(topic, vault, outDir, { stdout: STDOUT, json: JSON_OUT, resultJson: RESULT_JSON })
     .then(p => { if (p) console.log(p) })
     .catch(e => { console.error(`[kb-search] ${e.message}`); process.exit(1) })
+}
 }

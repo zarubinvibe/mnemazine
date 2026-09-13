@@ -1,4 +1,8 @@
 {
+  "app:build": { "purpose": "Нативное macOS-приложение: локальная сборка в .mnemazine/tmp, ad-hoc подпись без публикации", "writes": { "vault": false, "repo": true, "home": true, "net": false } },
+  "app:test": { "purpose": "Swift-тесты контракта клиента и безопасного отображения; только macOS", "writes": { "vault": false, "repo": true, "home": true, "net": false } },
+  "jobs": { "purpose": "Общая локальная очередь: submit/list/status/cancel/retry/work. Pending list/status возобновляют worker; --no-start только читает. Deep ingest пишет vault и обращается к сети", "writes": { "vault": true, "repo": true, "home": false, "net": true } },
+  "olympuz": { "purpose": "Адаптер координатора Олимпуса к общей очереди; проверка происхождения, приём с явным deep, статус/отмена/повтор", "writes": { "vault": true, "repo": true, "home": false, "net": true } },
   "install:local": { "purpose": "Первичная установка: каталоги, .venv, skills в $HOME/.claude/$HOME/.codex, симлинки в ~/.local/bin, конфиг .mnemazine, протокол-нота в vault", "writes": { "vault": true, "repo": true, "home": true, "net": true } },
   "start": { "purpose": "Строгий live-протокол: прогон инбокса (deep+require-deep) и финальный complete-гейт", "writes": { "vault": true, "repo": true, "home": true, "net": true } },
   "desktop": { "purpose": "Алиас start — тот же desktop-протокол", "writes": { "vault": true, "repo": true, "home": true, "net": true } },

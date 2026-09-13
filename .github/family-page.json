@@ -22,7 +22,7 @@
       "better": "Recognition, parsing, transcription and hashing all run on your machine. A file that has been through once is recognised by its hash and never reaches a paid model again.",
       "how": "One run walks the whole path. Every stage leaves evidence, and the run does not close while a single file is still unaccounted for.",
       "quick_intro": "You need Node.js 20 or newer, Python 3.11 or newer, and git. A Mac is better: image recognition only exists there. On Linux the rest still works.",
-      "quick_extra": "`setup.sh` is the guided path: it checks the prerequisites, asks where the inbox goes, and can deploy the Telegram bot. `MNEMAZINE_SETUP_DRYRUN=1 bash setup.sh` previews it without touching anything, and `bash install.sh` is the non-interactive skeleton if you already know what you want. No Git? Download [the ZIP](https://github.com/zarubinvibe/mnemazine/archive/refs/heads/main.zip) or [the tarball](https://github.com/zarubinvibe/mnemazine/archive/refs/heads/main.tar.gz) and run the same script inside. First time here? Open the project in Claude Code and run `/mnemazine-setup`: the install goes as a conversation, one question at a time, and nothing is installed without your yes.",
+      "quick_extra": "`setup.sh` is the guided path: it checks the prerequisites, asks where the inbox goes, and can deploy the Telegram bot. `MNEMAZINE_SETUP_DRYRUN=1 bash setup.sh` previews it without touching anything, and `bash install.sh` is the non-interactive skeleton if you already know what you want. No Git? Download [the ZIP](https://github.com/zarubinvibe/mnemazine/archive/refs/heads/main.zip) or [the tarball](https://github.com/zarubinvibe/mnemazine/archive/refs/heads/main.tar.gz) and run the same script inside. First time here? Open the project in Claude Code and run `/mnemazine-setup`: the install goes as a conversation, one question at a time, and nothing is installed without your yes.\n\nTo try the macOS menu-bar preview after setup, run `npm run app:build`, then `open .mnemazine/tmp/Mnemazine.app`. It runs on macOS 14+; building needs Xcode 26+ with the macOS 26 SDK. The app opens a Spotlight-style search capsule beside separate round controls for links, files, clipboard and settings. Dragging a file turns the row into a drop target; processing starts only after confirmation. Native Liquid Glass is used on macOS 26, with system materials on older versions. The icon is a connected-node graph. See [the app guide (Russian)](docs/macos-app.ru.md).",
       "quick_result": "the folders are ready, the engines say plainly what is installed and what is degraded, and `vault/` opens as an Obsidian vault.",
       "compare": [
         [
@@ -98,7 +98,10 @@
         "Apple Vision recognition is macOS only; on Linux screenshots fall back to the model or stay unread.",
         "Verification finds sources and contradictions, but the final judgement is still yours.",
         "A very large first run takes time and, in deep mode, tokens.",
-        "The vault is plain Markdown: no hosted service keeps a backup for you."
+        "The vault is plain Markdown: no hosted service keeps a backup for you.",
+        "The macOS app is a source preview with an ad-hoc signature, not a notarized download or installer. Its local repository and Node.js paths must remain valid; the bundle does not include a standalone backend.",
+        "The app accepts URLs, including YouTube links, or titles as research requests. A full page or video transcript is not guaranteed.",
+        "CLI discovery includes built-in Claude Code, Codex and Kimi adapters. After a quota or rate-limit error, fallback uses only eligible providers; other CLIs need an adapter. Discovery does not confirm login or quota."
       ],
       "docs": "Deeper: [the full reference](docs/DETAILS.md) covers site and video intake, the quality contract, the agent roster, exit codes and troubleshooting.",
       "license": "Mnemazine Community License 1.0: free for one person, including a solo business. An organisation needs a separate agreement. See [LICENSE](LICENSE).",
@@ -115,54 +118,54 @@
     "ru": {
       "title": "Mnemazine",
       "name": "Mnemazine",
-      "tagline": "Mnemazine читает вашу кучу скриншотов и ссылок и оставляет заметки, которыми вы потом реально пользуетесь.",
+      "tagline": "Mnemazine читает твою кучу скриншотов и ссылок и оставляет заметки, которыми ты потом пользуешься.",
       "hero_alt": "Мнемозина из белого мрамора у классической колонны превращает сырые обрывки в слоистую систему знания",
-      "what": "Mnemazine это фабрика знания. Во входящие вы кладете что попало: скриншоты, PDF, ссылки, голосовые. Наружу выходят заметки в базе Obsidian. Читает, распознает и расшифровывает ваш же компьютер, а в базу заметка попадает только с источником и вердиктом.",
-      "why": "Ссылки копятся, скриншоты копятся, знание нет. Куча растет, читать ее некому, а через полгода вы уже не помните, зачем это сохранили. Mnemazine читает эту кучу за вас и пишет заметку для вас будущего: с источником, без дублей, короткую настолько, чтобы ее открыли.",
+      "what": "Mnemazine это фабрика знания. Во входящие ты кладешь что попало: скриншоты, PDF, ссылки, голосовые. Наружу выходят заметки в базе Obsidian. Читает, распознает и расшифровывает твой же компьютер, а в базу заметка попадает только с источником и вердиктом.",
+      "why": "Ссылки копятся, скриншоты копятся, знание нет. Куча растет, читать ее некому, а через полгода ты уже не помнишь, зачем это сохранил. Mnemazine читает эту кучу за тебя и пишет заметку для тебя через полгода: с источником, без дублей, короткую настолько, чтобы ее открыли.",
       "advantage": "тяжелое делается локально, поэтому повторный файл не стоит ничего.",
-      "better": "Распознавание, разбор, расшифровка и хеширование идут на вашей машине. Файл, который уже проходил обработку, узнается по хешу и больше не доезжает до платной модели.",
+      "better": "Распознавание, разбор, расшифровка и хеширование идут на твоей машине. Файл, который уже проходил обработку, узнается по хешу и больше не доезжает до платной модели.",
       "how": "Один прогон проходит весь путь. Каждая стадия оставляет доказательство, и прогон не закрывается, пока хоть один файл не учтен.",
       "quick_intro": "Нужны Node.js 20 или новее, Python 3.11 или новее и git. Лучше Mac: распознавание картинок работает только там. На Linux остальное работает.",
-      "quick_extra": "`setup.sh` это ведомый путь: он проверяет предпосылки, спрашивает, где будут входящие, и умеет развернуть Telegram-бота. `MNEMAZINE_SETUP_DRYRUN=1 bash setup.sh` показывает план, ничего не трогая, а `bash install.sh` это неинтерактивный скелет, если вы уже знаете, что хотите. Нет Git? Скачайте [ZIP](https://github.com/zarubinvibe/mnemazine/archive/refs/heads/main.zip) или [tar.gz](https://github.com/zarubinvibe/mnemazine/archive/refs/heads/main.tar.gz) и запустите тот же скрипт внутри. Первый раз? Откройте проект в Claude Code и запустите `/mnemazine-setup`: установка пройдет разговором, по одному вопросу, и ничего не поставится без вашего «да».",
+      "quick_extra": "`setup.sh` это ведомый путь: он проверяет предпосылки, спрашивает, где будут входящие, и умеет развернуть Telegram-бота. `MNEMAZINE_SETUP_DRYRUN=1 bash setup.sh` показывает план, ничего не трогая, а `bash install.sh` это неинтерактивный скелет, если ты уже знаешь, что хочешь. Нет Git? Скачай [ZIP](https://github.com/zarubinvibe/mnemazine/archive/refs/heads/main.zip) или [tar.gz](https://github.com/zarubinvibe/mnemazine/archive/refs/heads/main.tar.gz) и запусти тот же скрипт внутри. Первый раз? Открой проект в Claude Code и запусти `/mnemazine-setup`: установка пройдет разговором, по одному вопросу, и ничего не поставится без твоего «да».\n\nЧтобы попробовать приложение в строке меню macOS после настройки проекта, выполни `npm run app:build`, затем `open .mnemazine/tmp/Mnemazine.app`. Для запуска нужна macOS 14+, для сборки Xcode 26+ с macOS 26 SDK. Рядом с поиском в стиле Spotlight стоят отдельные круглые кнопки ссылок, файлов, буфера и настроек. При переносе файла строка становится зоной приема; обработка начинается только после подтверждения. На macOS 26 используется нативное Liquid Glass, на более ранних версиях системные материалы. Значок приложения изображает граф связанных узлов. Подробнее: [приложение macOS](docs/macos-app.ru.md).",
       "quick_result": "папки готовы, движки честно говорят, что стоит, а что урезано, и `vault/` открывается как база Obsidian.",
       "compare": [
         [
           "**Mnemazine**",
           "Локальная фабрика знания",
-          "На вашей машине",
+          "На твоей машине",
           "Да, ради этого и сделано",
           "Проверенные заметки, дедуп, недельная сводка",
           "Лучший результат на Mac, установка занимает несколько минут"
         ],
         [
           "Obsidian руками",
-          "Заметочник, который вы наполняете сами",
-          "На вашей машине",
-          "Нет, читаете вы",
+          "Заметочник, который ты наполняешь сам",
+          "На твоей машине",
+          "Нет, читаешь ты",
           "Полный контроль над структурой",
-          "За вас никто не читает, не проверяет и не убирает дубли"
+          "За тебя никто не читает, не проверяет и не убирает дубли"
         ],
         [
           "NotebookLM",
-          "Облачный блокнот, куда вы загружаете документы",
+          "Облачный блокнот, куда ты загружаешь документы",
           "На серверах Google",
           "Да, после загрузки",
           "Быстрые ответы по загруженному",
-          "Материал уходит с вашей машины, заметки остаются в сервисе"
+          "Материал уходит с твоей машины, заметки остаются в сервисе"
         ],
         [
           "Notion AI",
           "Рабочее пространство с помощником",
           "На серверах Notion",
           "Да, внутри пространства",
-          "Поиск и черновики по вашим страницам",
-          "Ваш корпус живет внутри чужого продукта"
+          "Поиск и черновики по твоим страницам",
+          "Твой корпус живет внутри чужого продукта"
         ],
         [
           "Readwise Reader",
           "Читалка отложенного с цитатами",
           "На серверах Readwise",
-          "Ссылки и статьи, но не ваши папки",
+          "Ссылки и статьи, но не твои папки",
           "Цитаты, которые уезжают в заметки",
           "Он сохраняет и напоминает, но не проверяет"
         ],
@@ -186,31 +189,34 @@
         ]
       ],
       "safety": [
-        "Локально по умолчанию: распознавание, разбор, расшифровка и хеширование идут на вашей машине.",
-        "Глубокий режим отправляет материал вашему провайдеру модели, только если вы согласились; с выключенным режимом прогон стоит ноль токенов.",
-        "Telegram-бот ваш, а не общий, и без него система работает точно так же.",
+        "Локально по умолчанию: распознавание, разбор, расшифровка и хеширование идут на твоей машине.",
+        "Глубокий режим отправляет материал твоему провайдеру модели, только если ты согласился; с выключенным режимом прогон стоит ноль токенов.",
+        "Telegram-бот твой, а не общий, и без него система работает точно так же.",
         "Токен бота лежит с закрытыми правами и не попадает в Git.",
         "Заметки, помеченные как персональные данные, ворота экспорта не выпускают наружу.",
-        "Разбор сайтов и видео трогает только тот адрес, который вы дали сами."
+        "Разбор сайтов и видео трогает только тот адрес, который ты дал сам."
       ],
       "safety_tail": "Что и куда уходит по каждому каналу и какой сторож это держит, расписано в [полном разборе](docs/DETAILS.ru.md).",
       "status": "Статус: работает, есть релизная проверка и честные коды возврата.",
       "limits": [
         "Распознавание Apple Vision только на macOS; на Linux скриншоты уходят модели или остаются непрочитанными.",
-        "Проверка находит источники и противоречия, но итоговое суждение остается за вами.",
+        "Проверка находит источники и противоречия, но итоговое суждение остается за тобой.",
         "Очень большой первый прогон занимает время, а в глубоком режиме еще и токены.",
-        "База это обычный Markdown: никакой сервис не держит для вас резервную копию."
+        "База это обычный Markdown: никакой сервис не держит для тебя резервную копию.",
+        "Приложение macOS пока собирается из исходников с ad-hoc подписью. Готового нотарифицированного приложения для скачивания и установщика нет. Пути к локальному проекту и Node.js должны оставаться рабочими: самостоятельный backend в сборку не входит.",
+        "В приложение можно вставить URL, включая ссылку YouTube, или название как запрос на исследование. Полный текст страницы и расшифровка видео не гарантируются.",
+        "Встроены CLI-адаптеры Claude Code, Codex и Kimi. После ошибки квоты или частоты запросов замена выбирается только среди допущенных исполнителей; другим CLI нужен адаптер. Обнаружение не подтверждает вход в аккаунт или квоту."
       ],
       "docs": "Глубже: [полный разбор](docs/DETAILS.ru.md) про прием сайтов и видео, контракт качества, состав агентов, коды возврата и разбор поломок.",
       "license": "Mnemazine Community License 1.0: бесплатно одному человеку, включая работу на себя. Организации нужно отдельное соглашение. Текст в файле [LICENSE](LICENSE).",
-      "welcome": "Привет. Я, как и все, сохраняю ссылки и делаю скриншоты, и, как и все, никогда к ним не возвращался. Куча росла, знание нет.\n\nMnemazine читает эту кучу на моей же машине и оставляет заметки, написанные для меня через полгода. Если она сделает то же для вас, забирайте и делайте своей.",
+      "welcome": "Привет. Я, как и все, сохраняю ссылки и делаю скриншоты, и, как и все, никогда к ним не возвращался. Куча росла, знание нет.\n\nMnemazine читает эту кучу на моей же машине и оставляет заметки, написанные для меня через полгода. Если она сделает то же для тебя, забирай и делай своей.",
       "compare_header": [
         "Вариант",
         "Что это",
         "Где идет работа",
-        "Читает ваши файлы",
-        "Что получаете",
-        "Чем платите"
+        "Читает твои файлы",
+        "Что получаешь",
+        "Чем платишь"
       ]
     },
     "zh": {
@@ -224,7 +230,7 @@
       "better": "识别、解析、转写和哈希都在你的机器上跑。处理过的文件靠哈希认出来，不会再送到付费模型那边。",
       "how": "一次运行走完整条路。每个阶段都留下证据，只要还有一个文件没交代，这次运行就不结束。",
       "quick_intro": "需要 Node.js 20 以上、Python 3.11 以上和 git。最好是 Mac：图片识别只有那里有。在 Linux 上其余照常。",
-      "quick_extra": "`setup.sh` 是带引导的路径：它检查前置条件，问你收件箱放在哪里，还能部署 Telegram 机器人。`MNEMAZINE_SETUP_DRYRUN=1 bash setup.sh` 只看计划，不动任何文件；`bash install.sh` 是非交互的骨架安装，适合你已经清楚要什么的时候。没有 Git？下载 [ZIP](https://github.com/zarubinvibe/mnemazine/archive/refs/heads/main.zip) 或 [tar.gz](https://github.com/zarubinvibe/mnemazine/archive/refs/heads/main.tar.gz)，在里面跑同样的脚本。 第一次用？在 Claude Code 里打开项目并运行 `/mnemazine-setup`：安装以对话方式进行，一次问一个问题，没有你的同意不会装任何东西。",
+      "quick_extra": "`setup.sh` 是带引导的路径：它检查前置条件，问你收件箱放在哪里，还能部署 Telegram 机器人。`MNEMAZINE_SETUP_DRYRUN=1 bash setup.sh` 只看计划，不动任何文件；`bash install.sh` 是非交互的骨架安装，适合你已经清楚要什么的时候。没有 Git？下载 [ZIP](https://github.com/zarubinvibe/mnemazine/archive/refs/heads/main.zip) 或 [tar.gz](https://github.com/zarubinvibe/mnemazine/archive/refs/heads/main.tar.gz)，在里面跑同样的脚本。 第一次用？在 Claude Code 里打开项目并运行 `/mnemazine-setup`：安装以对话方式进行，一次问一个问题，没有你的同意不会装任何东西。\n\n配置项目后，运行 `npm run app:build`，再运行 `open .mnemazine/tmp/Mnemazine.app`，即可试用 macOS 菜单栏预览版。运行需要 macOS 14+；构建需要 Xcode 26+ 和 macOS 26 SDK。Spotlight 风格的搜索栏旁有独立圆形按钮，用于链接、文件、剪贴板和设置。拖入文件时，整行变为接收区域；确认后才开始处理。macOS 26 使用原生 Liquid Glass，旧版本使用系统材质。应用图标是相连的图谱节点。详见[应用指南（俄语）](docs/macos-app.ru.md)。",
       "quick_result": "目录建好，各个引擎老实说明哪些可用、哪些降级，`vault/` 可以直接当 Obsidian 知识库打开。",
       "compare": [
         [
@@ -300,7 +306,10 @@
         "Apple Vision 识别只在 macOS 上；在 Linux 上截图要么交给模型，要么留着不读。",
         "核验能找到来源和矛盾，但最终判断仍然是你的。",
         "第一次处理很大的一堆材料会花时间，在深度模式下还会花 token。",
-        "知识库就是普通的 Markdown：没有哪个服务替你做备份。"
+        "知识库就是普通的 Markdown：没有哪个服务替你做备份。",
+        "macOS 应用目前需从源码构建，使用 ad-hoc 签名，尚无经过公证的下载包或安装程序。本地项目和 Node.js 路径必须有效，应用包不包含独立后端。",
+        "应用可接收 URL（包括 YouTube 链接）或标题作为研究请求，不保证取得完整网页或视频转写。",
+        "内置 Claude Code、Codex 和 Kimi 的 CLI 适配器。遇到配额或频率限制错误，只会切换到获准且具备所需能力的服务；其他 CLI 需要适配器。检测到程序不代表已登录或仍有配额。"
       ],
       "docs": "想更深：[完整参考](docs/DETAILS.md) 讲网站与视频接入、质量契约、智能体名单、退出码和故障排查。",
       "license": "Mnemazine Community License 1.0：一个人使用免费，包括你自己单干的生意。组织使用需要单独协议。见 [LICENSE](LICENSE)。",
@@ -325,9 +334,9 @@
       },
       "ru": {
         "short": "Скриншоты, PDF, ссылки, заметки, аудио, видео",
-        "body": "Вы кладете файлы в одну папку или отправляете их своему Telegram-боту. Больше от вас ничего не нужно.",
+        "body": "Ты кладешь файлы в одну папку или отправляешь их своему Telegram-боту. Больше от тебя ничего не нужно.",
         "result": "одни входящие, где лежит все, что ждет прочтения.",
-        "alt": "Этап 1 такта Mnemazine: Положите материал во входящие, показан широкой мраморной сценой Pantheon"
+        "alt": "Этап 1 такта Mnemazine: Положи материал во входящие, показан широкой мраморной сценой Pantheon"
       },
       "zh": {
         "short": "截图、PDF、链接、笔记、音频、视频",
@@ -405,7 +414,7 @@
       },
       "ru": {
         "short": "Длинный материал режется на переиспользуемые атомы",
-        "body": "Длинный гайд превращается в несколько узких заметок, у каждой понятный заголовок и короткий блок о том, чем она вам поможет. Близкие дубли находятся по смыслу и сливаются, а не копятся.",
+        "body": "Длинный гайд превращается в несколько узких заметок, у каждой понятный заголовок и короткий блок о том, чем она тебе поможет. Близкие дубли находятся по смыслу и сливаются, а не копятся.",
         "result": "заметки такой длины, что будущий запрос тянет только нужную.",
         "alt": "Этап 5 такта Mnemazine: Одна заметка на одну мысль, показан широкой мраморной сценой Pantheon"
       },
@@ -446,7 +455,7 @@
       "ru": {
         "short": "HTML-сводка, отчет по знанию и запросы к графу",
         "body": "Недельная HTML-сводка показывает, что изменилось и на что стоит потратить время. Граф позволяет агенту спросить базу, а не загружать ее целиком в контекст.",
-        "result": "знание, которое возвращается к вам само, а не ждет, пока его вспомнят.",
+        "result": "знание, которое возвращается к тебе само, а не ждет, пока его вспомнят.",
         "alt": "Этап 7 такта Mnemazine: Недельная сводка и поиск, показан широкой мраморной сценой Pantheon"
       },
       "zh": {

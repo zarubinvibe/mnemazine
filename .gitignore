@@ -6,6 +6,7 @@ __pycache__/
 .env
 .mnemazine/cache/
 .mnemazine/tmp/
+.mnemazine/design-review/
 .mnemazine/bin/
 .mnemazine/archive/
 .mnemazine/state/
@@ -44,6 +45,7 @@ handoff-*.md
 
 # Internal audit/plan docs (local vault paths + project names; not public).
 docs/PLAN-*.md
+docs/theia-ui-review-prompt.ru.md
 
 # Private/generated vault maintenance waves. They may contain local vault paths,
 # project names, or one-off migration content and must not ship publicly.

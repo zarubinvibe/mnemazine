@@ -141,6 +141,8 @@ npm run doctor         # plain terminal: is it alive?
 
 `setup.sh` 是带引导的路径：它检查前置条件，问你收件箱放在哪里，还能部署 Telegram 机器人。`MNEMAZINE_SETUP_DRYRUN=1 bash setup.sh` 只看计划，不动任何文件；`bash install.sh` 是非交互的骨架安装，适合你已经清楚要什么的时候。没有 Git？下载 [ZIP](https://github.com/zarubinvibe/mnemazine/archive/refs/heads/main.zip) 或 [tar.gz](https://github.com/zarubinvibe/mnemazine/archive/refs/heads/main.tar.gz)，在里面跑同样的脚本。 第一次用？在 Claude Code 里打开项目并运行 `/mnemazine-setup`：安装以对话方式进行，一次问一个问题，没有你的同意不会装任何东西。
 
+配置项目后，运行 `npm run app:build`，再运行 `open .mnemazine/tmp/Mnemazine.app`，即可试用 macOS 菜单栏预览版。运行需要 macOS 14+；构建需要 Xcode 26+ 和 macOS 26 SDK。Spotlight 风格的搜索栏旁有独立圆形按钮，用于链接、文件、剪贴板和设置。拖入文件时，整行变为接收区域；确认后才开始处理。macOS 26 使用原生 Liquid Glass，旧版本使用系统材质。应用图标是相连的图谱节点。详见[应用指南（俄语）](docs/macos-app.ru.md)。
+
 第一次做这件事？[上手引导](docs/ONBOARDING.zh.md) 会一步一步带你走完第一次运行，并写清楚每条命令之后你会看到什么。
 
 **你会得到：** 目录建好，各个引擎老实说明哪些可用、哪些降级，`vault/` 可以直接当 Obsidian 知识库打开。
@@ -187,6 +189,9 @@ npm run doctor         # plain terminal: is it alive?
 - 核验能找到来源和矛盾，但最终判断仍然是你的。
 - 第一次处理很大的一堆材料会花时间，在深度模式下还会花 token。
 - 知识库就是普通的 Markdown：没有哪个服务替你做备份。
+- macOS 应用目前需从源码构建，使用 ad-hoc 签名，尚无经过公证的下载包或安装程序。本地项目和 Node.js 路径必须有效，应用包不包含独立后端。
+- 应用可接收 URL（包括 YouTube 链接）或标题作为研究请求，不保证取得完整网页或视频转写。
+- 内置 Claude Code、Codex 和 Kimi 的 CLI 适配器。遇到配额或频率限制错误，只会切换到获准且具备所需能力的服务；其他 CLI 需要适配器。检测到程序不代表已登录或仍有配额。
 
 想更深：[完整参考](docs/DETAILS.md) 讲网站与视频接入、质量契约、智能体名单、退出码和故障排查。
 

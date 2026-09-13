@@ -1,0 +1,62 @@
+import assert from 'node:assert/strict';
+import { execFileSync } from 'node:child_process';
+import { existsSync, linkSync, mkdirSync, mkdtempSync, readFileSync, rmSync, symlinkSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { setTimeout } from 'node:timers/promises';
+import { join } from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { runAdapter } from '../scripts/mnemazine-olympuz.mjs';
+
+const root = mkdtempSync(join(tmpdir(), 'mnemazine-olympuz-test-'));
+const cli = fileURLToPath(new URL('../scripts/mnemazine-jobs.mjs', import.meta.url));
+const state = join(root, 'shared-state');
+const worktree = join(root, 'god-worktree');
+const research = join(worktree, 'research');
+const base = ['--root', state, '--god', 'athena', '--run', 'run-1', '--project', 'example', '--mode', 'deep'];
+const core = (...args) => JSON.parse(execFileSync(process.execPath, [cli, ...args, '--root', state, '--no-start'], { encoding: 'utf8' }));
+try {
+  mkdirSync(research, { recursive: true });
+  const file = join(research, 'agent-research--example--public-source.md');
+  const content = '# Public fixture\nWater freezes at 0 °C under standard pressure.\n';
+  writeFileSync(file, content);
+  const { job } = runAdapter(['submit', ...base, '--worktree', worktree, '--file', file, '--no-start']);
+  assert.equal(job.kind, 'ingest');
+  assert.equal(job.status, 'queued');
+  assert.deepEqual(job.provenance, { client: 'olympuz', god: 'athena', run: 'run-1', project: 'example' });
+  assert.equal(readFileSync(file, 'utf8'), content, 'god source survives queue acceptance');
+  await setTimeout(20);
+  const redelivered = runAdapter(['submit', ...base, '--worktree', worktree, '--file', file, '--no-start']).job;
+  assert.equal(redelivered.id, job.id, 'unchanged delivery after clock tick reuses the same job');
+  assert.equal(redelivered.created_at, job.created_at, 'redelivery keeps original queue timestamp');
+  assert.equal(core('list').jobs.length, 1, 'redelivery adds no second job');
+  assert.throws(() => runAdapter(['submit', ...base.filter((x, i) => i < base.length - 2), '--worktree', worktree, '--file', file, '--no-start']), /--mode deep/);
+  assert.equal(core('status', '--id', job.id).job.id, job.id, 'desktop/core sees Olympuz job');
+  assert(core('list').jobs.some(item => item.id === job.id));
+  const desktop = core('submit', '--kind', 'search', '--query', 'public fixture', '--no-start').job;
+  assert.throws(() => runAdapter(['status', ...base, '--id', desktop.id]), /JOB_SCOPE_MISMATCH/);
+  assert.throws(() => runAdapter(['status', ...base.map(x => x === 'run-1' ? 'run-2' : x), '--id', job.id]), /JOB_SCOPE_MISMATCH/);
+  assert.equal(runAdapter(['cancel', ...base, '--id', job.id]).job.status, 'cancelled');
+  assert.equal(core('status', '--id', job.id).job.status, 'cancelled');
+  const retry = runAdapter(['retry', ...base, '--id', job.id, '--no-start']).job;
+  assert.equal(retry.status, 'queued');
+  assert.deepEqual(retry.provenance, job.provenance);
+  for (const command of ['search', 'brief']) {
+    assert.throws(() => runAdapter([command, ...base, '--query', 'private information']), /PROJECT_SCOPE_UNAVAILABLE/);
+  }
+  assert.throws(() => runAdapter(['submit', ...base, '--worktree', worktree, '--file', file, '--vault', root]), /Unknown option/);
+  const link = join(research, 'agent-research--example--link.md');
+  symlinkSync(file, link);
+  assert.throws(() => runAdapter(['submit', ...base, '--worktree', worktree, '--file', link, '--no-start']));
+  const hardlink = join(research, 'agent-research--example--hardlink.md');
+  linkSync(file, hardlink);
+  assert.throws(() => runAdapter(['submit', ...base, '--worktree', worktree, '--file', hardlink, '--no-start']), /обычным файлом/);
+  rmSync(hardlink);
+  const wrongProject = join(research, 'agent-research--another--source.md');
+  writeFileSync(wrongProject, content);
+  assert.throws(() => runAdapter(['submit', ...base, '--worktree', worktree, '--file', wrongProject, '--no-start']), /SOURCE_SCOPE_MISMATCH/);
+  const oversized = join(research, 'agent-research--example--oversized.md');
+  writeFileSync(oversized, Buffer.alloc(256 * 1024 + 1));
+  assert.throws(() => runAdapter(['submit', ...base, '--worktree', worktree, '--file', oversized, '--no-start']), /256 KiB/);
+  assert(existsSync(file));
+  console.log('PASS Olympuz/shared jobs: provenance, visibility, cancellation/retry, scope and hostile files');
+} finally { rmSync(root, { recursive: true, force: true }); }

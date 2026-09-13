@@ -1,0 +1,26 @@
+{
+  "asset": "app-icon-mnemazine.png",
+  "sha256": "281dd6481c06a1cbfeff88981e4c834c7fee937bd8b0f37bcab1e2344d4740c0",
+  "date": "2026-09-13",
+  "route": "codex:image_gen:managed-frontier",
+  "generation_id": "exec-556b4497-a267-4b98-a4d9-bff0d3d89a7f",
+  "purpose": "macOS launcher icon",
+  "prompt": "Replace radial mark with approved horizontally extended option 5 in a wide rectangular glass tile. Preserve marble Olympus Mons, caldera, stars and reflection. Correct top-middle to right-middle bond to top-middle to upper-right terminal. Eight nodes, nine bonds.",
+  "reference": "User-selected option 5, followed by explicit approval of both adaptation proofs",
+  "user_override": "Connected graph atoms replace scroll; preserve Olympus Mons and Iriz family materials.",
+  "visual_review": {
+    "result": "accepted",
+    "checks": [
+      "Eight nodes and nine bonds match approved option 5",
+      "Wide rectangular glass tile",
+      "Olympus Mons preserved"
+    ]
+  },
+  "owner_approval": {
+    "at": "2026-09-13T12:24:13.709Z",
+    "source": "art-review-server",
+    "asset": "01-launch-icon",
+    "sha256_12": "281dd6481c06",
+    "verdict": "годится"
+  }
+}
